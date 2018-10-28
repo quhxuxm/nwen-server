@@ -1,9 +1,9 @@
-package online.nwen.server.service.executor.api;
+package online.nwen.server.executor.api;
 
 import java.util.Map;
 
 /**
- * The executor response
+ * The api response
  *
  * @param <PayloadType>
  */

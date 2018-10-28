@@ -1,4 +1,4 @@
-package online.nwen.server.service.executor.api;
+package online.nwen.server.executor.api;
 
 public class ExecutorException extends Exception {
     public ExecutorException() {

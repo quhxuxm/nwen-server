@@ -1,7 +1,7 @@
-package online.nwen.server.service.executor.api;
+package online.nwen.server.executor.api;
 
 /**
- * The executor used to execute the business request.
+ * The api used to execute the business request.
  *
  * @param <ResponsePayloadType> The request payload.
  * @param <RequestPayloadType>  The response payload.

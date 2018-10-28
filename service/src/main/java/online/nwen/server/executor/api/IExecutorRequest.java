@@ -1,19 +1,23 @@
-package online.nwen.server.service.executor.api;
+package online.nwen.server.executor.api;
 
 import java.util.Map;
 
 /**
- * The executor request
+ * The api request
  *
  * @param <PayloadType>
  */
 public interface IExecutorRequest<PayloadType> {
+    enum RequestHeader {
+        SECURE_TOKEN
+    }
+
     /**
      * The request header.
      *
      * @return The header
      */
-    Map<String, String> getHeader();
+    Map<RequestHeader, String> getHeader();
 
     /**
      * The request payload.
