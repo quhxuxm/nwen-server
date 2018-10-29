@@ -1,7 +1,13 @@
 package online.nwen.server.service.api;
 
-public interface ISecurityService {
-    String generateSecureToken(ISecurityContext securityContext);
+import online.nwen.server.service.api.exception.ServiceException;
 
-    ISecurityContext parseSecurityContext(String secureToken);
+public interface ISecurityService {
+    String generateSecureToken(SecurityContext securityContext) throws ServiceException;
+
+    void verifySecureToken(String secureToken) throws ServiceException;
+
+    SecurityContext parseSecurityContext(String secureToken) throws ServiceException;
+
+    SecurityContext refreshSecurityContext(SecurityContext securityContext);
 }

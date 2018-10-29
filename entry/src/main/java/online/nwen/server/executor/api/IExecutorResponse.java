@@ -8,6 +8,10 @@ import java.util.Map;
  * @param <PayloadType>
  */
 public interface IExecutorResponse<PayloadType> {
+    enum ResponseHeader {
+        SECURE_TOKEN
+    }
+
     /**
      * Is the response success.
      *
@@ -20,7 +24,7 @@ public interface IExecutorResponse<PayloadType> {
      *
      * @return Response header
      */
-    Map<String, String> getHeader();
+    Map<ResponseHeader, String> getHeader();
 
     /**
      * Get the response payload.
