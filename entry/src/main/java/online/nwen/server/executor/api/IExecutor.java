@@ -19,4 +19,6 @@ public interface IExecutor<ResponsePayloadType, RequestPayloadType> {
     void exec(
             IExecutorRequest<RequestPayloadType> request, IExecutorResponse<ResponsePayloadType> response)
             throws ExecutorException;
+
+
 }
