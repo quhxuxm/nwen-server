@@ -1,21 +1,23 @@
 package online.nwen.server.controller;
 
+import online.nwen.server.executor.api.IExecutorRequest;
+
 import java.util.HashMap;
 import java.util.Map;
 
-class EntryRequest {
-    private Map<String, String> header;
-    private String payload;
+class EntryRequest implements IExecutorRequest<Object> {
+    private Map<IExecutorRequest.RequestHeader, String> header;
+    private Object payload;
 
     EntryRequest() {
         this.header = new HashMap<>();
     }
 
-    public Map<String, String> getHeader() {
+    public Map<IExecutorRequest.RequestHeader, String> getHeader() {
         return header;
     }
 
-    public String getPayload() {
+    public Object getPayload() {
         return payload;
     }
 
