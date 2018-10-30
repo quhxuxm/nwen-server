@@ -1,6 +1,7 @@
 package online.nwen.server.executor.api;
 
 import online.nwen.server.executor.api.exception.ExecutorException;
+import online.nwen.server.service.api.ISecurityContext;
 
 /**
  * The api used to execute the business request.
@@ -17,8 +18,7 @@ public interface IExecutor<ResponsePayloadType, RequestPayloadType> {
      * @throws ExecutorException The exception.
      */
     void exec(
-            IExecutorRequest<RequestPayloadType> request, IExecutorResponse<ResponsePayloadType> response)
+            IExecutorRequest<RequestPayloadType> request, IExecutorResponse<ResponsePayloadType> response,
+            ISecurityContext securityContext)
             throws ExecutorException;
-
-
 }

@@ -1,17 +1,15 @@
 package online.nwen.server.payload;
 
+import online.nwen.server.executor.api.exception.ExecutorException;
+
 public class ExceptionPayload {
-    public enum Code {
-        INPUT_ERROR
-    }
+    private ExecutorException.Code code;
 
-    private Code code;
-
-    public Code getCode() {
+    public ExecutorException.Code getCode() {
         return code;
     }
 
-    public void setCode(Code code) {
+    public void setCode(ExecutorException.Code code) {
         this.code = code;
     }
 }

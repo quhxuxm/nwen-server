@@ -2,7 +2,7 @@ package online.nwen.server.executor.api.exception;
 
 public class ExecutorException extends Exception {
     public enum Code {
-        AUTH_INPUT_ERROR,
+        INPUT_ERROR,
         AUTH_ERROR;
     }
 

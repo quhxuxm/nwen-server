@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 public class ServiceConfiguration {
     private String securitySecret;
     private String securityIssuer;
-    private long securityContextRefreshInterval;
+    private long securityContextRefreshableInterval;
+    private long securityContextExpireInterval;
 
     public String getSecuritySecret() {
         return securitySecret;
@@ -26,11 +27,19 @@ public class ServiceConfiguration {
         this.securityIssuer = securityIssuer;
     }
 
-    public long getSecurityContextRefreshInterval() {
-        return securityContextRefreshInterval;
+    public long getSecurityContextRefreshableInterval() {
+        return securityContextRefreshableInterval;
     }
 
-    public void setSecurityContextRefreshInterval(long securityContextRefreshInterval) {
-        this.securityContextRefreshInterval = securityContextRefreshInterval;
+    public void setSecurityContextRefreshableInterval(long securityContextRefreshableInterval) {
+        this.securityContextRefreshableInterval = securityContextRefreshableInterval;
+    }
+
+    public long getSecurityContextExpireInterval() {
+        return securityContextExpireInterval;
+    }
+
+    public void setSecurityContextExpireInterval(long securityContextExpireInterval) {
+        this.securityContextExpireInterval = securityContextExpireInterval;
     }
 }

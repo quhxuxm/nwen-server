@@ -5,11 +5,11 @@ import online.nwen.server.executor.api.IExecutorRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-class EntryRequest implements IExecutorRequest<Object> {
+class HttpExecutorRequest<PayloadType> implements IExecutorRequest<PayloadType> {
     private Map<IExecutorRequest.RequestHeader, String> header;
-    private Object payload;
+    private PayloadType payload;
 
-    EntryRequest() {
+    HttpExecutorRequest() {
         this.header = new HashMap<>();
     }
 
@@ -17,11 +17,11 @@ class EntryRequest implements IExecutorRequest<Object> {
         return header;
     }
 
-    public Object getPayload() {
+    public PayloadType getPayload() {
         return payload;
     }
 
-    public void setPayload(String payload) {
+    public void setPayload(PayloadType payload) {
         this.payload = payload;
     }
 }

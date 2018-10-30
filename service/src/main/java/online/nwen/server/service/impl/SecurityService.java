@@ -8,14 +8,15 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import online.nwen.server.configuration.ServiceConfiguration;
+import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
-import online.nwen.server.service.api.SecurityContext;
 import online.nwen.server.service.api.exception.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Date;
 
 @Service
 class SecurityService implements ISecurityService {
@@ -33,9 +34,12 @@ class SecurityService implements ISecurityService {
     }
 
     @Override
-    public String generateSecureToken(SecurityContext securityContext) throws ServiceException {
+    public String generateSecureToken(ISecurityContext securityContext) throws ServiceException {
         try {
-            return JWT.create().withSubject(this.objectMapper.writeValueAsString(securityContext)).sign(this.algorithm);
+            Date securityTokenExpireAt =
+                    new Date(System.currentTimeMillis() + this.serviceConfiguration.getSecurityContextExpireInterval());
+            return JWT.create().withSubject(this.objectMapper.writeValueAsString(securityContext))
+                    .withExpiresAt(securityTokenExpireAt).sign(this.algorithm);
         } catch (JsonProcessingException e) {
             logger.error("Fail to generate secure token because of exception.", e);
             throw new ServiceException("Fail to generate secure token because of exception.", e,
@@ -50,7 +54,7 @@ class SecurityService implements ISecurityService {
         } catch (TokenExpiredException e) {
             logger.error("Fail to verify secure token because of token expired.", e);
             throw new ServiceException("Fail to verify secure token because of token expired.", e,
-                    ServiceException.Code.SERVICE_ERROR);
+                    ServiceException.Code.SECURE_TOKEN_EXPIRED);
         } catch (Exception e) {
             logger.error("Fail to verify secure token because of exception.", e);
             throw new ServiceException("Fail to verify secure token because of exception.", e,
@@ -59,7 +63,7 @@ class SecurityService implements ISecurityService {
     }
 
     @Override
-    public SecurityContext parseSecurityContext(String secureToken) throws ServiceException {
+    public ISecurityContext parseSecurityContext(String secureToken) throws ServiceException {
         DecodedJWT decodedJWT = JWT.decode(secureToken);
         try {
             return this.objectMapper.readValue(decodedJWT.getSubject(), SecurityContext.class);
@@ -71,8 +75,20 @@ class SecurityService implements ISecurityService {
     }
 
     @Override
-    public SecurityContext refreshSecurityContext(SecurityContext securityContext) {
-        return new SecurityContext(
-                System.currentTimeMillis() + this.serviceConfiguration.getSecurityContextRefreshInterval());
+    public ISecurityContext refreshSecurityContext(ISecurityContext securityContext) {
+        SecurityContext result = new SecurityContext();
+        result.setRefreshExpiration(
+                System.currentTimeMillis() + this.serviceConfiguration.getSecurityContextRefreshableInterval());
+        result.setUsername(securityContext.getUsername());
+        return result;
+    }
+
+    @Override
+    public ISecurityContext createSecurityContext(String username) {
+        SecurityContext result = new SecurityContext();
+        result.setRefreshExpiration(
+                System.currentTimeMillis() + this.serviceConfiguration.getSecurityContextRefreshableInterval());
+        result.setUsername(username);
+        return result;
     }
 }
