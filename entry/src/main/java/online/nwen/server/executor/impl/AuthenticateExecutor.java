@@ -32,8 +32,8 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
         try {
             String secureToken = this.securityService.generateSecureToken(newSecurityContext);
             AuthenticateResponsePayload responsePayload = new AuthenticateResponsePayload();
-            responsePayload.setSecureToken(secureToken);
             response.setPayload(responsePayload);
+            response.getHeader().put(IExecutorResponse.ResponseHeader.SECURE_TOKEN, secureToken);
         } catch (ServiceException e) {
             throw new ExecutorException(e, ExecutorException.Code.AUTH_ERROR);
         }
