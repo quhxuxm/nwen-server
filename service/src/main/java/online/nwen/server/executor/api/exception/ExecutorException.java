@@ -4,6 +4,11 @@ public class ExecutorException extends Exception {
     public enum Code {
         INPUT_ERROR,
         AUTH_ERROR,
+        REGISTER_USERNAME_EMPTY,
+        REGISTER_PASSWORD_EMPTY,
+        REGISTER_NICKNAME_EMPTY,
+        REGISTER_USERNAME_EXIST,
+        REGISTER_NICKNAME_EXIST,
         SYS_ERROR;
     }
 

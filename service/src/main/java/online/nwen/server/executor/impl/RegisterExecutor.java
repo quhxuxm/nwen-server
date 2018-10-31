@@ -29,13 +29,16 @@ public class RegisterExecutor implements IExecutor<RegisterResponsePayload, Regi
             throws ExecutorException {
         RegisterRequestPayload registerRequestPayload = request.getPayload();
         if (StringUtils.isEmpty(registerRequestPayload.getUsername())) {
-            throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
+            logger.error("Fail to register author because of the username is empty.");
+            throw new ExecutorException(ExecutorException.Code.REGISTER_USERNAME_EMPTY);
         }
         if (StringUtils.isEmpty(registerRequestPayload.getPassword())) {
-            throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
+            logger.error("Fail to register author because of the password is empty.");
+            throw new ExecutorException(ExecutorException.Code.REGISTER_PASSWORD_EMPTY);
         }
         if (StringUtils.isEmpty(registerRequestPayload.getNickname())) {
-            throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
+            logger.error("Fail to register author because of the nickname is empty.");
+            throw new ExecutorException(ExecutorException.Code.REGISTER_NICKNAME_EMPTY);
         }
         RegisterResponsePayload registerResponsePayload = null;
         try {
@@ -43,10 +46,12 @@ public class RegisterExecutor implements IExecutor<RegisterResponsePayload, Regi
             response.setPayload(registerResponsePayload);
         } catch (ServiceException e) {
             if (e.getCode() == ServiceException.Code.AUTHOR_NICKNAME_EXIST) {
-                throw new ExecutorException(e, ExecutorException.Code.INPUT_ERROR);
+                logger.error("Fail to register author because of the nickname exist.");
+                throw new ExecutorException(e, ExecutorException.Code.REGISTER_NICKNAME_EXIST);
             }
             if (e.getCode() == ServiceException.Code.AUTHOR_USERNAME_EXIST) {
-                throw new ExecutorException(e, ExecutorException.Code.INPUT_ERROR);
+                logger.error("Fail to register author because of the username exist.");
+                throw new ExecutorException(e, ExecutorException.Code.REGISTER_USERNAME_EXIST);
             }
             logger.error("Fail to register author [{}] because of exception.",
                     registerRequestPayload.getUsername(), e);
