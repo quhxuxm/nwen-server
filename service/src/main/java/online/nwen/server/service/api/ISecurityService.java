@@ -1,6 +1,7 @@
 package online.nwen.server.service.api;
 
 import online.nwen.server.service.api.exception.ServiceException;
+import online.nwen.server.service.api.payload.AuthenticateResponsePayload;
 
 public interface ISecurityService {
     String generateSecureToken(ISecurityContext securityContext) throws ServiceException;
@@ -11,5 +12,5 @@ public interface ISecurityService {
 
     ISecurityContext refreshSecurityContext(ISecurityContext securityContext);
 
-    ISecurityContext createSecurityContext(String username);
+    ISecurityContext createSecurityContext(AuthenticateResponsePayload authenticateResponsePayload);
 }

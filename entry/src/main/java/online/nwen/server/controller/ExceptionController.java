@@ -1,7 +1,7 @@
 package online.nwen.server.controller;
 
 import online.nwen.server.executor.api.exception.ExecutorException;
-import online.nwen.server.payload.ExceptionPayload;
+import online.nwen.server.service.api.payload.ExceptionPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

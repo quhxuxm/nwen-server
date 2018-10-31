@@ -7,10 +7,11 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import online.nwen.server.configuration.ServiceConfiguration;
 import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.api.exception.ServiceException;
+import online.nwen.server.service.api.payload.AuthenticateResponsePayload;
+import online.nwen.server.service.configuration.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -84,11 +85,11 @@ class SecurityService implements ISecurityService {
     }
 
     @Override
-    public ISecurityContext createSecurityContext(String username) {
+    public ISecurityContext createSecurityContext(AuthenticateResponsePayload authenticateResponsePayload) {
         SecurityContext result = new SecurityContext();
         result.setRefreshExpiration(
                 System.currentTimeMillis() + this.serviceConfiguration.getSecurityContextRefreshableInterval());
-        result.setUsername(username);
+        result.setUsername(authenticateResponsePayload.getUsername());
         return result;
     }
 }

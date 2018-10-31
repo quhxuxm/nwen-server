@@ -6,7 +6,7 @@ import online.nwen.server.executor.impl.CreateArticleExecutor;
 import online.nwen.server.executor.impl.UpdateArticleExecutor;
 import online.nwen.server.executor.impl.ViewArticleDetailExecutor;
 import online.nwen.server.executor.impl.ViewArticleSummaryExecutor;
-import online.nwen.server.payload.*;
+import online.nwen.server.service.api.payload.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
