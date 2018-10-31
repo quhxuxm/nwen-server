@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 class ExceptionController extends AbstractEntryController {
     private static final Logger logger = LoggerFactory.getLogger(ExceptionController.class);
 
+    ExceptionController() {
+        super(null);
+    }
+
     @ExceptionHandler(value = ExecutorException.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public HttpExecutorResponse<ExceptionPayload> onExecutorException(ExecutorException e) {
+    HttpExecutorResponse<ExceptionPayload> onExecutorException(ExecutorException e) {
         logger.debug("Exception happen, convert exception to exception response. Exceptions is:\n", e);
         return this.generateExceptionEntryResponse(e.getCode());
     }
