@@ -5,14 +5,13 @@ import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.impl.AuthenticateExecutor;
 import online.nwen.server.payload.AuthenticateRequestPayload;
 import online.nwen.server.payload.AuthenticateResponsePayload;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/api/authenticate")
 class AuthenticateController extends AbstractEntryController {
     private IExecutorInvoker executorInvoker;
@@ -25,7 +24,6 @@ class AuthenticateController extends AbstractEntryController {
     }
 
     @PostMapping(consumes = MimeTypeUtils.APPLICATION_JSON_VALUE, produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    @ResponseBody
     HttpExecutorResponse<AuthenticateResponsePayload> service(
             @RequestBody HttpExecutorRequest<AuthenticateRequestPayload> request)
             throws ExecutorException {

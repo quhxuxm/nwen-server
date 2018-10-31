@@ -6,11 +6,11 @@ class SecurityContext implements ISecurityContext {
     private long refreshExpiration;
     private String username;
 
-    public void setRefreshExpiration(long refreshExpiration) {
+    void setRefreshExpiration(long refreshExpiration) {
         this.refreshExpiration = refreshExpiration;
     }
 
-    public void setUsername(String username) {
+    void setUsername(String username) {
         this.username = username;
     }
 

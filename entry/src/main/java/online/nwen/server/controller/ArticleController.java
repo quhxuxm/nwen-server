@@ -5,14 +5,13 @@ import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.impl.CreateArticleExecutor;
 import online.nwen.server.payload.CreateArticleRequestPayload;
 import online.nwen.server.payload.CreateArticleResponsePayload;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/api/article")
 public class ArticleController extends AbstractEntryController {
     private IExecutorInvoker executorInvoker;
@@ -26,7 +25,6 @@ public class ArticleController extends AbstractEntryController {
 
     @PostMapping(value = "/create", consumes = MimeTypeUtils.APPLICATION_JSON_VALUE,
             produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
-    @ResponseBody
     HttpExecutorResponse<CreateArticleResponsePayload> create(
             @RequestBody HttpExecutorRequest<CreateArticleRequestPayload> request)
             throws ExecutorException {

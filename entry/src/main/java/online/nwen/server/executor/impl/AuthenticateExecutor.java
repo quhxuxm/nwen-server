@@ -1,6 +1,5 @@
 package online.nwen.server.executor.impl;
 
-import online.nwen.server.configuration.ServiceConfiguration;
 import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
@@ -15,12 +14,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePayload, AuthenticateRequestPayload> {
     private ISecurityService securityService;
-    private ServiceConfiguration serviceConfiguration;
 
-    public AuthenticateExecutor(ISecurityService securityService,
-                                ServiceConfiguration serviceConfiguration) {
+    public AuthenticateExecutor(ISecurityService securityService) {
         this.securityService = securityService;
-        this.serviceConfiguration = serviceConfiguration;
     }
 
     @Override
