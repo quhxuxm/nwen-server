@@ -25,4 +25,13 @@ class ExceptionController extends AbstractEntryController {
         logger.debug("Exception happen, convert exception to exception response. Exceptions is:\n", e);
         return this.generateExceptionEntryResponse(e.getCode());
     }
+
+    @ExceptionHandler(value = Exception.class)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    HttpExecutorResponse<ExceptionPayload> onGeneralException(Exception e) {
+        ExecutorException executorException = new ExecutorException(ExecutorException.Code.SYS_ERROR);
+        logger.debug("General exception happen, convert exception to exception response. Exceptions is:\n", e);
+        return this.generateExceptionEntryResponse(executorException.getCode());
+    }
 }

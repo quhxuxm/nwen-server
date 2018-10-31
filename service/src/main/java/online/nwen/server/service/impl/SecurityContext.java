@@ -22,4 +22,12 @@ class SecurityContext implements ISecurityContext {
     public String getUsername() {
         return this.username;
     }
+
+    @Override
+    public String toString() {
+        return "SecurityContext{" +
+                "refreshExpiration=" + refreshExpiration +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }
