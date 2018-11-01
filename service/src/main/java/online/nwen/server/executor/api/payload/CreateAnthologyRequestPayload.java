@@ -1,26 +1,12 @@
 package online.nwen.server.executor.api.payload;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public class CreateArticleRequestPayload {
-    private String anthologyId;
+public class CreateAnthologyRequestPayload {
     private String title;
     private String summary;
-    private String content;
     private Set<String> tags;
-
-    public CreateArticleRequestPayload() {
-        this.tags = new HashSet<>();
-    }
-
-    public String getAnthologyId() {
-        return anthologyId;
-    }
-
-    public void setAnthologyId(String anthologyId) {
-        this.anthologyId = anthologyId;
-    }
+    private boolean publish;
 
     public String getTitle() {
         return title;
@@ -38,19 +24,19 @@ public class CreateArticleRequestPayload {
         this.summary = summary;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public Set<String> getTags() {
         return tags;
     }
 
     public void setTags(Set<String> tags) {
         this.tags = tags;
+    }
+
+    public boolean isPublish() {
+        return publish;
+    }
+
+    public void setPublish(boolean publish) {
+        this.publish = publish;
     }
 }
