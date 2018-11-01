@@ -10,4 +10,11 @@ public class AuthenticateResponsePayload {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @Override
+    public String toString() {
+        return "AuthenticateResponsePayload{" +
+                "username='" + username + '\'' +
+                '}';
+    }
 }

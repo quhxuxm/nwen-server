@@ -7,11 +7,11 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import online.nwen.server.configuration.GlobalConfiguration;
+import online.nwen.server.executor.api.payload.AuthenticateResponsePayload;
 import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.api.exception.SecurityServiceException;
-import online.nwen.server.executor.api.payload.AuthenticateResponsePayload;
-import online.nwen.server.service.configuration.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,20 +25,20 @@ class SecurityService implements ISecurityService {
     private Algorithm algorithm;
     private JWTVerifier verifier;
     private ObjectMapper objectMapper;
-    private ServiceConfiguration serviceConfiguration;
+    private GlobalConfiguration globalConfiguration;
 
-    public SecurityService(ServiceConfiguration serviceConfiguration) {
-        this.algorithm = Algorithm.HMAC256(serviceConfiguration.getSecuritySecret());
-        this.verifier = JWT.require(this.algorithm).withIssuer(serviceConfiguration.getSecurityIssuer()).build();
+    public SecurityService(GlobalConfiguration globalConfiguration) {
+        this.algorithm = Algorithm.HMAC256(globalConfiguration.getSecuritySecret());
+        this.verifier = JWT.require(this.algorithm).withIssuer(globalConfiguration.getSecurityIssuer()).build();
         this.objectMapper = new ObjectMapper();
-        this.serviceConfiguration = serviceConfiguration;
+        this.globalConfiguration = globalConfiguration;
     }
 
     @Override
     public String generateSecureToken(ISecurityContext securityContext) throws SecurityServiceException {
         try {
             Date securityTokenExpireAt =
-                    new Date(System.currentTimeMillis() + this.serviceConfiguration.getSecurityContextExpireInterval());
+                    new Date(System.currentTimeMillis() + this.globalConfiguration.getSecurityContextExpireInterval());
             return JWT.create().withSubject(this.objectMapper.writeValueAsString(securityContext))
                     .withExpiresAt(securityTokenExpireAt).sign(this.algorithm);
         } catch (JsonProcessingException e) {
@@ -79,7 +79,7 @@ class SecurityService implements ISecurityService {
     public ISecurityContext refreshSecurityContext(ISecurityContext securityContext) {
         SecurityContext result = new SecurityContext();
         result.setRefreshExpiration(
-                System.currentTimeMillis() + this.serviceConfiguration.getSecurityContextRefreshableInterval());
+                System.currentTimeMillis() + this.globalConfiguration.getSecurityContextRefreshableInterval());
         result.setUsername(securityContext.getUsername());
         return result;
     }
@@ -88,7 +88,7 @@ class SecurityService implements ISecurityService {
     public ISecurityContext createSecurityContext(AuthenticateResponsePayload authenticateResponsePayload) {
         SecurityContext result = new SecurityContext();
         result.setRefreshExpiration(
-                System.currentTimeMillis() + this.serviceConfiguration.getSecurityContextRefreshableInterval());
+                System.currentTimeMillis() + this.globalConfiguration.getSecurityContextRefreshableInterval());
         result.setUsername(authenticateResponsePayload.getUsername());
         return result;
     }

@@ -1,11 +1,11 @@
-package online.nwen.server.service.configuration;
+package online.nwen.server.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-@ConfigurationProperties(prefix = "service")
+@ConfigurationProperties(prefix = "nwen")
 @Component
-public class ServiceConfiguration {
+public class GlobalConfiguration {
     private String securitySecret;
     private String securityIssuer;
     private long securityContextRefreshableInterval;
