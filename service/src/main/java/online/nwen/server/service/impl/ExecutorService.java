@@ -7,7 +7,7 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
-import online.nwen.server.service.api.exception.ServiceException;
+import online.nwen.server.service.api.exception.SecurityServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ class ExecutorService implements IExecutorService {
         if (secureToken != null) {
             try {
                 securityContext = this.securityService.parseSecurityContext(secureToken);
-            } catch (ServiceException e) {
+            } catch (SecurityServiceException e) {
                 logger.debug(
                         "Fail to parse security context from secure token  because of exception.",
                         e);
@@ -49,8 +49,8 @@ class ExecutorService implements IExecutorService {
         }
         try {
             this.securityService.verifySecureToken(secureToken);
-        } catch (ServiceException e) {
-            if (ServiceException.Code.SECURE_TOKEN_EXPIRED != e.getCode()) {
+        } catch (SecurityServiceException e) {
+            if (SecurityServiceException.Code.SECURE_TOKEN_EXPIRED != e.getCode()) {
                 throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
             }
             if (securityContext == null) {
@@ -67,7 +67,7 @@ class ExecutorService implements IExecutorService {
                         this.securityService.refreshSecurityContext(securityContext);
                 String refreshedSecureToken = this.securityService.generateSecureToken(securityContext);
                 response.getHeader().put(IExecutorResponse.ResponseHeader.SECURE_TOKEN, refreshedSecureToken);
-            } catch (ServiceException e1) {
+            } catch (SecurityServiceException e1) {
                 logger.error("Can not refresh the secure token because of exception.", e1);
                 throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
             }

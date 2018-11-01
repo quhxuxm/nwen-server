@@ -10,7 +10,7 @@ import online.nwen.server.executor.api.payload.AuthenticateResponsePayload;
 import online.nwen.server.repository.IAuthorRepository;
 import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
-import online.nwen.server.service.api.exception.ServiceException;
+import online.nwen.server.service.api.exception.SecurityServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,7 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
                     responsePayload.getUsername());
             response.setPayload(responsePayload);
             response.getHeader().put(IExecutorResponse.ResponseHeader.SECURE_TOKEN, secureToken);
-        } catch (ServiceException e) {
+        } catch (SecurityServiceException e) {
             logger.error("Fail to generate security token for author [{}] because of exception.",
                     responsePayload.getUsername(), e);
             throw new ExecutorException(e, ExecutorException.Code.AUTH_ERROR);
