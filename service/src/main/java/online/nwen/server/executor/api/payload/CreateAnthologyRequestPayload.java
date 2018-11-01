@@ -1,5 +1,6 @@
 package online.nwen.server.executor.api.payload;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class CreateAnthologyRequestPayload {
@@ -7,6 +8,10 @@ public class CreateAnthologyRequestPayload {
     private String summary;
     private Set<String> tags;
     private boolean publish;
+
+    public CreateAnthologyRequestPayload() {
+        this.tags = new HashSet<>();
+    }
 
     public String getTitle() {
         return title;
@@ -26,10 +31,6 @@ public class CreateAnthologyRequestPayload {
 
     public Set<String> getTags() {
         return tags;
-    }
-
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
     }
 
     public boolean isPublish() {

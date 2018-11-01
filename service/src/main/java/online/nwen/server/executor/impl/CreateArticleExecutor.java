@@ -48,11 +48,11 @@ public class CreateArticleExecutor implements IExecutor<CreateArticleResponsePay
         CreateArticleRequestPayload requestPayload = request.getPayload();
         if (StringUtils.isEmpty(requestPayload.getTitle())) {
             logger.error("Fail to create article because of title is empty.");
-            throw new ExecutorException(ExecutorException.Code.CREATE_ARTICLE_TITLE_IS_EMPTY);
+            throw new ExecutorException(ExecutorException.Code.ARTICLE_TITLE_IS_EMPTY);
         }
         if (requestPayload.getTitle().trim().length() > this.globalConfiguration.getArticleTitleMaxLength()) {
             logger.error("Fail to create article because of title length exceed.");
-            throw new ExecutorException(ExecutorException.Code.CREATE_ARTICLE_TITLE_IS_TOO_LONG);
+            throw new ExecutorException(ExecutorException.Code.ARTICLE_TITLE_IS_TOO_LONG);
         }
         Author currentAuthor = null;
         try {

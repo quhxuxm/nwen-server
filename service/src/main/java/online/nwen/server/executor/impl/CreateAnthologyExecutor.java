@@ -43,11 +43,11 @@ public class CreateAnthologyExecutor
         CreateAnthologyRequestPayload requestPayload = request.getPayload();
         if (StringUtils.isEmpty(requestPayload.getTitle())) {
             logger.error("Fail to create anthology because of title is empty.");
-            throw new ExecutorException(ExecutorException.Code.CREATE_ANTHOLOGY_TITLE_IS_EMPTY);
+            throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_TITLE_IS_EMPTY);
         }
         if (requestPayload.getTitle().trim().length() > this.globalConfiguration.getAnthologyTitleMaxLength()) {
             logger.error("Fail to create anthology because of title length exceed.");
-            throw new ExecutorException(ExecutorException.Code.CREATE_ANTHOLOGY_TITLE_IS_TOO_LONG);
+            throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_TITLE_IS_TOO_LONG);
         }
         Author currentAuthor = null;
         try {
