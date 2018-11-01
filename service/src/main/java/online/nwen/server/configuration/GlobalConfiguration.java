@@ -10,6 +10,8 @@ public class GlobalConfiguration {
     private String securityIssuer;
     private long securityContextRefreshableInterval;
     private long securityContextExpireInterval;
+    private int articleTitleMaxLength;
+    private int anthologyTitleMaxLength;
 
     public String getSecuritySecret() {
         return securitySecret;
@@ -41,5 +43,21 @@ public class GlobalConfiguration {
 
     public void setSecurityContextExpireInterval(long securityContextExpireInterval) {
         this.securityContextExpireInterval = securityContextExpireInterval;
+    }
+
+    public int getArticleTitleMaxLength() {
+        return articleTitleMaxLength;
+    }
+
+    public void setArticleTitleMaxLength(int articleTitleMaxLength) {
+        this.articleTitleMaxLength = articleTitleMaxLength;
+    }
+
+    public int getAnthologyTitleMaxLength() {
+        return anthologyTitleMaxLength;
+    }
+
+    public void setAnthologyTitleMaxLength(int anthologyTitleMaxLength) {
+        this.anthologyTitleMaxLength = anthologyTitleMaxLength;
     }
 }

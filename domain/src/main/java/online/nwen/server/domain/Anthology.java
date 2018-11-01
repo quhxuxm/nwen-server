@@ -223,4 +223,32 @@ public class Anthology implements Serializable {
     public void setCommentsNumber(Long commentsNumber) {
         this.commentsNumber = commentsNumber;
     }
+
+    @Override
+    public String toString() {
+        return "Anthology{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", summary='" + summary + '\'' +
+                ", createDate=" + createDate +
+                ", updateDate=" + updateDate +
+                ", publishDate=" + publishDate +
+                ", sharedDate=" + sharedDate +
+                ", authorId='" + authorId + '\'' +
+                ", coverImageId='" + coverImageId + '\'' +
+                ", isPublished=" + isPublished +
+                ", isShared=" + isShared +
+                ", praiseNumber=" + praiseNumber +
+                ", commentsNumber=" + commentsNumber +
+                ", bookmarksNumber=" + bookmarksNumber +
+                ", articleNumber=" + articleNumber +
+                ", viewersNumber=" + viewersNumber +
+                ", praisesNumber=" + praisesNumber +
+                ", tags=" + tags +
+                ", participantAuthorIds=" + participantAuthorIds +
+                ", bookmarks=" + bookmarks +
+                ", praises=" + praises +
+                ", viewers=" + viewers +
+                '}';
+    }
 }
