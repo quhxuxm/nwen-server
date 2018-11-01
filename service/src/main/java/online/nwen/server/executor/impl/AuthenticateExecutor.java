@@ -1,30 +1,33 @@
 package online.nwen.server.executor.impl;
 
+import online.nwen.server.domain.Author;
 import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
-import online.nwen.server.service.api.IAuthorService;
+import online.nwen.server.executor.api.payload.AuthenticateRequestPayload;
+import online.nwen.server.executor.api.payload.AuthenticateResponsePayload;
+import online.nwen.server.repository.IAuthorRepository;
 import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.api.exception.ServiceException;
-import online.nwen.server.service.api.payload.AuthenticateRequestPayload;
-import online.nwen.server.service.api.payload.AuthenticateResponsePayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
+
 @Service
 public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePayload, AuthenticateRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticateExecutor.class);
     private ISecurityService securityService;
-    private IAuthorService authorService;
+    private IAuthorRepository authorRepository;
 
     public AuthenticateExecutor(ISecurityService securityService,
-                                IAuthorService authorService) {
+                                IAuthorRepository authorRepository) {
         this.securityService = securityService;
-        this.authorService = authorService;
+        this.authorRepository = authorRepository;
     }
 
     @Override
@@ -41,14 +44,21 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
             logger.error("Fail to do authentication because of the password is empty.");
             throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
         }
-        AuthenticateResponsePayload responsePayload = null;
-        try {
-            responsePayload = this.authorService.authenticate(requestPayload);
-            logger.debug("Success to do authentication on service level.");
-        } catch (ServiceException e) {
-            logger.error("Fail to authenticate {} because of exception.", requestPayload.getUsername(), e);
-            throw new ExecutorException(e, ExecutorException.Code.AUTH_ERROR);
+        Author author = this.authorRepository.findByUsername(requestPayload.getUsername());
+        if (author == null) {
+            throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
         }
+        if (!requestPayload.getPassword().equals(author.getPassword())) {
+            throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
+        }
+        author.setLastLoginDate(new Date());
+        try {
+            this.authorRepository.save(author);
+        } catch (Exception e) {
+            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
+        }
+        AuthenticateResponsePayload responsePayload = new AuthenticateResponsePayload();
+        responsePayload.setUsername(author.getUsername());
         logger.debug("Begin to generate security context for new authentication.");
         ISecurityContext newSecurityContext =
                 this.securityService.createSecurityContext(responsePayload);

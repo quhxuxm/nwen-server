@@ -4,9 +4,6 @@ public class ServiceException extends Exception {
     public enum Code {
         SECURE_TOKEN_EXPIRED,
         SERVICE_ERROR,
-        AUTHOR_NOT_EXIST,
-        AUTHOR_USERNAME_EXIST,
-        AUTHOR_NICKNAME_EXIST;
     }
 
     private Code code;

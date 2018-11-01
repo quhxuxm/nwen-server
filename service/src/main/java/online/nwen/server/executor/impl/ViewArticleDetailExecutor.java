@@ -1,11 +1,11 @@
 package online.nwen.server.executor.impl;
 
 import online.nwen.server.executor.api.exception.ExecutorException;
-import online.nwen.server.service.api.payload.ViewArticleDetailRequestPayload;
+import online.nwen.server.executor.api.payload.ViewArticleDetailRequestPayload;
 import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
-import online.nwen.server.service.api.payload.ViewArticleDetailResponsePayload;
+import online.nwen.server.executor.api.payload.ViewArticleDetailResponsePayload;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

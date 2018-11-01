@@ -1,12 +1,12 @@
 package online.nwen.server.controller;
 
-import online.nwen.server.executor.api.IExecutorInvoker;
+import online.nwen.server.service.api.IExecutorService;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.impl.CreateArticleExecutor;
 import online.nwen.server.executor.impl.UpdateArticleExecutor;
 import online.nwen.server.executor.impl.ViewArticleDetailExecutor;
 import online.nwen.server.executor.impl.ViewArticleSummaryExecutor;
-import online.nwen.server.service.api.payload.*;
+import online.nwen.server.executor.api.payload.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +21,7 @@ class ArticleController extends AbstractEntryController {
     private ViewArticleDetailExecutor viewArticleDetailExecutor;
     private ViewArticleSummaryExecutor viewArticleSummaryExecutor;
 
-    public ArticleController(IExecutorInvoker executorInvoker,
+    public ArticleController(IExecutorService executorInvoker,
                              CreateArticleExecutor createArticleExecutor,
                              UpdateArticleExecutor updateArticleExecutor,
                              ViewArticleDetailExecutor viewArticleDetailExecutor,

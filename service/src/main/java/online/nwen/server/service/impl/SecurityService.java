@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.api.exception.ServiceException;
-import online.nwen.server.service.api.payload.AuthenticateResponsePayload;
+import online.nwen.server.executor.api.payload.AuthenticateResponsePayload;
 import online.nwen.server.service.configuration.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

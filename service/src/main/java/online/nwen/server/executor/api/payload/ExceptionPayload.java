@@ -1,4 +1,4 @@
-package online.nwen.server.service.api.payload;
+package online.nwen.server.executor.api.payload;
 
 import online.nwen.server.executor.api.exception.ExecutorException;
 

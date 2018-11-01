@@ -1,10 +1,10 @@
 package online.nwen.server.controller;
 
-import online.nwen.server.executor.api.IExecutorInvoker;
 import online.nwen.server.executor.api.exception.ExecutorException;
+import online.nwen.server.executor.api.payload.AuthenticateRequestPayload;
+import online.nwen.server.executor.api.payload.AuthenticateResponsePayload;
 import online.nwen.server.executor.impl.AuthenticateExecutor;
-import online.nwen.server.service.api.payload.AuthenticateRequestPayload;
-import online.nwen.server.service.api.payload.AuthenticateResponsePayload;
+import online.nwen.server.service.api.IExecutorService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 class AuthenticateController extends AbstractEntryController {
     private AuthenticateExecutor authenticateExecutor;
 
-    AuthenticateController(IExecutorInvoker executorInvoker,
+    AuthenticateController(IExecutorService executorInvoker,
                            AuthenticateExecutor authenticateExecutor) {
         super(executorInvoker);
         this.authenticateExecutor = authenticateExecutor;
@@ -26,6 +26,6 @@ class AuthenticateController extends AbstractEntryController {
     HttpExecutorResponse<AuthenticateResponsePayload> authenticate(
             @RequestBody HttpExecutorRequest<AuthenticateRequestPayload> request)
             throws ExecutorException {
-        return this.service(request, this.authenticateExecutor, true);
+        return this.service(request, this.authenticateExecutor, false);
     }
 }

@@ -1,16 +1,16 @@
 package online.nwen.server.controller;
 
 import online.nwen.server.executor.api.IExecutor;
-import online.nwen.server.executor.api.IExecutorInvoker;
+import online.nwen.server.service.api.IExecutorService;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.exception.ExecutorException;
-import online.nwen.server.service.api.payload.ExceptionPayload;
+import online.nwen.server.executor.api.payload.ExceptionPayload;
 import org.springframework.web.bind.annotation.RequestBody;
 
 abstract class AbstractEntryController {
-    private IExecutorInvoker executorInvoker;
+    private IExecutorService executorInvoker;
 
-    AbstractEntryController(IExecutorInvoker executorInvoker) {
+    AbstractEntryController(IExecutorService executorInvoker) {
         this.executorInvoker = executorInvoker;
     }
 

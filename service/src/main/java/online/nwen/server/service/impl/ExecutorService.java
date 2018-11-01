@@ -1,7 +1,7 @@
-package online.nwen.server.executor.impl;
+package online.nwen.server.service.impl;
 
 import online.nwen.server.executor.api.IExecutor;
-import online.nwen.server.executor.api.IExecutorInvoker;
+import online.nwen.server.service.api.IExecutorService;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-class ExecutorInvoker implements IExecutorInvoker {
-    private static final Logger logger = LoggerFactory.getLogger(ExecutorInvoker.class);
+class ExecutorService implements IExecutorService {
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorService.class);
     private ISecurityService securityService;
 
-    ExecutorInvoker(ISecurityService securityService) {
+    ExecutorService(ISecurityService securityService) {
         this.securityService = securityService;
     }
 

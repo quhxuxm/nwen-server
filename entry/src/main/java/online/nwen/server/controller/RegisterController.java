@@ -1,10 +1,10 @@
 package online.nwen.server.controller;
 
-import online.nwen.server.executor.api.IExecutorInvoker;
+import online.nwen.server.service.api.IExecutorService;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.impl.RegisterExecutor;
-import online.nwen.server.service.api.payload.RegisterRequestPayload;
-import online.nwen.server.service.api.payload.RegisterResponsePayload;
+import online.nwen.server.executor.api.payload.RegisterRequestPayload;
+import online.nwen.server.executor.api.payload.RegisterResponsePayload;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 class RegisterController extends AbstractEntryController {
     private RegisterExecutor registerExecutor;
 
-    RegisterController(IExecutorInvoker executorInvoker,
+    RegisterController(IExecutorService executorInvoker,
                        RegisterExecutor registerExecutor) {
         super(executorInvoker);
         this.registerExecutor = registerExecutor;
