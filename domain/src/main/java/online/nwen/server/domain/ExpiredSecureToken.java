@@ -12,8 +12,9 @@ public class ExpiredSecureToken implements Serializable {
     private static final long serialVersionUID = -190322673132950117L;
     @Id
     private String id;
-    @Indexed(expireAfterSeconds = 3600, unique = true)
+    @Indexed(unique = true)
     private String token;
+    @Indexed(expireAfterSeconds = 3600)
     private Date markExpiredAt;
 
     public String getId() {
