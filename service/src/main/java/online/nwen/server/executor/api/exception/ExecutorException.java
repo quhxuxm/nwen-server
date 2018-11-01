@@ -16,6 +16,7 @@ public class ExecutorException extends Exception {
         CREATE_ARTICLE_TITLE_IS_TOO_LONG,
         CREATE_ANTHOLOGY_TITLE_IS_EMPTY,
         CREATE_ANTHOLOGY_TITLE_IS_TOO_LONG,
+        CURRENT_AUTHOR_NOT_EXIST,
         SYS_ERROR;
     }
 

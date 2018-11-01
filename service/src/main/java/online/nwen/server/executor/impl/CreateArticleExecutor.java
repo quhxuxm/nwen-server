@@ -64,7 +64,7 @@ public class CreateArticleExecutor implements IExecutor<CreateArticleResponsePay
         if (currentAuthor == null) {
             logger.error("Fail to create article because of can not find current author [{}].",
                     securityContext.getUsername());
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
+            throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
         if (requestPayload.getAnthologyId() == null) {
             logger.error("Fail to create article because of anthology id is empty.");

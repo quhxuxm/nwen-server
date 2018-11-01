@@ -59,7 +59,7 @@ public class CreateAnthologyExecutor
         if (currentAuthor == null) {
             logger.error("Fail to create anthology because of can not find current author [{}].",
                     securityContext.getUsername());
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
+            throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
         Anthology anthology = new Anthology();
         anthology.setAuthorId(currentAuthor.getId());
