@@ -1,10 +1,12 @@
 package online.nwen.server.service.impl;
 
+import online.nwen.server.domain.ExpiredSecureToken;
 import online.nwen.server.executor.api.IExecutor;
-import online.nwen.server.service.api.IExecutorService;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
+import online.nwen.server.repository.IExpiredSecureTokenRepository;
+import online.nwen.server.service.api.IExecutorService;
 import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.api.exception.SecurityServiceException;
@@ -12,13 +14,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 class ExecutorService implements IExecutorService {
     private static final Logger logger = LoggerFactory.getLogger(ExecutorService.class);
     private ISecurityService securityService;
+    private IExpiredSecureTokenRepository expiredSecureTokenRepository;
 
-    ExecutorService(ISecurityService securityService) {
+    ExecutorService(ISecurityService securityService,
+                    IExpiredSecureTokenRepository expiredSecureTokenRepository) {
         this.securityService = securityService;
+        this.expiredSecureTokenRepository = expiredSecureTokenRepository;
     }
 
     @Override
@@ -61,6 +68,29 @@ class ExecutorService implements IExecutorService {
             try {
                 if (System.currentTimeMillis() > securityContext.getRefreshExpiration()) {
                     logger.error("Can not refresh the secure token because of the refresh expiration exceed.");
+                    throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
+                }
+                boolean isSecureTokenInBlacklist = false;
+                try {
+                    isSecureTokenInBlacklist = this.expiredSecureTokenRepository.existsByToken(secureToken);
+                } catch (Exception e1) {
+                    logger.error(
+                            "Can not refresh the secure token because of exception when check if the secure token is in black list.",
+                            e1);
+                    throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
+                }
+                if (isSecureTokenInBlacklist) {
+                    logger.error(
+                            "Can not refresh the secure token because of the current secure token in the incoming request is a expired token that in black list.");
+                    throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
+                }
+                try {
+                    ExpiredSecureToken expiredSecureToken = new ExpiredSecureToken();
+                    expiredSecureToken.setToken(secureToken);
+                    expiredSecureToken.setMarkExpiredAt(new Date());
+                    this.expiredSecureTokenRepository.save(expiredSecureToken);
+                } catch (Exception e1) {
+                    logger.error("Can not refresh the secure token because of exception.", e1);
                     throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
                 }
                 securityContext =
