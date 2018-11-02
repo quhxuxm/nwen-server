@@ -16,6 +16,7 @@ public class ExecutorException extends Exception {
         NOT_ANTHOLOGY_PARTICIPANT,
         NOT_ARTICLE_OWNER,
         NOT_ANTHOLOGY_OWNER,
+        ARTICLE_AUTHOR_NOT_EXIST,
         ARTICLE_ID_IS_EMPTY,
         ARTICLE_TITLE_IS_EMPTY,
         ARTICLE_TITLE_IS_TOO_LONG,
