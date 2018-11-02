@@ -96,6 +96,10 @@ public class CreateArticleExecutor implements IExecutor<CreateArticleResponsePay
         article.setCreateDate(new Date());
         article.setSummary(requestPayload.getSummary());
         article.setTags(requestPayload.getTags());
+        article.setPublished(requestPayload.isPublished());
+        if (requestPayload.isPublished()) {
+            article.setPublishDate(new Date());
+        }
         try {
             this.articleRepository.save(article);
         } catch (Exception e) {

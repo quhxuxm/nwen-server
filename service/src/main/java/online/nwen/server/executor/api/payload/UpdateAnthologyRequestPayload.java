@@ -3,15 +3,13 @@ package online.nwen.server.executor.api.payload;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CreateArticleRequestPayload {
+public class UpdateAnthologyRequestPayload {
     private String anthologyId;
     private String title;
     private String summary;
-    private String content;
-    private boolean published;
     private Set<String> tags;
 
-    public CreateArticleRequestPayload() {
+    public UpdateAnthologyRequestPayload() {
         this.tags = new HashSet<>();
     }
 
@@ -39,23 +37,7 @@ public class CreateArticleRequestPayload {
         this.summary = summary;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public Set<String> getTags() {
         return tags;
-    }
-
-    public boolean isPublished() {
-        return published;
-    }
-
-    public void setPublished(boolean published) {
-        this.published = published;
     }
 }

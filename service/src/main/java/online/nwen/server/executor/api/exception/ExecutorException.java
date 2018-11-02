@@ -11,6 +11,8 @@ public class ExecutorException extends Exception {
         NICKNAME_EXIST,
         ANTHOLOGY_ID_IS_EMPTY,
         ANTHOLOGY_NOT_EXIST,
+        ANTHOLOGY_TITLE_IS_EMPTY,
+        ANTHOLOGY_TITLE_IS_TOO_LONG,
         NOT_ANTHOLOGY_PARTICIPANT,
         NOT_ARTICLE_OWNER,
         NOT_ANTHOLOGY_OWNER,
@@ -18,8 +20,6 @@ public class ExecutorException extends Exception {
         ARTICLE_TITLE_IS_EMPTY,
         ARTICLE_TITLE_IS_TOO_LONG,
         ARTICLE_NOT_EXIST,
-        ANTHOLOGY_TITLE_IS_EMPTY,
-        ANTHOLOGY_TITLE_IS_TOO_LONG,
         CURRENT_AUTHOR_NOT_EXIST,
         SYS_ERROR;
     }

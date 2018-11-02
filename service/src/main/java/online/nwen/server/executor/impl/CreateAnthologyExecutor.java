@@ -67,6 +67,9 @@ public class CreateAnthologyExecutor
         anthology.setCreateDate(new Date());
         anthology.setSummary(requestPayload.getSummary());
         anthology.setPublished(requestPayload.isPublish());
+        if (requestPayload.isPublish()) {
+            anthology.setPublishDate(new Date());
+        }
         try {
             logger.debug("Begin to save anthology: {}", anthology);
             this.anthologyRepository.save(anthology);
