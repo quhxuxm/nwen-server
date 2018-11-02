@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Set;
 
 public class ViewArticleSummaryResponsePayload {
-    private String articleId;
+    private String id;
     private String title;
     private String summary;
     private String authorNickname;
@@ -22,12 +22,12 @@ public class ViewArticleSummaryResponsePayload {
     private Date createDate;
     private Date publishDate;
 
-    public String getArticleId() {
-        return articleId;
+    public String getId() {
+        return id;
     }
 
-    public void setArticleId(String articleId) {
-        this.articleId = articleId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTitle() {
