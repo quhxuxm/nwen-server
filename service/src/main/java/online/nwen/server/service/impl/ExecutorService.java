@@ -87,7 +87,8 @@ class ExecutorService implements IExecutorService {
                 try {
                     ExpiredSecureToken expiredSecureToken = new ExpiredSecureToken();
                     expiredSecureToken.setToken(secureToken);
-                    expiredSecureToken.setMarkExpiredAt(new Date());
+                    ISecurityContext oldSecurityContext = this.securityService.parseSecurityContext(secureToken);
+                    expiredSecureToken.setRecodeExpireAt(new Date(oldSecurityContext.getRefreshExpiration()));
                     this.expiredSecureTokenRepository.save(expiredSecureToken);
                 } catch (Exception e1) {
                     logger.error("Can not refresh the secure token because of exception.", e1);

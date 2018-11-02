@@ -68,18 +68,25 @@ public class CreateArticleExecutor implements IExecutor<CreateArticleResponsePay
         }
         if (requestPayload.getAnthologyId() == null) {
             logger.error("Fail to create article because of anthology id is empty.");
-            throw new ExecutorException(ExecutorException.Code.CREATE_ARTICLE_ANTHOLOGY_ID_IS_EMPTY);
+            throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_ID_IS_EMPTY);
         }
         Optional<Anthology> targetAnthologyOptional =
                 this.anthologyRepository.findById(requestPayload.getAnthologyId());
         if (!targetAnthologyOptional.isPresent()) {
             logger.error("Fail to create article because of anthology is not exist.");
-            throw new ExecutorException(ExecutorException.Code.CREATE_ARTICLE_ANTHOLOGY_NOT_EXIST);
+            throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
         }
-        if (!currentAuthor.getId().equals(targetAnthologyOptional.get().getAuthorId())) {
-            logger.error("Fail to create article because of anthology not belong to author [{}].",
-                    securityContext.getUsername());
-            throw new ExecutorException(ExecutorException.Code.CREATE_ARTICLE_ANTHOLOGY_NOT_BELONG_TO_AUTHOR);
+        Anthology targetAnthology = targetAnthologyOptional.get();
+        if (!targetAnthology.getAuthorId().equals(currentAuthor.getId())) {
+            logger.debug(
+                    "Current author is not the owner of the anthology, author is [{}], anthology is [{}].",
+                    securityContext.getUsername(), targetAnthology.getId());
+            if (!targetAnthology.getParticipantAuthorIds().contains(currentAuthor.getId())) {
+                logger.error(
+                        "Fail to create article because of author is not the participant of the anthology, author is [{}], anthology is [{}].",
+                        securityContext.getUsername(), targetAnthology.getId());
+                throw new ExecutorException(ExecutorException.Code.NOT_ANTHOLOGY_PARTICIPANT);
+            }
         }
         Article article = new Article();
         article.setAnthologyId(requestPayload.getAnthologyId());

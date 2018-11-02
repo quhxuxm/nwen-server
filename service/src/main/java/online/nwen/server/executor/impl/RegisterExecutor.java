@@ -40,24 +40,24 @@ public class RegisterExecutor implements IExecutor<RegisterResponsePayload, Regi
         RegisterRequestPayload registerRequestPayload = request.getPayload();
         if (StringUtils.isEmpty(registerRequestPayload.getUsername())) {
             logger.error("Fail to register author because of the username is empty.");
-            throw new ExecutorException(ExecutorException.Code.REGISTER_USERNAME_EMPTY);
+            throw new ExecutorException(ExecutorException.Code.USERNAME_IS_EMPTY);
         }
         if (StringUtils.isEmpty(registerRequestPayload.getPassword())) {
             logger.error("Fail to register author because of the password is empty.");
-            throw new ExecutorException(ExecutorException.Code.REGISTER_PASSWORD_EMPTY);
+            throw new ExecutorException(ExecutorException.Code.PASSWORD_IS_EMPTY);
         }
         if (StringUtils.isEmpty(registerRequestPayload.getNickname())) {
             logger.error("Fail to register author because of the nickname is empty.");
-            throw new ExecutorException(ExecutorException.Code.REGISTER_NICKNAME_EMPTY);
+            throw new ExecutorException(ExecutorException.Code.NICKNAME_IS_EMPTY);
         }
         logger.debug("Begin to register author with {}", registerRequestPayload);
         if (this.authorRepository.existsByUsername(registerRequestPayload.getUsername())) {
             logger.error("Fail to register author because of username exist.");
-            throw new ExecutorException(ExecutorException.Code.REGISTER_USERNAME_EXIST);
+            throw new ExecutorException(ExecutorException.Code.USERNAME_EXIST);
         }
         if (this.authorRepository.existsByNickname(registerRequestPayload.getNickname())) {
             logger.error("Fail to register author because of nickname exist.");
-            throw new ExecutorException(ExecutorException.Code.REGISTER_NICKNAME_EXIST);
+            throw new ExecutorException(ExecutorException.Code.NICKNAME_EXIST);
         }
         Author author = new Author();
         author.setNickname(registerRequestPayload.getNickname());

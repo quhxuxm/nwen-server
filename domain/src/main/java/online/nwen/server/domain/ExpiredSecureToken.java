@@ -14,8 +14,8 @@ public class ExpiredSecureToken implements Serializable {
     private String id;
     @Indexed(unique = true)
     private String token;
-    @Indexed(expireAfterSeconds = 3600)
-    private Date markExpiredAt;
+    @Indexed(expireAfterSeconds = 1)
+    private Date recodeExpireAt;
 
     public String getId() {
         return id;
@@ -33,11 +33,11 @@ public class ExpiredSecureToken implements Serializable {
         this.token = token;
     }
 
-    public Date getMarkExpiredAt() {
-        return markExpiredAt;
+    public Date getRecodeExpireAt() {
+        return recodeExpireAt;
     }
 
-    public void setMarkExpiredAt(Date markExpiredAt) {
-        this.markExpiredAt = markExpiredAt;
+    public void setRecodeExpireAt(Date recodeExpireAt) {
+        this.recodeExpireAt = recodeExpireAt;
     }
 }
