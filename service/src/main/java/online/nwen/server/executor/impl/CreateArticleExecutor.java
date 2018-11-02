@@ -66,12 +66,14 @@ public class CreateArticleExecutor implements IExecutor<CreateArticleResponsePay
                     securityContext.getUsername());
             throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
-        if (requestPayload.getAnthologyId() == null) {
-            logger.error("Fail to create article because of anthology id is empty.");
-            throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_ID_IS_EMPTY);
+        String targetAnthologyId = requestPayload.getAnthologyId();
+        if (targetAnthologyId == null) {
+            targetAnthologyId = currentAuthor.getDefaultAnthologyId();
+            logger.debug("Use default anthology because the  anthology id in the request is empty, anthology id = {}.",
+                    targetAnthologyId);
         }
         Optional<Anthology> targetAnthologyOptional =
-                this.anthologyRepository.findById(requestPayload.getAnthologyId());
+                this.anthologyRepository.findById(targetAnthologyId);
         if (!targetAnthologyOptional.isPresent()) {
             logger.error("Fail to create article because of anthology is not exist.");
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
@@ -89,7 +91,7 @@ public class CreateArticleExecutor implements IExecutor<CreateArticleResponsePay
             }
         }
         Article article = new Article();
-        article.setAnthologyId(requestPayload.getAnthologyId());
+        article.setAnthologyId(targetAnthologyId);
         article.setAuthorId(currentAuthor.getId());
         article.setTitle(requestPayload.getTitle());
         article.setContent(requestPayload.getContent());
@@ -116,6 +118,7 @@ public class CreateArticleExecutor implements IExecutor<CreateArticleResponsePay
         }
         CreateArticleResponsePayload createArticleResponsePayload = new CreateArticleResponsePayload();
         createArticleResponsePayload.setArticleId(article.getId());
+        createArticleResponsePayload.setAnthologyId(targetAnthologyId);
         response.setPayload(createArticleResponsePayload);
     }
 }
