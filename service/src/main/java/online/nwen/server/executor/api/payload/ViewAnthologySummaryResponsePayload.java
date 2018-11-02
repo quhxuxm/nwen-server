@@ -20,6 +20,7 @@ public class ViewAnthologySummaryResponsePayload {
     private Date createDate;
     private Date publishDate;
     private long articleNumber;
+    private boolean publish;
 
     public String getId() {
         return id;
@@ -147,5 +148,13 @@ public class ViewAnthologySummaryResponsePayload {
 
     public void setCoverImageId(String coverImageId) {
         this.coverImageId = coverImageId;
+    }
+
+    public void setPublish(boolean publish) {
+        this.publish = publish;
+    }
+
+    public boolean isPublish() {
+        return publish;
     }
 }

@@ -69,6 +69,10 @@ public class ViewAnthologySummaryExecutor implements
         viewAnthologySummaryResponsePayload.setAuthorId(targetAnthology.getId());
         viewAnthologySummaryResponsePayload.setAuthorIconImageId(anthologyOwner.getIconImageId());
         viewAnthologySummaryResponsePayload.setArticleNumber(targetAnthology.getArticleNumber());
+        viewAnthologySummaryResponsePayload.setPublishDate(targetAnthology.getPublishDate());
+        viewAnthologySummaryResponsePayload.setPublish(targetAnthology.isPublish());
+        viewAnthologySummaryResponsePayload.setPraisesNumber(targetAnthology.getPraisesNumber());
+        viewAnthologySummaryResponsePayload.setUpdateDate(targetAnthology.getUpdateDate());
         response.setPayload(viewAnthologySummaryResponsePayload);
     }
 }

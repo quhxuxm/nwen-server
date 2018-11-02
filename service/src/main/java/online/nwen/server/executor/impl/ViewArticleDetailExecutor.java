@@ -96,6 +96,10 @@ public class ViewArticleDetailExecutor implements
         viewArticleDetailResponsePayload.setAnthologyId(articleAnthology.getId());
         viewArticleDetailResponsePayload.setAnthologyCoverImageId(articleAnthology.getCoverImageId());
         viewArticleDetailResponsePayload.setAnthologyTitle(articleAnthology.getTitle());
+        viewArticleDetailResponsePayload.setPublish(targetArticle.isPublish());
+        viewArticleDetailResponsePayload.setPublishDate(targetArticle.getPublishDate());
+        viewArticleDetailResponsePayload.setUpdateDate(targetArticle.getUpdateDate());
+        viewArticleDetailResponsePayload.setPraisesNumber(targetArticle.getPraisesNumber());
         response.setPayload(viewArticleDetailResponsePayload);
     }
 }

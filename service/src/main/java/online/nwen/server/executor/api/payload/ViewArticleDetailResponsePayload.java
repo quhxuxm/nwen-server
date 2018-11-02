@@ -22,6 +22,7 @@ public class ViewArticleDetailResponsePayload {
     private Date updateDate;
     private Date createDate;
     private Date publishDate;
+    private boolean publish;
 
     public String getId() {
         return id;
@@ -165,5 +166,13 @@ public class ViewArticleDetailResponsePayload {
 
     public void setPublishDate(Date publishDate) {
         this.publishDate = publishDate;
+    }
+
+    public void setPublish(boolean publish) {
+        this.publish = publish;
+    }
+
+    public boolean isPublish() {
+        return publish;
     }
 }
