@@ -14,7 +14,7 @@ public class ExpiredSecureToken implements Serializable {
     private String id;
     @Indexed(unique = true)
     private String token;
-    @Indexed(expireAfterSeconds = 1)
+    @Indexed(expireAfterSeconds = 0)
     private Date recodeExpireAt;
 
     public String getId() {
