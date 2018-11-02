@@ -24,12 +24,12 @@ public class Anthology implements Serializable {
     private String coverImageId;
     private boolean publish;
     private boolean share;
-    private Long praiseNumber;
-    private Long commentsNumber;
-    private Long bookmarksNumber;
-    private Long articleNumber;
-    private Long viewersNumber;
-    private Long praisesNumber;
+    private long praiseNumber;
+    private long commentsNumber;
+    private long bookmarksNumber;
+    private long articleNumber;
+    private long viewersNumber;
+    private long praisesNumber;
     private Set<String> tags;
     private Set<String> participantAuthorIds;
     private Map<String, Date> bookmarks;
@@ -136,11 +136,11 @@ public class Anthology implements Serializable {
         return share;
     }
 
-    public Long getPraiseNumber() {
+    public long getPraiseNumber() {
         return praiseNumber;
     }
 
-    public void setPraiseNumber(Long praiseNumber) {
+    public void setPraiseNumber(long praiseNumber) {
         this.praiseNumber = praiseNumber;
     }
 
@@ -160,11 +160,11 @@ public class Anthology implements Serializable {
         this.participantAuthorIds = participantAuthorIds;
     }
 
-    public Long getArticleNumber() {
+    public long getArticleNumber() {
         return articleNumber;
     }
 
-    public void setArticleNumber(Long articleNumber) {
+    public void setArticleNumber(long articleNumber) {
         this.articleNumber = articleNumber;
     }
 
@@ -192,35 +192,35 @@ public class Anthology implements Serializable {
         this.viewers = viewers;
     }
 
-    public Long getViewersNumber() {
+    public long getViewersNumber() {
         return viewersNumber;
     }
 
-    public void setViewersNumber(Long viewersNumber) {
+    public void setViewersNumber(long viewersNumber) {
         this.viewersNumber = viewersNumber;
     }
 
-    public Long getPraisesNumber() {
+    public long getPraisesNumber() {
         return praisesNumber;
     }
 
-    public void setPraisesNumber(Long praisesNumber) {
+    public void setPraisesNumber(long praisesNumber) {
         this.praisesNumber = praisesNumber;
     }
 
-    public Long getBookmarksNumber() {
+    public long getBookmarksNumber() {
         return bookmarksNumber;
     }
 
-    public void setBookmarksNumber(Long bookmarksNumber) {
+    public void setBookmarksNumber(long bookmarksNumber) {
         this.bookmarksNumber = bookmarksNumber;
     }
 
-    public Long getCommentsNumber() {
+    public long getCommentsNumber() {
         return commentsNumber;
     }
 
-    public void setCommentsNumber(Long commentsNumber) {
+    public void setCommentsNumber(long commentsNumber) {
         this.commentsNumber = commentsNumber;
     }
 
