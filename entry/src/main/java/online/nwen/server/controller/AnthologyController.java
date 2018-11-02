@@ -1,11 +1,9 @@
 package online.nwen.server.controller;
 
 import online.nwen.server.executor.api.exception.ExecutorException;
-import online.nwen.server.executor.api.payload.CreateAnthologyRequestPayload;
-import online.nwen.server.executor.api.payload.CreateAnthologyResponsePayload;
-import online.nwen.server.executor.api.payload.UpdateAnthologyRequestPayload;
-import online.nwen.server.executor.api.payload.UpdateAnthologyResponsePayload;
+import online.nwen.server.executor.api.payload.*;
 import online.nwen.server.executor.impl.CreateAnthologyExecutor;
+import online.nwen.server.executor.impl.PublishAnthologyExecutor;
 import online.nwen.server.executor.impl.UpdateAnthologyExecutor;
 import online.nwen.server.service.api.IExecutorService;
 import org.springframework.http.MediaType;
@@ -19,13 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 class AnthologyController extends AbstractEntryController {
     private CreateAnthologyExecutor createAnthologyExecutor;
     private UpdateAnthologyExecutor updateAnthologyExecutor;
+    private PublishAnthologyExecutor publishAnthologyExecutor;
 
     public AnthologyController(IExecutorService executorInvoker,
                                CreateAnthologyExecutor createAnthologyExecutor,
-                               UpdateAnthologyExecutor updateAnthologyExecutor) {
+                               UpdateAnthologyExecutor updateAnthologyExecutor,
+                               PublishAnthologyExecutor publishAnthologyExecutor) {
         super(executorInvoker);
         this.createAnthologyExecutor = createAnthologyExecutor;
         this.updateAnthologyExecutor = updateAnthologyExecutor;
+        this.publishAnthologyExecutor = publishAnthologyExecutor;
     }
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -42,5 +43,13 @@ class AnthologyController extends AbstractEntryController {
             @RequestBody HttpExecutorRequest<UpdateAnthologyRequestPayload> request)
             throws ExecutorException {
         return this.service(request, this.updateAnthologyExecutor, true);
+    }
+
+    @PostMapping(value = "/publish", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    HttpExecutorResponse<PublishAnthologyResponsePayload> publish(
+            @RequestBody HttpExecutorRequest<PublishAnthologyRequestPayload> request)
+            throws ExecutorException {
+        return this.service(request, this.publishAnthologyExecutor, true);
     }
 }

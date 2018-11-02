@@ -22,8 +22,8 @@ public class Anthology implements Serializable {
     private Date sharedDate;
     private String authorId;
     private String coverImageId;
-    private Boolean isPublished;
-    private Boolean isShared;
+    private boolean publish;
+    private boolean share;
     private Long praiseNumber;
     private Long commentsNumber;
     private Long bookmarksNumber;
@@ -39,8 +39,8 @@ public class Anthology implements Serializable {
     public Anthology() {
         this.createDate = new Date();
         this.updateDate = this.createDate;
-        this.isPublished = false;
-        this.isShared = false;
+        this.publish = false;
+        this.share = false;
         this.praiseNumber = 0L;
         this.commentsNumber = 0L;
         this.bookmarksNumber = 0L;
@@ -120,20 +120,20 @@ public class Anthology implements Serializable {
         this.coverImageId = coverImageId;
     }
 
-    public Boolean getPublished() {
-        return isPublished;
+    public boolean isPublish() {
+        return publish;
     }
 
-    public void setPublished(Boolean published) {
-        isPublished = published;
+    public void setPublish(boolean publish) {
+        this.publish = publish;
     }
 
-    public Boolean getShared() {
-        return isShared;
+    public void setShare(boolean share) {
+        this.share = share;
     }
 
-    public void setShared(Boolean shared) {
-        isShared = shared;
+    public boolean isShare() {
+        return share;
     }
 
     public Long getPraiseNumber() {
@@ -236,8 +236,8 @@ public class Anthology implements Serializable {
                 ", sharedDate=" + sharedDate +
                 ", authorId='" + authorId + '\'' +
                 ", coverImageId='" + coverImageId + '\'' +
-                ", isPublished=" + isPublished +
-                ", isShared=" + isShared +
+                ", publish=" + publish +
+                ", share=" + share +
                 ", praiseNumber=" + praiseNumber +
                 ", commentsNumber=" + commentsNumber +
                 ", bookmarksNumber=" + bookmarksNumber +

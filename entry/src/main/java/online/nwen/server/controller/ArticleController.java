@@ -1,12 +1,9 @@
 package online.nwen.server.controller;
 
-import online.nwen.server.service.api.IExecutorService;
 import online.nwen.server.executor.api.exception.ExecutorException;
-import online.nwen.server.executor.impl.CreateArticleExecutor;
-import online.nwen.server.executor.impl.UpdateArticleExecutor;
-import online.nwen.server.executor.impl.ViewArticleDetailExecutor;
-import online.nwen.server.executor.impl.ViewArticleSummaryExecutor;
 import online.nwen.server.executor.api.payload.*;
+import online.nwen.server.executor.impl.*;
+import online.nwen.server.service.api.IExecutorService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,17 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 class ArticleController extends AbstractEntryController {
     private CreateArticleExecutor createArticleExecutor;
     private UpdateArticleExecutor updateArticleExecutor;
+    private PublishArticleExecutor publishArticleExecutor;
     private ViewArticleDetailExecutor viewArticleDetailExecutor;
     private ViewArticleSummaryExecutor viewArticleSummaryExecutor;
 
     public ArticleController(IExecutorService executorInvoker,
                              CreateArticleExecutor createArticleExecutor,
                              UpdateArticleExecutor updateArticleExecutor,
+                             PublishArticleExecutor publishArticleExecutor,
                              ViewArticleDetailExecutor viewArticleDetailExecutor,
                              ViewArticleSummaryExecutor viewArticleSummaryExecutor) {
         super(executorInvoker);
         this.createArticleExecutor = createArticleExecutor;
         this.updateArticleExecutor = updateArticleExecutor;
+        this.publishArticleExecutor = publishArticleExecutor;
         this.viewArticleDetailExecutor = viewArticleDetailExecutor;
         this.viewArticleSummaryExecutor = viewArticleSummaryExecutor;
     }
@@ -47,6 +47,14 @@ class ArticleController extends AbstractEntryController {
             @RequestBody HttpExecutorRequest<UpdateArticleRequestPayload> request)
             throws ExecutorException {
         return this.service(request, this.updateArticleExecutor, true);
+    }
+
+    @PostMapping(value = "/publish", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    HttpExecutorResponse<PublishArticleResponsePayload> publish(
+            @RequestBody HttpExecutorRequest<PublishArticleRequestPayload> request)
+            throws ExecutorException {
+        return this.service(request, this.publishArticleExecutor, true);
     }
 
     @PostMapping(value = "/view/detail", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,

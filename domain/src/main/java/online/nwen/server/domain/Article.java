@@ -21,7 +21,7 @@ public class Article implements Serializable {
     private String anthologyId;
     private String authorId;
     private String coverResourceId;
-    private Boolean isPublished;
+    private boolean publish;
     @Indexed
     private Set<String> tags;
     private Map<String, Date> bookmarks;
@@ -39,7 +39,7 @@ public class Article implements Serializable {
         this.praises = new HashMap<>();
         this.viewers = new HashMap<>();
         this.updateDate = this.createDate;
-        this.isPublished = false;
+        this.publish = false;
         this.bookmarksNumber = 0L;
         this.praisesNumber = 0L;
         this.viewersNumber = 0L;
@@ -101,12 +101,12 @@ public class Article implements Serializable {
         this.summary = summary;
     }
 
-    public Boolean getPublished() {
-        return isPublished;
+    public void setPublish(boolean publish) {
+        this.publish = publish;
     }
 
-    public void setPublished(Boolean published) {
-        isPublished = published;
+    public boolean isPublish() {
+        return publish;
     }
 
     public String getAnthologyId() {
@@ -195,5 +195,30 @@ public class Article implements Serializable {
 
     public void setCommentNumber(Long commentNumber) {
         this.commentNumber = commentNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", publishDate=" + publishDate +
+                ", updateDate=" + updateDate +
+                ", createDate=" + createDate +
+                ", content='" + content + '\'' +
+                ", summary='" + summary + '\'' +
+                ", anthologyId='" + anthologyId + '\'' +
+                ", authorId='" + authorId + '\'' +
+                ", coverResourceId='" + coverResourceId + '\'' +
+                ", publish=" + publish +
+                ", tags=" + tags +
+                ", bookmarks=" + bookmarks +
+                ", praises=" + praises +
+                ", viewers=" + viewers +
+                ", bookmarksNumber=" + bookmarksNumber +
+                ", praisesNumber=" + praisesNumber +
+                ", viewersNumber=" + viewersNumber +
+                ", commentNumber=" + commentNumber +
+                '}';
     }
 }

@@ -87,7 +87,7 @@ public class UpdateAnthologyExecutor
         try {
             this.anthologyRepository.save(targetAnthology);
         } catch (Exception e) {
-            logger.error("Fail to create article because of exception.", e);
+            logger.error("Fail to update anthology because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
         UpdateAnthologyResponsePayload updateAnthologyResponsePayload = new UpdateAnthologyResponsePayload();

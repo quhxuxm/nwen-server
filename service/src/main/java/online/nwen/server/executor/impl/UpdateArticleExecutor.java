@@ -86,7 +86,7 @@ public class UpdateArticleExecutor implements IExecutor<UpdateArticleResponsePay
         try {
             this.articleRepository.save(targetArticle);
         } catch (Exception e) {
-            logger.error("Fail to create article because of exception.", e);
+            logger.error("Fail to update article because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
         UpdateArticleResponsePayload updateArticleResponsePayload = new UpdateArticleResponsePayload();
