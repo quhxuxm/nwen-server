@@ -106,6 +106,14 @@ public class CreateArticleExecutor implements IExecutor<CreateArticleResponsePay
             logger.error("Fail to create article because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
+        targetAnthology.setArticleNumber(targetAnthology.getArticleNumber() + 1);
+        targetAnthology.setUpdateDate(new Date());
+        try {
+            this.anthologyRepository.save(targetAnthology);
+        } catch (Exception e) {
+            logger.error("Fail to create article because of exception on update anthology information.", e);
+            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
+        }
         CreateArticleResponsePayload createArticleResponsePayload = new CreateArticleResponsePayload();
         createArticleResponsePayload.setArticleId(article.getId());
         response.setPayload(createArticleResponsePayload);
