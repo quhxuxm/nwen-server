@@ -18,19 +18,22 @@ class ArticleController extends AbstractEntryController {
     private PublishArticleExecutor publishArticleExecutor;
     private ViewArticleDetailExecutor viewArticleDetailExecutor;
     private ViewArticleSummaryExecutor viewArticleSummaryExecutor;
+    private SearchArticleExecutor searchArticleExecutor;
 
     public ArticleController(IExecutorService executorInvoker,
                              CreateArticleExecutor createArticleExecutor,
                              UpdateArticleExecutor updateArticleExecutor,
                              PublishArticleExecutor publishArticleExecutor,
                              ViewArticleDetailExecutor viewArticleDetailExecutor,
-                             ViewArticleSummaryExecutor viewArticleSummaryExecutor) {
+                             ViewArticleSummaryExecutor viewArticleSummaryExecutor,
+                             SearchArticleExecutor searchArticleExecutor) {
         super(executorInvoker);
         this.createArticleExecutor = createArticleExecutor;
         this.updateArticleExecutor = updateArticleExecutor;
         this.publishArticleExecutor = publishArticleExecutor;
         this.viewArticleDetailExecutor = viewArticleDetailExecutor;
         this.viewArticleSummaryExecutor = viewArticleSummaryExecutor;
+        this.searchArticleExecutor = searchArticleExecutor;
     }
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
@@ -71,5 +74,13 @@ class ArticleController extends AbstractEntryController {
             @RequestBody HttpExecutorRequest<ViewArticleSummaryRequestPayload> request)
             throws ExecutorException {
         return this.service(request, this.viewArticleSummaryExecutor, false);
+    }
+
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    HttpExecutorResponse<SearchArticleResponsePayload> search(
+            @RequestBody HttpExecutorRequest<SearchArticleRequestPayload> request)
+            throws ExecutorException {
+        return this.service(request, this.searchArticleExecutor, false);
     }
 }
