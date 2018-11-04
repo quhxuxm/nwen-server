@@ -6,7 +6,8 @@ import java.util.Map;
 public class SearchArticleRequestPayload {
     public static class Condition {
         public enum Type {
-            ANTHOLOGY_ID
+            ANTHOLOGY_ID,
+            TAGS
         }
 
         private Type type;
