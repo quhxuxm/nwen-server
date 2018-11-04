@@ -19,6 +19,10 @@ public class SearchArticleExecutor
         implements IExecutor<SearchArticleResponsePayload, SearchArticleRequestPayload> {
     private IArticleRepository articleRepository;
 
+    public SearchArticleExecutor(IArticleRepository articleRepository) {
+        this.articleRepository = articleRepository;
+    }
+
     @Override
     public void exec(IExecutorRequest<SearchArticleRequestPayload> request,
                      IExecutorResponse<SearchArticleResponsePayload> response,
