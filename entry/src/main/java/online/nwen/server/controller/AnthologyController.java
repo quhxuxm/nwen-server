@@ -2,10 +2,7 @@ package online.nwen.server.controller;
 
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.*;
-import online.nwen.server.executor.impl.CreateAnthologyExecutor;
-import online.nwen.server.executor.impl.PublishAnthologyExecutor;
-import online.nwen.server.executor.impl.UpdateAnthologyExecutor;
-import online.nwen.server.executor.impl.ViewAnthologySummaryExecutor;
+import online.nwen.server.executor.impl.*;
 import online.nwen.server.service.api.IExecutorService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +17,7 @@ class AnthologyController extends AbstractEntryController {
     private UpdateAnthologyExecutor updateAnthologyExecutor;
     private PublishAnthologyExecutor publishAnthologyExecutor;
     private ViewAnthologySummaryExecutor viewAnthologySummaryExecutor;
+    private SearchAnthologyExecutor searchAnthologyExecutor;
 
     public AnthologyController(IExecutorService executorInvoker,
                                CreateAnthologyExecutor createAnthologyExecutor,
@@ -64,4 +62,13 @@ class AnthologyController extends AbstractEntryController {
             throws ExecutorException {
         return this.service(request, this.viewAnthologySummaryExecutor, false);
     }
+
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    HttpExecutorResponse<SearchAnthologyResponsePayload> search(
+            @RequestBody HttpExecutorRequest<SearchAnthologyRequestPayload> request)
+            throws ExecutorException {
+        return this.service(request, this.searchAnthologyExecutor, false);
+    }
 }
+
