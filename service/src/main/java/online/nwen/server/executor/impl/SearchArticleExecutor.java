@@ -1,5 +1,6 @@
 package online.nwen.server.executor.impl;
 
+import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.Article;
 import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
@@ -7,6 +8,7 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.SearchArticleRequestPayload;
 import online.nwen.server.executor.api.payload.SearchArticleResponsePayload;
+import online.nwen.server.repository.IAnthologyRepository;
 import online.nwen.server.repository.IArticleRepository;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
@@ -17,15 +19,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class SearchArticleExecutor
         implements IExecutor<SearchArticleResponsePayload, SearchArticleRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(SearchArticleExecutor.class);
     private IArticleRepository articleRepository;
+    private IAnthologyRepository anthologyRepository;
 
-    public SearchArticleExecutor(IArticleRepository articleRepository) {
+    public SearchArticleExecutor(IArticleRepository articleRepository,
+                                 IAnthologyRepository anthologyRepository) {
         this.articleRepository = articleRepository;
+        this.anthologyRepository = anthologyRepository;
     }
 
     @Override
@@ -36,27 +42,30 @@ public class SearchArticleExecutor
         Pageable pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize());
         if (SearchArticleRequestPayload.Condition.Type.ANTHOLOGY_ID == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by anthology id.");
-            response.setPayload(this.searchArticlesByAnthologyId(requestPayload.getCondition(), pageable));
+            response.setPayload(
+                    this.searchArticlesByAnthologyId(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         if (SearchArticleRequestPayload.Condition.Type.TAGS == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by tags.");
-            response.setPayload(this.searchArticlesByTags(requestPayload.getCondition(), pageable));
+            response.setPayload(this.searchArticlesByTags(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         if (SearchArticleRequestPayload.Condition.Type.AUTHOR_ID == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by author id.");
-            response.setPayload(this.searchArticlesByAuthor(requestPayload.getCondition(), pageable));
+            response.setPayload(this.searchArticlesByAuthor(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         if (SearchArticleRequestPayload.Condition.Type.RECENT_CREATED == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by recent created.");
-            response.setPayload(this.searchArticlesByRecentCreated(requestPayload.getCondition(), pageable));
+            response.setPayload(
+                    this.searchArticlesByRecentCreated(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         if (SearchArticleRequestPayload.Condition.Type.RECENT_UPDATED == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by recent updated.");
-            response.setPayload(this.searchArticlesByRecentUpdated(requestPayload.getCondition(), pageable));
+            response.setPayload(
+                    this.searchArticlesByRecentUpdated(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         logger.error("Do not support the search type.");
@@ -64,12 +73,26 @@ public class SearchArticleExecutor
     }
 
     private SearchArticleResponsePayload searchArticlesByAnthologyId(
-            SearchArticleRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+            SearchArticleRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String anthologyId = condition.getParams().get("anthologyId");
         logger.debug("Search articles by anthology id {}", anthologyId);
+        boolean includePublish = false;
+        if (securityContext != null) {
+            Optional<Anthology> targetAnthologyOptional = this.anthologyRepository.findById(anthologyId);
+            if (!targetAnthologyOptional.isPresent()) {
+                logger.error("Fail to search articles by anthology id because of anthology not exist.");
+                throw new ExecutorException("Fail to search articles by anthology id because of anthology not exist.",
+                        ExecutorException.Code.SYS_ERROR);
+            }
+            Anthology targetAnthology = targetAnthologyOptional.get();
+            if (targetAnthology.getAuthorId().equals(securityContext.getAuthorId())) {
+                includePublish = true;
+            }
+        }
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository.findAllByAnthologyId(anthologyId, pageable);
+            articlePage = articleRepository.findAllByAnthologyIdAndPublish(anthologyId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by anthology id because of exception.", e);
             throw new ExecutorException("Fail to search articles by anthology id because of exception.", e,
@@ -81,13 +104,14 @@ public class SearchArticleExecutor
     }
 
     private SearchArticleResponsePayload searchArticlesByTags(
-            SearchArticleRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+            SearchArticleRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String tagsStr = condition.getParams().get("tags");
         logger.debug("Search articles by tags {}", tagsStr);
         String[] tags = tagsStr.split(",");
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository.findAllByTagsContaining(tags, pageable);
+            articlePage = articleRepository.findAllByTagsContainingAndPublish(tags, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by tags because of exception.", e);
             throw new ExecutorException("Fail to search articles by tags because of exception.", e,
@@ -99,12 +123,17 @@ public class SearchArticleExecutor
     }
 
     private SearchArticleResponsePayload searchArticlesByAuthor(
-            SearchArticleRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+            SearchArticleRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String authorId = condition.getParams().get("authorId");
         logger.debug("Search articles by author id {}", authorId);
+        boolean includePublish = false;
+        if (securityContext != null && securityContext.getAuthorId().equals(authorId)) {
+            includePublish = true;
+        }
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository.findAllByAuthorId(authorId, pageable);
+            articlePage = articleRepository.findAllByAuthorIdAndPublish(authorId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by author id because of exception.", e);
             throw new ExecutorException("Fail to search articles by author id because of exception.", e,
@@ -116,13 +145,16 @@ public class SearchArticleExecutor
     }
 
     private SearchArticleResponsePayload searchArticlesByRecentCreated(
-            SearchArticleRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+            SearchArticleRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String relativeDateString = condition.getParams().get("relativeDate");
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository.findAllByCreateDateBeforeOrderByCreateDateDesc(relativeDate, pageable);
+            articlePage =
+                    articleRepository
+                            .findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(relativeDate, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by author id because of exception.", e);
             throw new ExecutorException("Fail to search articles by author id because of exception.", e,
@@ -134,13 +166,16 @@ public class SearchArticleExecutor
     }
 
     private SearchArticleResponsePayload searchArticlesByRecentUpdated(
-            SearchArticleRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+            SearchArticleRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String relativeDateString = condition.getParams().get("relativeDate");
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository.findAllByUpdateDateBeforeOrderByUpdateDateDesc(relativeDate, pageable);
+            articlePage =
+                    articleRepository
+                            .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by author id because of exception.", e);
             throw new ExecutorException("Fail to search articles by author id because of exception.", e,

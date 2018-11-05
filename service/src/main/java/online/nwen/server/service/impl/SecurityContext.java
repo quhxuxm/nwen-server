@@ -5,6 +5,7 @@ import online.nwen.server.service.api.ISecurityContext;
 class SecurityContext implements ISecurityContext {
     private long refreshExpiration;
     private String username;
+    private String authorId;
 
     void setRefreshExpiration(long refreshExpiration) {
         this.refreshExpiration = refreshExpiration;
@@ -24,10 +25,20 @@ class SecurityContext implements ISecurityContext {
     }
 
     @Override
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
+    @Override
     public String toString() {
         return "SecurityContext{" +
                 "refreshExpiration=" + refreshExpiration +
                 ", username='" + username + '\'' +
+                ", authorId='" + authorId + '\'' +
                 '}';
     }
 }

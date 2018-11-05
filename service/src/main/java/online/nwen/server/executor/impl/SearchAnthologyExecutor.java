@@ -1,15 +1,12 @@
 package online.nwen.server.executor.impl;
 
 import online.nwen.server.domain.Anthology;
-import online.nwen.server.domain.Article;
 import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.SearchAnthologyRequestPayload;
 import online.nwen.server.executor.api.payload.SearchAnthologyResponsePayload;
-import online.nwen.server.executor.api.payload.SearchArticleRequestPayload;
-import online.nwen.server.executor.api.payload.SearchArticleResponsePayload;
 import online.nwen.server.repository.IAnthologyRepository;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
@@ -39,22 +36,25 @@ public class SearchAnthologyExecutor
         Pageable pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize());
         if (SearchAnthologyRequestPayload.Condition.Type.AUTHOR_ID == requestPayload.getCondition().getType()) {
             logger.debug("Search anthologies by author id.");
-            response.setPayload(this.searchAnthologiesByAuthorId(requestPayload.getCondition(), pageable));
+            response.setPayload(
+                    this.searchAnthologiesByAuthorId(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         if (SearchAnthologyRequestPayload.Condition.Type.TAGS == requestPayload.getCondition().getType()) {
             logger.debug("Search anthologies by tags.");
-            response.setPayload(this.searchAnthologiesByTags(requestPayload.getCondition(), pageable));
+            response.setPayload(this.searchAnthologiesByTags(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         if (SearchAnthologyRequestPayload.Condition.Type.RECENT_CREATED == requestPayload.getCondition().getType()) {
             logger.debug("Search anthologies by recent created.");
-            response.setPayload(this.searchAnthologiesByRecentCreated(requestPayload.getCondition(), pageable));
+            response.setPayload(
+                    this.searchAnthologiesByRecentCreated(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         if (SearchAnthologyRequestPayload.Condition.Type.RECENT_UPDATED == requestPayload.getCondition().getType()) {
             logger.debug("Search anthologies by recent updated.");
-            response.setPayload(this.searchAnthologiesByRecentUpdated(requestPayload.getCondition(), pageable));
+            response.setPayload(
+                    this.searchAnthologiesByRecentUpdated(requestPayload.getCondition(), pageable, securityContext));
             return;
         }
         logger.error("Do not support the search type.");
@@ -62,12 +62,17 @@ public class SearchAnthologyExecutor
     }
 
     private SearchAnthologyResponsePayload searchAnthologiesByAuthorId(
-            SearchAnthologyRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+            SearchAnthologyRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String authorId = condition.getParams().get("authorId");
+        boolean includePublish = false;
+        if (securityContext != null && securityContext.getAuthorId().equals(authorId)) {
+            includePublish = true;
+        }
         logger.debug("Search anthologies by author id {}", authorId);
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository.findAllByAuthorId(authorId, pageable);
+            anthologyPage = this.anthologyRepository.findAllByAuthorIdAndPublish(authorId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by author id because of exception.", e);
             throw new ExecutorException("Fail to search anthologies by author id because of exception.", e,
@@ -79,13 +84,14 @@ public class SearchAnthologyExecutor
     }
 
     private SearchAnthologyResponsePayload searchAnthologiesByTags(
-            SearchAnthologyRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+            SearchAnthologyRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String tagsStr = condition.getParams().get("tags");
         logger.debug("Search anthologies by tags {}", tagsStr);
         String[] tags = tagsStr.split(",");
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository.findAllByTagsContaining(tags, pageable);
+            anthologyPage = this.anthologyRepository.findAllByTagsContainingAndPublish(tags, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by tags because of exception.", e);
             throw new ExecutorException("Fail to search anthologies by tags because of exception.", e,
@@ -97,13 +103,15 @@ public class SearchAnthologyExecutor
     }
 
     private SearchAnthologyResponsePayload searchAnthologiesByRecentCreated(
-            SearchAnthologyRequestPayload.Condition  condition, Pageable pageable) throws ExecutorException {
+            SearchAnthologyRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String relativeDateString = condition.getParams().get("relativeDate");
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository.findAllByCreateDateBeforeOrderByCreateDateDesc(relativeDate, pageable);
+            anthologyPage = this.anthologyRepository
+                    .findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(relativeDate, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by recent created because of exception.", e);
             throw new ExecutorException("Fail to search anthologies by recent created because of exception.", e,
@@ -115,13 +123,15 @@ public class SearchAnthologyExecutor
     }
 
     private SearchAnthologyResponsePayload searchAnthologiesByRecentUpdated(
-            SearchAnthologyRequestPayload.Condition  condition, Pageable pageable) throws ExecutorException {
+            SearchAnthologyRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
+            throws ExecutorException {
         String relativeDateString = condition.getParams().get("relativeDate");
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository.findAllByUpdateDateBeforeOrderByUpdateDateDesc(relativeDate, pageable);
+            anthologyPage = this.anthologyRepository
+                    .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by recent updated because of exception.", e);
             throw new ExecutorException("Fail to search anthologies by recent updated because of exception.", e,
@@ -145,6 +155,7 @@ public class SearchAnthologyExecutor
         }
         return relativeDate;
     }
+
     private Page<SearchAnthologyResponsePayload.SearchAnthologyRecord> convertAnthologyPageToSearchAnthologyRecordPage(
             Page<Anthology> anthologyPage) {
         return anthologyPage.map(anthology -> {

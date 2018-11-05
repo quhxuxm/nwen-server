@@ -1,6 +1,7 @@
 package online.nwen.server.executor.api.payload;
 
 public class AuthenticateResponsePayload {
+    private String authorId;
     private String username;
 
     public String getUsername() {
@@ -11,10 +12,19 @@ public class AuthenticateResponsePayload {
         this.username = username;
     }
 
+    public String getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
     @Override
     public String toString() {
         return "AuthenticateResponsePayload{" +
-                "username='" + username + '\'' +
+                "authorId='" + authorId + '\'' +
+                ", username='" + username + '\'' +
                 '}';
     }
 }

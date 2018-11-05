@@ -59,6 +59,7 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
         }
         AuthenticateResponsePayload responsePayload = new AuthenticateResponsePayload();
         responsePayload.setUsername(author.getUsername());
+        responsePayload.setAuthorId(author.getId());
         logger.debug("Begin to generate security context for new authentication.");
         ISecurityContext newSecurityContext =
                 this.securityService.createSecurityContext(responsePayload);
