@@ -92,7 +92,8 @@ public class SearchArticleExecutor
         }
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository.findAllByAnthologyIdAndPublishOrderByUpdateDateDesc(anthologyId, includePublish, pageable);
+            articlePage = articleRepository
+                    .findAllByAnthologyIdAndPublishOrderByUpdateDateDesc(anthologyId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by anthology id because of exception.", e);
             throw new ExecutorException("Fail to search articles by anthology id because of exception.", e,
@@ -111,7 +112,8 @@ public class SearchArticleExecutor
         String[] tags = tagsStr.split(",");
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository.findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
+            articlePage =
+                    articleRepository.findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by tags because of exception.", e);
             throw new ExecutorException("Fail to search articles by tags because of exception.", e,
@@ -133,7 +135,8 @@ public class SearchArticleExecutor
         }
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository.findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, includePublish, pageable);
+            articlePage = articleRepository
+                    .findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by author id because of exception.", e);
             throw new ExecutorException("Fail to search articles by author id because of exception.", e,
@@ -206,6 +209,7 @@ public class SearchArticleExecutor
             SearchArticleResponsePayload.SearchArticleRecord record =
                     new SearchArticleResponsePayload.SearchArticleRecord();
             record.setId(article.getId());
+            record.setPublish(article.isPublish());
             return record;
         });
     }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 public class SearchAnthologyResponsePayload {
     public static class SearchAnthologyRecord {
         private String id;
+        private boolean publish;
 
         public String getId() {
             return id;
@@ -12,6 +13,14 @@ public class SearchAnthologyResponsePayload {
 
         public void setId(String id) {
             this.id = id;
+        }
+
+        public boolean isPublish() {
+            return publish;
+        }
+
+        public void setPublish(boolean publish) {
+            this.publish = publish;
         }
     }
 

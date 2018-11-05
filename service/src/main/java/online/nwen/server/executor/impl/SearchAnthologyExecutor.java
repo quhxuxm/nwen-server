@@ -72,7 +72,8 @@ public class SearchAnthologyExecutor
         logger.debug("Search anthologies by author id {}", authorId);
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository.findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, includePublish, pageable);
+            anthologyPage = this.anthologyRepository
+                    .findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by author id because of exception.", e);
             throw new ExecutorException("Fail to search anthologies by author id because of exception.", e,
@@ -91,7 +92,8 @@ public class SearchAnthologyExecutor
         String[] tags = tagsStr.split(",");
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository.findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
+            anthologyPage = this.anthologyRepository
+                    .findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by tags because of exception.", e);
             throw new ExecutorException("Fail to search anthologies by tags because of exception.", e,
@@ -162,6 +164,7 @@ public class SearchAnthologyExecutor
             SearchAnthologyResponsePayload.SearchAnthologyRecord record =
                     new SearchAnthologyResponsePayload.SearchAnthologyRecord();
             record.setId(anthology.getId());
+            record.setPublish(anthology.isPublish());
             return record;
         });
     }
