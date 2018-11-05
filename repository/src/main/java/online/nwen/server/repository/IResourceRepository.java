@@ -5,4 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface IResourceRepository extends MongoRepository<Resource, String> {
     Resource findByMd5(String md5);
+
+    boolean existsByMd5(String md5);
 }

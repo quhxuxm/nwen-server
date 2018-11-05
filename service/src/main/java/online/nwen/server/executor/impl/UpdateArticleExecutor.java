@@ -3,7 +3,6 @@ package online.nwen.server.executor.impl;
 import online.nwen.server.configuration.GlobalConfiguration;
 import online.nwen.server.domain.Article;
 import online.nwen.server.domain.Author;
-import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
@@ -11,6 +10,10 @@ import online.nwen.server.executor.api.payload.UpdateArticleRequestPayload;
 import online.nwen.server.executor.api.payload.UpdateArticleResponsePayload;
 import online.nwen.server.repository.IArticleRepository;
 import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.repository.IResourceRepository;
+import online.nwen.server.service.api.ArticleContentAnalyzeRequest;
+import online.nwen.server.service.api.ArticleContentAnalyzeResponse;
+import online.nwen.server.service.api.IArticleContentAnalyzeService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,18 +24,24 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
-public class UpdateArticleExecutor implements IExecutor<UpdateArticleResponsePayload, UpdateArticleRequestPayload> {
+public class UpdateArticleExecutor
+        extends AbstractArticleExecutor<UpdateArticleResponsePayload, UpdateArticleRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(UpdateArticleExecutor.class);
     private IAuthorRepository authorRepository;
     private IArticleRepository articleRepository;
     private GlobalConfiguration globalConfiguration;
+    private IArticleContentAnalyzeService articleContentAnalyzeService;
 
-    public UpdateArticleExecutor(IAuthorRepository authorRepository,
+    public UpdateArticleExecutor(IResourceRepository resourceRepository,
+                                 IAuthorRepository authorRepository,
                                  IArticleRepository articleRepository,
-                                 GlobalConfiguration globalConfiguration) {
+                                 GlobalConfiguration globalConfiguration,
+                                 IArticleContentAnalyzeService articleContentAnalyzeService) {
+        super(resourceRepository);
         this.authorRepository = authorRepository;
         this.articleRepository = articleRepository;
         this.globalConfiguration = globalConfiguration;
+        this.articleContentAnalyzeService = articleContentAnalyzeService;
     }
 
     @Override
@@ -79,7 +88,12 @@ public class UpdateArticleExecutor implements IExecutor<UpdateArticleResponsePay
             throw new ExecutorException(ExecutorException.Code.NOT_ARTICLE_OWNER);
         }
         targetArticle.setTitle(requestPayload.getTitle());
-        targetArticle.setContent(requestPayload.getContent());
+        ArticleContentAnalyzeRequest articleContentAnalyzeRequest = new ArticleContentAnalyzeRequest();
+        articleContentAnalyzeRequest.setAuthorId(currentAuthor.getId());
+        articleContentAnalyzeRequest.setContent(requestPayload.getContent());
+        ArticleContentAnalyzeResponse articleContentAnalyzeResponse =
+                this.articleContentAnalyzeService.analyze(articleContentAnalyzeRequest);
+        targetArticle.setContent(articleContentAnalyzeResponse.getContent());
         targetArticle.setUpdateDate(new Date());
         targetArticle.setSummary(requestPayload.getSummary());
         targetArticle.setTags(requestPayload.getTags());
@@ -89,6 +103,8 @@ public class UpdateArticleExecutor implements IExecutor<UpdateArticleResponsePay
             logger.error("Fail to update article because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
+        String resourceSaveAuthorId = currentAuthor.getId();
+        saveMediaResources(articleContentAnalyzeResponse, resourceSaveAuthorId);
         UpdateArticleResponsePayload updateArticleResponsePayload = new UpdateArticleResponsePayload();
         updateArticleResponsePayload.setArticleId(targetArticle.getId());
         response.setPayload(updateArticleResponsePayload);
