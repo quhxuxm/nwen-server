@@ -11,7 +11,7 @@ public class Comment implements Serializable {
     private static final long serialVersionUID = -8397645527218208099L;
 
     public enum Type {
-        ARTICLE, ANTHOLOGY
+        ARTICLE, ANTHOLOGY, COMMENT
     }
 
     @Id
@@ -20,9 +20,9 @@ public class Comment implements Serializable {
     private Date createDate;
     private Date updateDate;
     private String content;
-    private String parentCommentId;
     private String refDocumentId;
     private Type type;
+    private long commentNumber;
 
     public Comment() {
         this.createDate = new Date();
@@ -69,14 +69,6 @@ public class Comment implements Serializable {
         this.content = content;
     }
 
-    public String getParentCommentId() {
-        return parentCommentId;
-    }
-
-    public void setParentCommentId(String parentCommentId) {
-        this.parentCommentId = parentCommentId;
-    }
-
     public String getRefDocumentId() {
         return refDocumentId;
     }
@@ -91,5 +83,13 @@ public class Comment implements Serializable {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public long getCommentNumber() {
+        return commentNumber;
+    }
+
+    public void setCommentNumber(long commentNumber) {
+        this.commentNumber = commentNumber;
     }
 }
