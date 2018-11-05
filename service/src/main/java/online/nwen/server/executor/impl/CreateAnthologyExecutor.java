@@ -78,6 +78,13 @@ public class CreateAnthologyExecutor
             logger.error("Fail to save anthology because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
+        currentAuthor.setAnthologyNumber(currentAuthor.getAnthologyNumber() + 1);
+        try {
+            this.authorRepository.save(currentAuthor);
+        } catch (Exception e) {
+            logger.error("Fail to save anthology because of exception when update anthology number for the author.", e);
+            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
+        }
         CreateAnthologyResponsePayload createAnthologyResponsePayload = new CreateAnthologyResponsePayload();
         createAnthologyResponsePayload.setAnthologyId(anthology.getId());
         response.setPayload(createAnthologyResponsePayload);

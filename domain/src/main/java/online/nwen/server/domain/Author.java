@@ -26,10 +26,10 @@ public class Author implements Serializable {
     private Map<String, Date> followers;
     private Map<String, Date> following;
     private String defaultAnthologyId;
-    private Long anthologyNumber;
-    private Long articleNumber;
-    private Long commentNumber;
-    private Long followerNumber;
+    private long anthologyNumber;
+    private long articleNumber;
+    private long commentNumber;
+    private long followerNumber;
 
     public Author() {
         this.registerDate = new Date();
@@ -139,35 +139,35 @@ public class Author implements Serializable {
         this.defaultAnthologyId = defaultAnthologyId;
     }
 
-    public Long getAnthologyNumber() {
+    public long getAnthologyNumber() {
         return anthologyNumber;
     }
 
-    public void setAnthologyNumber(Long anthologyNumber) {
+    public void setAnthologyNumber(long anthologyNumber) {
         this.anthologyNumber = anthologyNumber;
     }
 
-    public Long getArticleNumber() {
+    public long getArticleNumber() {
         return articleNumber;
     }
 
-    public void setArticleNumber(Long articleNumber) {
+    public void setArticleNumber(long articleNumber) {
         this.articleNumber = articleNumber;
     }
 
-    public Long getCommentNumber() {
+    public long getCommentNumber() {
         return commentNumber;
     }
 
-    public void setCommentNumber(Long commentNumber) {
+    public void setCommentNumber(long commentNumber) {
         this.commentNumber = commentNumber;
     }
 
-    public Long getFollowerNumber() {
+    public long getFollowerNumber() {
         return followerNumber;
     }
 
-    public void setFollowerNumber(Long followerNumber) {
+    public void setFollowerNumber(long followerNumber) {
         this.followerNumber = followerNumber;
     }
 

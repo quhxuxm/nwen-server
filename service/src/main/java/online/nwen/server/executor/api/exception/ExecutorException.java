@@ -9,6 +9,7 @@ public class ExecutorException extends Exception {
         NICKNAME_IS_EMPTY,
         USERNAME_EXIST,
         NICKNAME_EXIST,
+        AUTHOR_NOT_EXIST,
         ANTHOLOGY_ID_IS_EMPTY,
         ANTHOLOGY_NOT_EXIST,
         ANTHOLOGY_TITLE_IS_EMPTY,

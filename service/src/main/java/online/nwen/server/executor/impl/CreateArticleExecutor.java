@@ -132,6 +132,13 @@ public class CreateArticleExecutor
             logger.error("Fail to create article because of exception on update anthology information.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
+        currentAuthor.setArticleNumber(currentAuthor.getArticleNumber() + 1);
+        try {
+            this.authorRepository.save(currentAuthor);
+        } catch (Exception e) {
+            logger.error("Fail to save article because of exception when update article number for the author.", e);
+            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
+        }
         CreateArticleResponsePayload createArticleResponsePayload = new CreateArticleResponsePayload();
         createArticleResponsePayload.setArticleId(article.getId());
         createArticleResponsePayload.setAnthologyId(targetAnthologyId);
