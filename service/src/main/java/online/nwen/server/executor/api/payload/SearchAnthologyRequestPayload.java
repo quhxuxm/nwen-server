@@ -7,7 +7,9 @@ public class SearchAnthologyRequestPayload {
     public static class Condition {
         public enum Type {
             AUTHOR_ID,
-            TAGS
+            TAGS,
+            RECENT_CREATED,
+            RECENT_UPDATED
         }
 
         private Type type;

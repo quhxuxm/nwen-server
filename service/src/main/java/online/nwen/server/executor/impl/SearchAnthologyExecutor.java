@@ -1,12 +1,15 @@
 package online.nwen.server.executor.impl;
 
 import online.nwen.server.domain.Anthology;
+import online.nwen.server.domain.Article;
 import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.SearchAnthologyRequestPayload;
 import online.nwen.server.executor.api.payload.SearchAnthologyResponsePayload;
+import online.nwen.server.executor.api.payload.SearchArticleRequestPayload;
+import online.nwen.server.executor.api.payload.SearchArticleResponsePayload;
 import online.nwen.server.repository.IAnthologyRepository;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
@@ -15,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class SearchAnthologyExecutor
@@ -40,6 +45,16 @@ public class SearchAnthologyExecutor
         if (SearchAnthologyRequestPayload.Condition.Type.TAGS == requestPayload.getCondition().getType()) {
             logger.debug("Search anthologies by tags.");
             response.setPayload(this.searchAnthologiesByTags(requestPayload.getCondition(), pageable));
+            return;
+        }
+        if (SearchAnthologyRequestPayload.Condition.Type.RECENT_CREATED == requestPayload.getCondition().getType()) {
+            logger.debug("Search anthologies by recent created.");
+            response.setPayload(this.searchAnthologiesByRecentCreated(requestPayload.getCondition(), pageable));
+            return;
+        }
+        if (SearchAnthologyRequestPayload.Condition.Type.RECENT_UPDATED == requestPayload.getCondition().getType()) {
+            logger.debug("Search anthologies by recent updated.");
+            response.setPayload(this.searchAnthologiesByRecentUpdated(requestPayload.getCondition(), pageable));
             return;
         }
         logger.error("Do not support the search type.");
@@ -81,6 +96,55 @@ public class SearchAnthologyExecutor
         return result;
     }
 
+    private SearchAnthologyResponsePayload searchAnthologiesByRecentCreated(
+            SearchAnthologyRequestPayload.Condition  condition, Pageable pageable) throws ExecutorException {
+        String relativeDateString = condition.getParams().get("relativeDate");
+        logger.debug("Search recent created by relative date: {}", relativeDateString);
+        Date relativeDate = getRelativeDateFromRequest(relativeDateString);
+        Page<Anthology> anthologyPage = null;
+        try {
+            anthologyPage = this.anthologyRepository.findAllByCreateDateBeforeOrderByCreateDateDesc(relativeDate, pageable);
+        } catch (Exception e) {
+            logger.error("Fail to search anthologies by recent created because of exception.", e);
+            throw new ExecutorException("Fail to search anthologies by recent created because of exception.", e,
+                    ExecutorException.Code.SYS_ERROR);
+        }
+        SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
+        result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
+        return result;
+    }
+
+    private SearchAnthologyResponsePayload searchAnthologiesByRecentUpdated(
+            SearchAnthologyRequestPayload.Condition  condition, Pageable pageable) throws ExecutorException {
+        String relativeDateString = condition.getParams().get("relativeDate");
+        logger.debug("Search recent created by relative date: {}", relativeDateString);
+        Date relativeDate = getRelativeDateFromRequest(relativeDateString);
+        Page<Anthology> anthologyPage = null;
+        try {
+            anthologyPage = this.anthologyRepository.findAllByUpdateDateBeforeOrderByUpdateDateDesc(relativeDate, pageable);
+        } catch (Exception e) {
+            logger.error("Fail to search anthologies by recent updated because of exception.", e);
+            throw new ExecutorException("Fail to search anthologies by recent updated because of exception.", e,
+                    ExecutorException.Code.SYS_ERROR);
+        }
+        SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
+        result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
+        return result;
+    }
+
+    private Date getRelativeDateFromRequest(String relativeDateString) {
+        Date relativeDate;
+        if (relativeDateString == null) {
+            relativeDate = new Date();
+        } else {
+            try {
+                relativeDate = new Date(Long.parseLong(relativeDateString));
+            } catch (NumberFormatException e) {
+                relativeDate = new Date();
+            }
+        }
+        return relativeDate;
+    }
     private Page<SearchAnthologyResponsePayload.SearchAnthologyRecord> convertAnthologyPageToSearchAnthologyRecordPage(
             Page<Anthology> anthologyPage) {
         return anthologyPage.map(anthology -> {

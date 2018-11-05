@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class SearchArticleExecutor
         implements IExecutor<SearchArticleResponsePayload, SearchArticleRequestPayload> {
@@ -40,6 +42,21 @@ public class SearchArticleExecutor
         if (SearchArticleRequestPayload.Condition.Type.TAGS == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by tags.");
             response.setPayload(this.searchArticlesByTags(requestPayload.getCondition(), pageable));
+            return;
+        }
+        if (SearchArticleRequestPayload.Condition.Type.AUTHOR_ID == requestPayload.getCondition().getType()) {
+            logger.debug("Search articles by author id.");
+            response.setPayload(this.searchArticlesByAuthor(requestPayload.getCondition(), pageable));
+            return;
+        }
+        if (SearchArticleRequestPayload.Condition.Type.RECENT_CREATED == requestPayload.getCondition().getType()) {
+            logger.debug("Search articles by recent created.");
+            response.setPayload(this.searchArticlesByRecentCreated(requestPayload.getCondition(), pageable));
+            return;
+        }
+        if (SearchArticleRequestPayload.Condition.Type.RECENT_UPDATED == requestPayload.getCondition().getType()) {
+            logger.debug("Search articles by recent updated.");
+            response.setPayload(this.searchArticlesByRecentUpdated(requestPayload.getCondition(), pageable));
             return;
         }
         logger.error("Do not support the search type.");
@@ -80,6 +97,25 @@ public class SearchArticleExecutor
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
         return result;
     }
+
+    private SearchArticleResponsePayload searchArticlesByAuthor(
+            SearchArticleRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+        String authorId = condition.getParams().get("authorId");
+        logger.debug("Search articles by author id {}", authorId);
+        Page<Article> articlePage = null;
+        try {
+            articlePage = articleRepository.findAllByAuthorId(authorId, pageable);
+        } catch (Exception e) {
+            logger.error("Fail to search articles by author id because of exception.", e);
+            throw new ExecutorException("Fail to search articles by author id because of exception.", e,
+                    ExecutorException.Code.SYS_ERROR);
+        }
+        SearchArticleResponsePayload result = new SearchArticleResponsePayload();
+        result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
+        return result;
+    }
+
+ c
 
     private Page<SearchArticleResponsePayload.SearchArticleRecord> convertArticlePageToSearchArticleRecordPage(
             Page<Article> articlePage) {
