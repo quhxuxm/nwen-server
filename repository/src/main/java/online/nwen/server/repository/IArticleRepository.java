@@ -8,11 +8,13 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Date;
 
 public interface IArticleRepository extends MongoRepository<Article, String> {
-    Page<Article> findAllByTagsContainingAndPublish(String[] tags, boolean publish, Pageable pageable);
+    Page<Article> findAllByTagsContainingAndPublishOrderByUpdateDateDesc(String[] tags, boolean publish,
+                                                                         Pageable pageable);
 
-    Page<Article> findAllByAnthologyIdAndPublish(String anthologyId, boolean publish, Pageable pageable);
+    Page<Article> findAllByAnthologyIdAndPublishOrderByUpdateDateDesc(String anthologyId, boolean publish,
+                                                                      Pageable pageable);
 
-    Page<Article> findAllByAuthorIdAndPublish(String authorId, boolean publish, Pageable pageable);
+    Page<Article> findAllByAuthorIdAndPublishOrderByUpdateDateDesc(String authorId, boolean publish, Pageable pageable);
 
     Page<Article> findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(Date relativeDate, boolean publish,
                                                                            Pageable pageable);
