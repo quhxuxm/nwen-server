@@ -115,7 +115,55 @@ public class SearchArticleExecutor
         return result;
     }
 
- c
+    private SearchArticleResponsePayload searchArticlesByRecentCreated(
+            SearchArticleRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+        String relativeDateString = condition.getParams().get("relativeDate");
+        logger.debug("Search recent created by relative date: {}", relativeDateString);
+        Date relativeDate = getRelativeDateFromRequest(relativeDateString);
+        Page<Article> articlePage = null;
+        try {
+            articlePage = articleRepository.findAllByCreateDateBeforeOrderByCreateDateDesc(relativeDate, pageable);
+        } catch (Exception e) {
+            logger.error("Fail to search articles by author id because of exception.", e);
+            throw new ExecutorException("Fail to search articles by author id because of exception.", e,
+                    ExecutorException.Code.SYS_ERROR);
+        }
+        SearchArticleResponsePayload result = new SearchArticleResponsePayload();
+        result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
+        return result;
+    }
+
+    private SearchArticleResponsePayload searchArticlesByRecentUpdated(
+            SearchArticleRequestPayload.Condition condition, Pageable pageable) throws ExecutorException {
+        String relativeDateString = condition.getParams().get("relativeDate");
+        logger.debug("Search recent created by relative date: {}", relativeDateString);
+        Date relativeDate = getRelativeDateFromRequest(relativeDateString);
+        Page<Article> articlePage = null;
+        try {
+            articlePage = articleRepository.findAllByUpdateDateBeforeOrderByUpdateDateDesc(relativeDate, pageable);
+        } catch (Exception e) {
+            logger.error("Fail to search articles by author id because of exception.", e);
+            throw new ExecutorException("Fail to search articles by author id because of exception.", e,
+                    ExecutorException.Code.SYS_ERROR);
+        }
+        SearchArticleResponsePayload result = new SearchArticleResponsePayload();
+        result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
+        return result;
+    }
+
+    private Date getRelativeDateFromRequest(String relativeDateString) {
+        Date relativeDate;
+        if (relativeDateString == null) {
+            relativeDate = new Date();
+        } else {
+            try {
+                relativeDate = new Date(Long.parseLong(relativeDateString));
+            } catch (NumberFormatException e) {
+                relativeDate = new Date();
+            }
+        }
+        return relativeDate;
+    }
 
     private Page<SearchArticleResponsePayload.SearchArticleRecord> convertArticlePageToSearchArticleRecordPage(
             Page<Article> articlePage) {
