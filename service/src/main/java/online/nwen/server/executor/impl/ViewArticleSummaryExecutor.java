@@ -9,31 +9,29 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.ViewArticleSummaryRequestPayload;
 import online.nwen.server.executor.api.payload.ViewArticleSummaryResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IArticleRepository;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.IArticleService;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Optional;
-
 @Service
 public class ViewArticleSummaryExecutor implements
         IExecutor<ViewArticleSummaryResponsePayload, ViewArticleSummaryRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(ViewArticleSummaryExecutor.class);
-    private IArticleRepository articleRepository;
-    private IAuthorRepository authorRepository;
-    private IAnthologyRepository anthologyRepository;
+    private IArticleService articleService;
+    private IAuthorService authorService;
+    private IAnthologyService anthologyService;
 
-    public ViewArticleSummaryExecutor(IArticleRepository articleRepository,
-                                      IAuthorRepository authorRepository,
-                                      IAnthologyRepository anthologyRepository) {
-        this.articleRepository = articleRepository;
-        this.authorRepository = authorRepository;
-        this.anthologyRepository = anthologyRepository;
+    public ViewArticleSummaryExecutor(IArticleService articleService,
+                                      IAuthorService authorService,
+                                      IAnthologyService anthologyService) {
+        this.articleService = articleService;
+        this.authorService = authorService;
+        this.anthologyService = anthologyService;
     }
 
     @Override
@@ -46,24 +44,21 @@ public class ViewArticleSummaryExecutor implements
             logger.error("Fail to view article summary because of article id is empty.");
             throw new ExecutorException(ExecutorException.Code.ARTICLE_ID_IS_EMPTY);
         }
-        Optional<Article> targetArticleOptional = this.articleRepository.findById(requestPayload.getArticleId());
-        if (!targetArticleOptional.isPresent()) {
+        Article targetArticle = this.articleService.findById(requestPayload.getArticleId());
+        if (targetArticle == null) {
             logger.error("Fail to view article summary because of article not exist, article id = [{}].",
                     requestPayload.getArticleId());
             throw new ExecutorException(ExecutorException.Code.ARTICLE_NOT_EXIST);
         }
-        Article targetArticle = targetArticleOptional.get();
-        Optional<Author> articleOwnerOptional = this.authorRepository.findById(targetArticle.getAuthorId());
-        if (!articleOwnerOptional.isPresent()) {
+        Author articleOwner = this.authorService.findById(targetArticle.getAuthorId());
+        if (articleOwner == null) {
             throw new ExecutorException(ExecutorException.Code.ARTICLE_AUTHOR_NOT_EXIST);
         }
-        Author articleOwner = articleOwnerOptional.get();
-        Optional<Anthology> articleAnthologyOptional =
-                this.anthologyRepository.findById(targetArticle.getAnthologyId());
-        if (!articleAnthologyOptional.isPresent()) {
+        Anthology articleAnthology =
+                this.anthologyService.findById(targetArticle.getAnthologyId());
+        if (articleAnthology == null) {
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
         }
-        Anthology articleAnthology = articleAnthologyOptional.get();
         ViewArticleSummaryResponsePayload viewArticleSummaryResponsePayload = new ViewArticleSummaryResponsePayload();
         viewArticleSummaryResponsePayload.setTitle(targetArticle.getTitle());
         viewArticleSummaryResponsePayload.setId(targetArticle.getId());

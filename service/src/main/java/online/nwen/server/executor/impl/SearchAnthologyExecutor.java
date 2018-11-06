@@ -7,7 +7,7 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.SearchAnthologyRequestPayload;
 import online.nwen.server.executor.api.payload.SearchAnthologyResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
+import online.nwen.server.service.api.IAnthologyService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +22,10 @@ import java.util.Date;
 public class SearchAnthologyExecutor
         implements IExecutor<SearchAnthologyResponsePayload, SearchAnthologyRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(SearchAnthologyExecutor.class);
-    private IAnthologyRepository anthologyRepository;
+    private IAnthologyService anthologyService;
 
-    public SearchAnthologyExecutor(IAnthologyRepository anthologyRepository) {
-        this.anthologyRepository = anthologyRepository;
+    public SearchAnthologyExecutor(IAnthologyService anthologyService) {
+        this.anthologyService = anthologyService;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class SearchAnthologyExecutor
         logger.debug("Search anthologies by author id {}", authorId);
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository
+            anthologyPage = this.anthologyService
                     .findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by author id because of exception.", e);
@@ -92,7 +92,7 @@ public class SearchAnthologyExecutor
         String[] tags = tagsStr.split(",");
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository
+            anthologyPage = this.anthologyService
                     .findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by tags because of exception.", e);
@@ -112,7 +112,7 @@ public class SearchAnthologyExecutor
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository
+            anthologyPage = this.anthologyService
                     .findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(relativeDate, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by recent created because of exception.", e);
@@ -132,7 +132,7 @@ public class SearchAnthologyExecutor
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Anthology> anthologyPage = null;
         try {
-            anthologyPage = this.anthologyRepository
+            anthologyPage = this.anthologyService
                     .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search anthologies by recent updated because of exception.", e);

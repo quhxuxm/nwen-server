@@ -8,8 +8,8 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.PublishArticleRequestPayload;
 import online.nwen.server.executor.api.payload.PublishArticleResponsePayload;
-import online.nwen.server.repository.IArticleRepository;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IArticleService;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,19 +17,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class PublishArticleExecutor implements IExecutor<PublishArticleResponsePayload, PublishArticleRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(PublishArticleExecutor.class);
-    private IAuthorRepository authorRepository;
-    private IArticleRepository articleRepository;
+    private IAuthorService authorService;
+    private IArticleService articleService;
 
-    public PublishArticleExecutor(IAuthorRepository authorRepository,
-                                  IArticleRepository articleRepository
+    public PublishArticleExecutor(IAuthorService authorService,
+                                  IArticleService articleService
     ) {
-        this.authorRepository = authorRepository;
-        this.articleRepository = articleRepository;
+        this.authorService = authorService;
+        this.articleService = articleService;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class PublishArticleExecutor implements IExecutor<PublishArticleResponseP
         }
         Author currentAuthor = null;
         try {
-            currentAuthor = this.authorRepository.findByUsername(securityContext.getUsername());
+            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
         } catch (Exception e) {
             logger.error("Fail to publish article because of exception happen on search current author.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
@@ -54,13 +53,12 @@ public class PublishArticleExecutor implements IExecutor<PublishArticleResponseP
                     securityContext.getUsername());
             throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
-        Optional<Article> targetArticleOptional = this.articleRepository.findById(requestPayload.getArticleId());
-        if (!targetArticleOptional.isPresent()) {
+        Article targetArticle = this.articleService.findById(requestPayload.getArticleId());
+        if (targetArticle == null) {
             logger.error("Fail to publish article because of article not exist, article id = [{}].",
                     requestPayload.getArticleId());
             throw new ExecutorException(ExecutorException.Code.ARTICLE_NOT_EXIST);
         }
-        Article targetArticle = targetArticleOptional.get();
         if (!targetArticle.getAuthorId().equals(currentAuthor.getId())) {
             logger.error(
                     "Fail to publish article because of author is not the owner, author is [{}], article is [{}].",
@@ -75,7 +73,7 @@ public class PublishArticleExecutor implements IExecutor<PublishArticleResponseP
         }
         targetArticle.setPublish(requestPayload.isPublish());
         try {
-            this.articleRepository.save(targetArticle);
+            this.articleService.save(targetArticle);
         } catch (Exception e) {
             logger.error("Fail to create article because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);

@@ -7,7 +7,7 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.SearchCommentRequestPayload;
 import online.nwen.server.executor.api.payload.SearchCommentResponsePayload;
-import online.nwen.server.repository.ICommentRepository;
+import online.nwen.server.service.api.ICommentService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePayload, SearchCommentRequestPayload> {
-    private ICommentRepository commentRepository;
+    private ICommentService commentService;
 
-    public SearchCommentExecutor(ICommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
+    public SearchCommentExecutor(ICommentService commentService) {
+        this.commentService = commentService;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePay
         if (SearchCommentRequestPayload.Condition.Type.ARTICLE == condition.getType()) {
             String articleId = condition.getParams().get("articleId");
             Page<Comment> commentPage =
-                    this.commentRepository.findAllByTypeAndRefDocumentId(Comment.Type.ARTICLE, articleId, pageable);
+                    this.commentService.findAllByTypeAndRefDocumentId(Comment.Type.ARTICLE, articleId, pageable);
             Page<SearchCommentResponsePayload.CommentSearchRecord> recordPage =
                     this.convertCommentPageToSearchRecordPage(commentPage);
             SearchCommentResponsePayload responsePayload = new SearchCommentResponsePayload();
@@ -49,7 +49,7 @@ public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePay
         if (SearchCommentRequestPayload.Condition.Type.ANTHOLOGY == condition.getType()) {
             String anthologyId = condition.getParams().get("anthologyId");
             Page<Comment> commentPage =
-                    this.commentRepository.findAllByTypeAndRefDocumentId(Comment.Type.ANTHOLOGY, anthologyId, pageable);
+                    this.commentService.findAllByTypeAndRefDocumentId(Comment.Type.ANTHOLOGY, anthologyId, pageable);
             Page<SearchCommentResponsePayload.CommentSearchRecord> recordPage =
                     this.convertCommentPageToSearchRecordPage(commentPage);
             SearchCommentResponsePayload responsePayload = new SearchCommentResponsePayload();
@@ -60,7 +60,7 @@ public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePay
         if (SearchCommentRequestPayload.Condition.Type.COMMENT == condition.getType()) {
             String commentId = condition.getParams().get("commentId");
             Page<Comment> commentPage =
-                    this.commentRepository.findAllByTypeAndRefDocumentId(Comment.Type.COMMENT, commentId, pageable);
+                    this.commentService.findAllByTypeAndRefDocumentId(Comment.Type.COMMENT, commentId, pageable);
             Page<SearchCommentResponsePayload.CommentSearchRecord> recordPage =
                     this.convertCommentPageToSearchRecordPage(commentPage);
             SearchCommentResponsePayload responsePayload = new SearchCommentResponsePayload();

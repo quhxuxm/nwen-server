@@ -8,38 +8,31 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.UpdateArticleRequestPayload;
 import online.nwen.server.executor.api.payload.UpdateArticleResponsePayload;
-import online.nwen.server.repository.IArticleRepository;
-import online.nwen.server.repository.IAuthorRepository;
-import online.nwen.server.repository.IResourceRepository;
-import online.nwen.server.service.api.ArticleContentAnalyzeRequest;
-import online.nwen.server.service.api.ArticleContentAnalyzeResponse;
-import online.nwen.server.service.api.IArticleContentAnalyzeService;
-import online.nwen.server.service.api.ISecurityContext;
+import online.nwen.server.service.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class UpdateArticleExecutor
         extends AbstractArticleExecutor<UpdateArticleResponsePayload, UpdateArticleRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(UpdateArticleExecutor.class);
-    private IAuthorRepository authorRepository;
-    private IArticleRepository articleRepository;
+    private IAuthorService authorService;
+    private IArticleService articleService;
     private GlobalConfiguration globalConfiguration;
     private IArticleContentAnalyzeService articleContentAnalyzeService;
 
-    public UpdateArticleExecutor(IResourceRepository resourceRepository,
-                                 IAuthorRepository authorRepository,
-                                 IArticleRepository articleRepository,
+    public UpdateArticleExecutor(IResourceService resourceService,
+                                 IAuthorService authorService,
+                                 IArticleService articleService,
                                  GlobalConfiguration globalConfiguration,
                                  IArticleContentAnalyzeService articleContentAnalyzeService) {
-        super(resourceRepository);
-        this.authorRepository = authorRepository;
-        this.articleRepository = articleRepository;
+        super(resourceService);
+        this.authorService = authorService;
+        this.articleService = articleService;
         this.globalConfiguration = globalConfiguration;
         this.articleContentAnalyzeService = articleContentAnalyzeService;
     }
@@ -64,7 +57,7 @@ public class UpdateArticleExecutor
         }
         Author currentAuthor = null;
         try {
-            currentAuthor = this.authorRepository.findByUsername(securityContext.getUsername());
+            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
         } catch (Exception e) {
             logger.error("Fail to update article because of exception happen on search current author.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
@@ -74,13 +67,12 @@ public class UpdateArticleExecutor
                     securityContext.getUsername());
             throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
-        Optional<Article> targetArticleOptional = this.articleRepository.findById(requestPayload.getArticleId());
-        if (!targetArticleOptional.isPresent()) {
+        Article targetArticle = this.articleService.findById(requestPayload.getArticleId());
+        if (targetArticle == null) {
             logger.error("Fail to update article because of article not exist, article id = [{}].",
                     requestPayload.getArticleId());
             throw new ExecutorException(ExecutorException.Code.ARTICLE_NOT_EXIST);
         }
-        Article targetArticle = targetArticleOptional.get();
         if (!targetArticle.getAuthorId().equals(currentAuthor.getId())) {
             logger.error(
                     "Fail to update article because of author is not the owner, author is [{}], article is [{}].",
@@ -98,7 +90,7 @@ public class UpdateArticleExecutor
         targetArticle.setSummary(requestPayload.getSummary());
         targetArticle.setTags(requestPayload.getTags());
         try {
-            this.articleRepository.save(targetArticle);
+            this.articleService.save(targetArticle);
         } catch (Exception e) {
             logger.error("Fail to update article because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);

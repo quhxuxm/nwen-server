@@ -7,7 +7,7 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.AuthenticateRequestPayload;
 import online.nwen.server.executor.api.payload.AuthenticateResponsePayload;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.api.exception.SecurityServiceException;
@@ -22,12 +22,12 @@ import java.util.Date;
 public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePayload, AuthenticateRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticateExecutor.class);
     private ISecurityService securityService;
-    private IAuthorRepository authorRepository;
+    private IAuthorService authorService;
 
     public AuthenticateExecutor(ISecurityService securityService,
-                                IAuthorRepository authorRepository) {
+                                IAuthorService authorService) {
         this.securityService = securityService;
-        this.authorRepository = authorRepository;
+        this.authorService = authorService;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
             logger.error("Fail to do authentication because of the password is empty.");
             throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
         }
-        Author author = this.authorRepository.findByUsername(requestPayload.getUsername());
+        Author author = this.authorService.findByUsername(requestPayload.getUsername());
         if (author == null) {
             throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
         }
@@ -53,7 +53,7 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
         }
         author.setLastLoginDate(new Date());
         try {
-            this.authorRepository.save(author);
+            this.authorService.save(author);
         } catch (Exception e) {
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }

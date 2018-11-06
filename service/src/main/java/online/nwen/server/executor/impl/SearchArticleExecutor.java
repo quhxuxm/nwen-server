@@ -8,8 +8,8 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.SearchArticleRequestPayload;
 import online.nwen.server.executor.api.payload.SearchArticleResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IArticleRepository;
+import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.IArticleService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +19,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class SearchArticleExecutor
         implements IExecutor<SearchArticleResponsePayload, SearchArticleRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(SearchArticleExecutor.class);
-    private IArticleRepository articleRepository;
-    private IAnthologyRepository anthologyRepository;
+    private IArticleService articleService;
+    private IAnthologyService anthologyService;
 
-    public SearchArticleExecutor(IArticleRepository articleRepository,
-                                 IAnthologyRepository anthologyRepository) {
-        this.articleRepository = articleRepository;
-        this.anthologyRepository = anthologyRepository;
+    public SearchArticleExecutor(IArticleService articleService,
+                                 IAnthologyService anthologyService) {
+        this.articleService = articleService;
+        this.anthologyService = anthologyService;
     }
 
     @Override
@@ -79,20 +78,19 @@ public class SearchArticleExecutor
         logger.debug("Search articles by anthology id {}", anthologyId);
         boolean includePublish = false;
         if (securityContext != null) {
-            Optional<Anthology> targetAnthologyOptional = this.anthologyRepository.findById(anthologyId);
-            if (!targetAnthologyOptional.isPresent()) {
+            Anthology targetAnthology = this.anthologyService.findById(anthologyId);
+            if (targetAnthology == null) {
                 logger.error("Fail to search articles by anthology id because of anthology not exist.");
                 throw new ExecutorException("Fail to search articles by anthology id because of anthology not exist.",
                         ExecutorException.Code.SYS_ERROR);
             }
-            Anthology targetAnthology = targetAnthologyOptional.get();
             if (targetAnthology.getAuthorId().equals(securityContext.getAuthorId())) {
                 includePublish = true;
             }
         }
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository
+            articlePage = articleService
                     .findAllByAnthologyIdAndPublishOrderByUpdateDateDesc(anthologyId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by anthology id because of exception.", e);
@@ -113,7 +111,7 @@ public class SearchArticleExecutor
         Page<Article> articlePage = null;
         try {
             articlePage =
-                    articleRepository.findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
+                    articleService.findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by tags because of exception.", e);
             throw new ExecutorException("Fail to search articles by tags because of exception.", e,
@@ -135,7 +133,7 @@ public class SearchArticleExecutor
         }
         Page<Article> articlePage = null;
         try {
-            articlePage = articleRepository
+            articlePage = articleService
                     .findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, includePublish, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by author id because of exception.", e);
@@ -156,7 +154,7 @@ public class SearchArticleExecutor
         Page<Article> articlePage = null;
         try {
             articlePage =
-                    articleRepository
+                    articleService
                             .findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(relativeDate, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by author id because of exception.", e);
@@ -177,7 +175,7 @@ public class SearchArticleExecutor
         Page<Article> articlePage = null;
         try {
             articlePage =
-                    articleRepository
+                    articleService
                             .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, false, pageable);
         } catch (Exception e) {
             logger.error("Fail to search articles by author id because of exception.", e);

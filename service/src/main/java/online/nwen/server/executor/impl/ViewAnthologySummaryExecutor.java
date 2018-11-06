@@ -8,28 +8,26 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.ViewAnthologySummaryRequestPayload;
 import online.nwen.server.executor.api.payload.ViewAnthologySummaryResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Optional;
-
 @Service
 public class ViewAnthologySummaryExecutor implements
         IExecutor<ViewAnthologySummaryResponsePayload, ViewAnthologySummaryRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(ViewAnthologySummaryExecutor.class);
-    private IAuthorRepository authorRepository;
-    private IAnthologyRepository anthologyRepository;
+    private IAuthorService authorService;
+    private IAnthologyService anthologyService;
 
     public ViewAnthologySummaryExecutor(
-            IAuthorRepository authorRepository,
-            IAnthologyRepository anthologyRepository) {
-        this.authorRepository = authorRepository;
-        this.anthologyRepository = anthologyRepository;
+            IAuthorService authorService,
+            IAnthologyService anthologyService) {
+        this.authorService = authorService;
+        this.anthologyService = anthologyService;
     }
 
     @Override
@@ -42,19 +40,17 @@ public class ViewAnthologySummaryExecutor implements
             logger.error("Fail to view anthology summary because of anthology id is empty.");
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_ID_IS_EMPTY);
         }
-        Optional<Anthology> targetAnthologyOptional =
-                this.anthologyRepository.findById(requestPayload.getAnthologyId());
-        if (!targetAnthologyOptional.isPresent()) {
+        Anthology targetAnthology =
+                this.anthologyService.findById(requestPayload.getAnthologyId());
+        if (targetAnthology == null) {
             logger.error("Fail to view anthology summary because of anthology not exist, anthology id = [{}].",
                     requestPayload.getAnthologyId());
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
         }
-        Anthology targetAnthology = targetAnthologyOptional.get();
-        Optional<Author> anthologyOwnerOptional = this.authorRepository.findById(targetAnthology.getAuthorId());
-        if (!anthologyOwnerOptional.isPresent()) {
+        Author anthologyOwner = this.authorService.findById(targetAnthology.getAuthorId());
+        if (anthologyOwner == null) {
             throw new ExecutorException(ExecutorException.Code.ARTICLE_AUTHOR_NOT_EXIST);
         }
-        Author anthologyOwner = anthologyOwnerOptional.get();
         ViewAnthologySummaryResponsePayload viewAnthologySummaryResponsePayload =
                 new ViewAnthologySummaryResponsePayload();
         viewAnthologySummaryResponsePayload.setTitle(targetAnthology.getTitle());

@@ -9,8 +9,8 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.CreateAnthologyRequestPayload;
 import online.nwen.server.executor.api.payload.CreateAnthologyResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +23,15 @@ import java.util.Date;
 public class CreateAnthologyExecutor
         implements IExecutor<CreateAnthologyResponsePayload, CreateAnthologyRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(CreateAnthologyExecutor.class);
-    private IAnthologyRepository anthologyRepository;
-    private IAuthorRepository authorRepository;
+    private IAnthologyService anthologyService;
+    private IAuthorService authorService;
     private GlobalConfiguration globalConfiguration;
 
-    public CreateAnthologyExecutor(IAnthologyRepository anthologyRepository,
-                                   IAuthorRepository authorRepository,
+    public CreateAnthologyExecutor(IAnthologyService anthologyService,
+                                   IAuthorService authorService,
                                    GlobalConfiguration globalConfiguration) {
-        this.anthologyRepository = anthologyRepository;
-        this.authorRepository = authorRepository;
+        this.anthologyService = anthologyService;
+        this.authorService = authorService;
         this.globalConfiguration = globalConfiguration;
     }
 
@@ -51,7 +51,7 @@ public class CreateAnthologyExecutor
         }
         Author currentAuthor = null;
         try {
-            currentAuthor = this.authorRepository.findByUsername(securityContext.getUsername());
+            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
         } catch (Exception e) {
             logger.error("Fail to create anthology because of exception happen on search current author.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
@@ -72,7 +72,7 @@ public class CreateAnthologyExecutor
         }
         try {
             logger.debug("Begin to save anthology: {}", anthology);
-            this.anthologyRepository.save(anthology);
+            this.anthologyService.save(anthology);
             logger.debug("Success to save anthology: {}", anthology.getId());
         } catch (Exception e) {
             logger.error("Fail to save anthology because of exception.", e);
@@ -80,7 +80,7 @@ public class CreateAnthologyExecutor
         }
         currentAuthor.setAnthologyNumber(currentAuthor.getAnthologyNumber() + 1);
         try {
-            this.authorRepository.save(currentAuthor);
+            this.authorService.save(currentAuthor);
         } catch (Exception e) {
             logger.error("Fail to save anthology because of exception when update anthology number for the author.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);

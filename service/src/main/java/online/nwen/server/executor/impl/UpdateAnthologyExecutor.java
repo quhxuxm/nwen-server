@@ -9,8 +9,8 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.UpdateAnthologyRequestPayload;
 import online.nwen.server.executor.api.payload.UpdateAnthologyResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,22 +18,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class UpdateAnthologyExecutor
         implements IExecutor<UpdateAnthologyResponsePayload, UpdateAnthologyRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(UpdateAnthologyExecutor.class);
-    private IAnthologyRepository anthologyRepository;
+    private IAnthologyService anthologyService;
     private GlobalConfiguration globalConfiguration;
-    private IAuthorRepository authorRepository;
+    private IAuthorService authorService;
 
-    public UpdateAnthologyExecutor(IAnthologyRepository anthologyRepository,
+    public UpdateAnthologyExecutor(IAnthologyService anthologyService,
                                    GlobalConfiguration globalConfiguration,
-                                   IAuthorRepository authorRepository) {
-        this.anthologyRepository = anthologyRepository;
+                                   IAuthorService authorService) {
+        this.anthologyService = anthologyService;
         this.globalConfiguration = globalConfiguration;
-        this.authorRepository = authorRepository;
+        this.authorService = authorService;
     }
 
     @Override
@@ -56,7 +55,7 @@ public class UpdateAnthologyExecutor
         }
         Author currentAuthor = null;
         try {
-            currentAuthor = this.authorRepository.findByUsername(securityContext.getUsername());
+            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
         } catch (Exception e) {
             logger.error("Fail to update anthology because of exception happen on search current author.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
@@ -66,14 +65,13 @@ public class UpdateAnthologyExecutor
                     securityContext.getUsername());
             throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
-        Optional<Anthology> targetAnthologyOptional =
-                this.anthologyRepository.findById(requestPayload.getAnthologyId());
-        if (!targetAnthologyOptional.isPresent()) {
+        Anthology targetAnthology =
+                this.anthologyService.findById(requestPayload.getAnthologyId());
+        if (targetAnthology == null) {
             logger.error("Fail to update anthology because of anthology not exist, anthology id = [{}].",
                     requestPayload.getAnthologyId());
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
         }
-        Anthology targetAnthology = targetAnthologyOptional.get();
         if (!targetAnthology.getAuthorId().equals(currentAuthor.getId())) {
             logger.error(
                     "Fail to update anthology because of author is not the owner, author is [{}], anthology is [{}].",
@@ -85,7 +83,7 @@ public class UpdateAnthologyExecutor
         targetAnthology.setSummary(requestPayload.getSummary());
         targetAnthology.setTags(requestPayload.getTags());
         try {
-            this.anthologyRepository.save(targetAnthology);
+            this.anthologyService.save(targetAnthology);
         } catch (Exception e) {
             logger.error("Fail to update anthology because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);

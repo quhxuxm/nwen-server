@@ -9,42 +9,34 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.CreateArticleRequestPayload;
 import online.nwen.server.executor.api.payload.CreateArticleResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IArticleRepository;
-import online.nwen.server.repository.IAuthorRepository;
-import online.nwen.server.repository.IResourceRepository;
-import online.nwen.server.service.api.ArticleContentAnalyzeRequest;
-import online.nwen.server.service.api.ArticleContentAnalyzeResponse;
-import online.nwen.server.service.api.IArticleContentAnalyzeService;
-import online.nwen.server.service.api.ISecurityContext;
+import online.nwen.server.service.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class CreateArticleExecutor
         extends AbstractArticleExecutor<CreateArticleResponsePayload, CreateArticleRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(CreateArticleExecutor.class);
-    private IAuthorRepository authorRepository;
-    private IArticleRepository articleRepository;
-    private IAnthologyRepository anthologyRepository;
+    private IAuthorService authorService;
+    private IArticleService articleService;
+    private IAnthologyService anthologyService;
     private GlobalConfiguration globalConfiguration;
     private IArticleContentAnalyzeService articleContentAnalyzeService;
 
-    public CreateArticleExecutor(IResourceRepository resourceRepository,
-                                 IAuthorRepository authorRepository,
-                                 IArticleRepository articleRepository,
-                                 IAnthologyRepository anthologyRepository,
+    public CreateArticleExecutor(IResourceService resourceService,
+                                 IAuthorService authorService,
+                                 IArticleService articleService,
+                                 IAnthologyService anthologyService,
                                  GlobalConfiguration globalConfiguration,
                                  IArticleContentAnalyzeService articleContentAnalyzeService) {
-        super(resourceRepository);
-        this.authorRepository = authorRepository;
-        this.articleRepository = articleRepository;
-        this.anthologyRepository = anthologyRepository;
+        super(resourceService);
+        this.authorService = authorService;
+        this.articleService = articleService;
+        this.anthologyService = anthologyService;
         this.globalConfiguration = globalConfiguration;
         this.articleContentAnalyzeService = articleContentAnalyzeService;
     }
@@ -65,7 +57,7 @@ public class CreateArticleExecutor
         }
         Author currentAuthor = null;
         try {
-            currentAuthor = this.authorRepository.findByUsername(securityContext.getUsername());
+            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
         } catch (Exception e) {
             logger.error("Fail to create article because of exception happen on search current author.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
@@ -81,13 +73,11 @@ public class CreateArticleExecutor
             logger.debug("Use default anthology because the  anthology id in the request is empty, anthology id = {}.",
                     targetAnthologyId);
         }
-        Optional<Anthology> targetAnthologyOptional =
-                this.anthologyRepository.findById(targetAnthologyId);
-        if (!targetAnthologyOptional.isPresent()) {
+        Anthology targetAnthology = this.anthologyService.findById(targetAnthologyId);
+        if (targetAnthology == null) {
             logger.error("Fail to create article because of anthology is not exist.");
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
         }
-        Anthology targetAnthology = targetAnthologyOptional.get();
         if (!targetAnthology.getAuthorId().equals(currentAuthor.getId())) {
             logger.debug(
                     "Current author is not the owner of the anthology, author is [{}], anthology is [{}].",
@@ -117,7 +107,7 @@ public class CreateArticleExecutor
             article.setPublishDate(new Date());
         }
         try {
-            this.articleRepository.save(article);
+            this.articleService.save(article);
         } catch (Exception e) {
             logger.error("Fail to create article because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
@@ -127,14 +117,14 @@ public class CreateArticleExecutor
         targetAnthology.setArticleNumber(targetAnthology.getArticleNumber() + 1);
         targetAnthology.setUpdateDate(new Date());
         try {
-            this.anthologyRepository.save(targetAnthology);
+            this.anthologyService.save(targetAnthology);
         } catch (Exception e) {
             logger.error("Fail to create article because of exception on update anthology information.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
         currentAuthor.setArticleNumber(currentAuthor.getArticleNumber() + 1);
         try {
-            this.authorRepository.save(currentAuthor);
+            this.authorService.save(currentAuthor);
         } catch (Exception e) {
             logger.error("Fail to save article because of exception when update article number for the author.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);

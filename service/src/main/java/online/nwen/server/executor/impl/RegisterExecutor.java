@@ -9,8 +9,8 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.RegisterRequestPayload;
 import online.nwen.server.executor.api.payload.RegisterResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +24,13 @@ import java.util.Set;
 @Service
 public class RegisterExecutor implements IExecutor<RegisterResponsePayload, RegisterRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(RegisterExecutor.class);
-    private IAuthorRepository authorRepository;
-    private IAnthologyRepository anthologyRepository;
+    private IAuthorService authorService;
+    private IAnthologyService anthologyService;
 
-    public RegisterExecutor(IAuthorRepository authorRepository,
-                            IAnthologyRepository anthologyRepository) {
-        this.authorRepository = authorRepository;
-        this.anthologyRepository = anthologyRepository;
+    public RegisterExecutor(IAuthorService authorService,
+                            IAnthologyService anthologyService) {
+        this.authorService = authorService;
+        this.anthologyService = anthologyService;
     }
 
     @Override
@@ -51,11 +51,11 @@ public class RegisterExecutor implements IExecutor<RegisterResponsePayload, Regi
             throw new ExecutorException(ExecutorException.Code.NICKNAME_IS_EMPTY);
         }
         logger.debug("Begin to register author with {}", registerRequestPayload);
-        if (this.authorRepository.existsByUsername(registerRequestPayload.getUsername())) {
+        if (this.authorService.existsByUsername(registerRequestPayload.getUsername())) {
             logger.error("Fail to register author because of username exist.");
             throw new ExecutorException(ExecutorException.Code.USERNAME_EXIST);
         }
-        if (this.authorRepository.existsByNickname(registerRequestPayload.getNickname())) {
+        if (this.authorService.existsByNickname(registerRequestPayload.getNickname())) {
             logger.error("Fail to register author because of nickname exist.");
             throw new ExecutorException(ExecutorException.Code.NICKNAME_EXIST);
         }
@@ -68,7 +68,7 @@ public class RegisterExecutor implements IExecutor<RegisterResponsePayload, Regi
         roles.add(Role.AUTHOR);
         author.setRoles(roles);
         try {
-            this.authorRepository.save(author);
+            this.authorService.save(author);
         } catch (Exception e) {
             logger.error("Fail to register author because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
@@ -77,14 +77,14 @@ public class RegisterExecutor implements IExecutor<RegisterResponsePayload, Regi
         anthology.setAuthorId(author.getId());
         anthology.setCreateDate(new Date());
         try {
-            this.anthologyRepository.save(anthology);
+            this.anthologyService.save(anthology);
         } catch (Exception e) {
             logger.error("Fail to register author because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
         author.setDefaultAnthologyId(anthology.getId());
         try {
-            this.authorRepository.save(author);
+            this.authorService.save(author);
         } catch (Exception e) {
             logger.error("Fail to register author because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);

@@ -10,31 +10,26 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.CreateCommentRequestPayload;
 import online.nwen.server.executor.api.payload.CreateCommentResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IArticleRepository;
-import online.nwen.server.repository.IAuthorRepository;
-import online.nwen.server.repository.ICommentRepository;
-import online.nwen.server.service.api.ISecurityContext;
+import online.nwen.server.service.api.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class CreateCommentExecutor implements IExecutor<CreateCommentResponsePayload, CreateCommentRequestPayload> {
-    private IArticleRepository articleRepository;
-    private IAnthologyRepository anthologyRepository;
-    private IAuthorRepository authorRepository;
-    private ICommentRepository commentRepository;
+    private IArticleService articleService;
+    private IAnthologyService anthologyService;
+    private IAuthorService authorService;
+    private ICommentService commentService;
 
-    public CreateCommentExecutor(IArticleRepository articleRepository,
-                                 IAnthologyRepository anthologyRepository,
-                                 IAuthorRepository authorRepository,
-                                 ICommentRepository commentRepository) {
-        this.articleRepository = articleRepository;
-        this.anthologyRepository = anthologyRepository;
-        this.authorRepository = authorRepository;
-        this.commentRepository = commentRepository;
+    public CreateCommentExecutor(IArticleService articleService,
+                                 IAnthologyService anthologyService,
+                                 IAuthorService authorService,
+                                 ICommentService commentService) {
+        this.articleService = articleService;
+        this.anthologyService = anthologyService;
+        this.authorService = authorService;
+        this.commentService = commentService;
     }
 
     @Override
@@ -42,11 +37,10 @@ public class CreateCommentExecutor implements IExecutor<CreateCommentResponsePay
                      IExecutorResponse<CreateCommentResponsePayload> response, ISecurityContext securityContext)
             throws ExecutorException {
         CreateCommentRequestPayload requestPayload = request.getPayload();
-        Optional<Author> currentAuthorOptional = this.authorRepository.findById(securityContext.getAuthorId());
-        if (!currentAuthorOptional.isPresent()) {
+        Author currentAuthor = this.authorService.findById(securityContext.getAuthorId());
+        if (currentAuthor == null) {
             throw new ExecutorException(ExecutorException.Code.AUTHOR_NOT_EXIST);
         }
-        Author currentAuthor = currentAuthorOptional.get();
         Comment comment = new Comment();
         comment.setAuthorId(currentAuthor.getId());
         comment.setContent(requestPayload.getContent());
@@ -64,50 +58,50 @@ public class CreateCommentExecutor implements IExecutor<CreateCommentResponsePay
             case ARTICLE:
                 Article article = this.findArticleByRefDocumentId(requestPayload.getRefDocumentId());
                 article.setCommentNumber(article.getCommentNumber());
-                this.articleRepository.save(article);
+                this.articleService.save(article);
                 break;
             case COMMENT:
                 Comment parentComment = this.findCommentByRefDocumentId(requestPayload.getRefDocumentId());
                 parentComment.setCommentNumber(parentComment.getCommentNumber() + 1);
-                this.commentRepository.save(parentComment);
+                this.commentService.save(parentComment);
                 break;
             case ANTHOLOGY:
                 Anthology anthology = this.findAnthologyByRefDocumentId(requestPayload.getRefDocumentId());
                 anthology.setCommentsNumber(anthology.getCommentsNumber() + 1);
-                this.anthologyRepository.save(anthology);
+                this.anthologyService.save(anthology);
                 break;
             default:
                 throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
         }
-        this.commentRepository.save(comment);
+        this.commentService.save(comment);
         currentAuthor.setCommentNumber(currentAuthor.getCommentNumber() + 1);
-        this.authorRepository.save(currentAuthor);
+        this.authorService.save(currentAuthor);
         CreateCommentResponsePayload responsePayload = new CreateCommentResponsePayload();
         responsePayload.setCommentId(comment.getId());
         response.setPayload(responsePayload);
     }
 
     private Article findArticleByRefDocumentId(String refDocumentId) throws ExecutorException {
-        Optional<Article> articleOptional = this.articleRepository.findById(refDocumentId);
-        if (!articleOptional.isPresent()) {
+        Article article = this.articleService.findById(refDocumentId);
+        if (article == null) {
             throw new ExecutorException(ExecutorException.Code.ARTICLE_NOT_EXIST);
         }
-        return articleOptional.get();
+        return article;
     }
 
     private Anthology findAnthologyByRefDocumentId(String refDocumentId) throws ExecutorException {
-        Optional<Anthology> anthologyOptional = this.anthologyRepository.findById(refDocumentId);
-        if (!anthologyOptional.isPresent()) {
+        Anthology anthology = this.anthologyService.findById(refDocumentId);
+        if (anthology == null) {
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
         }
-        return anthologyOptional.get();
+        return anthology;
     }
 
     private Comment findCommentByRefDocumentId(String refDocumentId) throws ExecutorException {
-        Optional<Comment> commentOptional = this.commentRepository.findById(refDocumentId);
-        if (!commentOptional.isPresent()) {
+        Comment comment = this.commentService.findById(refDocumentId);
+        if (comment == null) {
             throw new ExecutorException(ExecutorException.Code.COMMENT_NOT_EXIST);
         }
-        return commentOptional.get();
+        return comment;
     }
 }

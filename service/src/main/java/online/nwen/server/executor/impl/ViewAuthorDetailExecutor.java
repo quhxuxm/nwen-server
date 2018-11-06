@@ -7,17 +7,17 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.ViewAuthorDetailRequestPayload;
 import online.nwen.server.executor.api.payload.ViewAuthorDetailResponsePayload;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
+import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
+@Service
 public class ViewAuthorDetailExecutor
         implements IExecutor<ViewAuthorDetailResponsePayload, ViewAuthorDetailRequestPayload> {
-    private IAuthorRepository authorRepository;
+    private IAuthorService authorService;
 
-    public ViewAuthorDetailExecutor(IAuthorRepository authorRepository) {
-        this.authorRepository = authorRepository;
+    public ViewAuthorDetailExecutor(IAuthorService authorService) {
+        this.authorService = authorService;
     }
 
     @Override
@@ -25,11 +25,10 @@ public class ViewAuthorDetailExecutor
                      IExecutorResponse<ViewAuthorDetailResponsePayload> response, ISecurityContext securityContext)
             throws ExecutorException {
         ViewAuthorDetailRequestPayload requestPayload = request.getPayload();
-        Optional<Author> targetAuthorOptional = this.authorRepository.findById(requestPayload.getAuthorId());
-        if (!targetAuthorOptional.isPresent()) {
+        Author targetAuthor = this.authorService.findById(requestPayload.getAuthorId());
+        if (targetAuthor == null) {
             throw new ExecutorException(ExecutorException.Code.AUTHOR_NOT_EXIST);
         }
-        Author targetAuthor = targetAuthorOptional.get();
         ViewAuthorDetailResponsePayload responsePayload = new ViewAuthorDetailResponsePayload();
         responsePayload.setUsername(targetAuthor.getUsername());
         responsePayload.setNickname(targetAuthor.getNickname());

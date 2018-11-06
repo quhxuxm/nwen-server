@@ -8,8 +8,8 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.PublishAnthologyRequestPayload;
 import online.nwen.server.executor.api.payload.PublishAnthologyResponsePayload;
-import online.nwen.server.repository.IAnthologyRepository;
-import online.nwen.server.repository.IAuthorRepository;
+import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,20 +17,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class PublishAnthologyExecutor
         implements IExecutor<PublishAnthologyResponsePayload, PublishAnthologyRequestPayload> {
     private static final Logger logger = LoggerFactory.getLogger(PublishAnthologyExecutor.class);
-    private IAuthorRepository authorRepository;
-    private IAnthologyRepository anthologyRepository;
+    private IAuthorService authorService;
+    private IAnthologyService anthologyService;
 
-    public PublishAnthologyExecutor(IAuthorRepository authorRepository,
-                                    IAnthologyRepository anthologyRepository
+    public PublishAnthologyExecutor(IAuthorService authorService,
+                                    IAnthologyService anthologyService
     ) {
-        this.authorRepository = authorRepository;
-        this.anthologyRepository = anthologyRepository;
+        this.authorService = authorService;
+        this.anthologyService = anthologyService;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class PublishAnthologyExecutor
         }
         Author currentAuthor = null;
         try {
-            currentAuthor = this.authorRepository.findByUsername(securityContext.getUsername());
+            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
         } catch (Exception e) {
             logger.error("Fail to publish anthology because of exception happen on search current author.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
@@ -55,14 +54,12 @@ public class PublishAnthologyExecutor
                     securityContext.getUsername());
             throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
-        Optional<Anthology> targetAnthologyOptional =
-                this.anthologyRepository.findById(requestPayload.getAnthologyId());
-        if (!targetAnthologyOptional.isPresent()) {
+        Anthology targetAnthology = this.anthologyService.findById(requestPayload.getAnthologyId());
+        if (targetAnthology == null) {
             logger.error("Fail to publish anthology because of anthology not exist, anthology id = [{}].",
                     requestPayload.getAnthologyId());
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
         }
-        Anthology targetAnthology = targetAnthologyOptional.get();
         if (!targetAnthology.getAuthorId().equals(currentAuthor.getId())) {
             logger.error(
                     "Fail to publish anthology because of author is not the owner, author is [{}], anthology is [{}].",
@@ -77,7 +74,7 @@ public class PublishAnthologyExecutor
         }
         targetAnthology.setPublish(requestPayload.isPublish());
         try {
-            this.anthologyRepository.save(targetAnthology);
+            this.anthologyService.save(targetAnthology);
         } catch (Exception e) {
             logger.error("Fail to publish anthology because of exception.", e);
             throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
