@@ -11,6 +11,9 @@ public class SearchCommentResponsePayload {
         private Date createDate;
         private long subCommentNumber;
         private String authorId;
+        private String authorNickname;
+        private String authorUsername;
+        private String authorIconImageId;
 
         public String getCommentId() {
             return commentId;
@@ -50,6 +53,30 @@ public class SearchCommentResponsePayload {
 
         public void setAuthorId(String authorId) {
             this.authorId = authorId;
+        }
+
+        public String getAuthorNickname() {
+            return authorNickname;
+        }
+
+        public void setAuthorNickname(String authorNickname) {
+            this.authorNickname = authorNickname;
+        }
+
+        public String getAuthorUsername() {
+            return authorUsername;
+        }
+
+        public void setAuthorUsername(String authorUsername) {
+            this.authorUsername = authorUsername;
+        }
+
+        public String getAuthorIconImageId() {
+            return authorIconImageId;
+        }
+
+        public void setAuthorIconImageId(String authorIconImageId) {
+            this.authorIconImageId = authorIconImageId;
         }
     }
 

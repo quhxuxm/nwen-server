@@ -1,5 +1,6 @@
 package online.nwen.server.executor.impl;
 
+import online.nwen.server.domain.Author;
 import online.nwen.server.domain.Comment;
 import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
@@ -7,6 +8,7 @@ import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.SearchCommentRequestPayload;
 import online.nwen.server.executor.api.payload.SearchCommentResponsePayload;
+import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ICommentService;
 import online.nwen.server.service.api.ISecurityContext;
 import org.springframework.data.domain.Page;
@@ -17,9 +19,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePayload, SearchCommentRequestPayload> {
     private ICommentService commentService;
+    private IAuthorService authorService;
 
-    public SearchCommentExecutor(ICommentService commentService) {
+    public SearchCommentExecutor(ICommentService commentService,
+                                 IAuthorService authorService) {
         this.commentService = commentService;
+        this.authorService = authorService;
     }
 
     @Override
@@ -81,6 +86,12 @@ public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePay
             record.setCreateDate(comment.getCreateDate());
             record.setSubCommentNumber(comment.getCommentNumber());
             record.setAuthorId(comment.getAuthorId());
+            Author commentAuthor = this.authorService.findById(comment.getAuthorId());
+            if (commentAuthor != null) {
+                record.setAuthorNickname(commentAuthor.getNickname());
+                record.setAuthorUsername(commentAuthor.getUsername());
+                record.setAuthorIconImageId(commentAuthor.getIconImageId());
+            }
             return record;
         });
     }
