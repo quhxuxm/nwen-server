@@ -3,6 +3,9 @@ package online.nwen.server.service.impl;
 import online.nwen.server.domain.Resource;
 import online.nwen.server.repository.IResourceRepository;
 import online.nwen.server.service.api.IResourceService;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,12 +18,14 @@ class ResourceService implements IResourceService {
         this.resourceRepository = resourceRepository;
     }
 
+    @Cacheable("resource_by_id")
     @Override
     public Resource findById(String id) {
         Optional<Resource> resultOptional = this.resourceRepository.findById(id);
         return resultOptional.orElse(null);
     }
 
+    @Cacheable("resource_by_md5")
     @Override
     public Resource findByMd5(String md5) {
         return this.resourceRepository.findByMd5(md5);
@@ -31,6 +36,10 @@ class ResourceService implements IResourceService {
         return this.resourceRepository.existsByMd5(md5);
     }
 
+    @Caching(put = {
+            @CachePut(value = "resource_by_id", key = "#result.id"),
+            @CachePut(value = "resource_by_md5", key = "#result.md5")
+    })
     @Override
     public Resource save(Resource resource) {
         return this.resourceRepository.save(resource);

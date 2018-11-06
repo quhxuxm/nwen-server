@@ -3,6 +3,8 @@ package online.nwen.server.service.impl;
 import online.nwen.server.domain.Anthology;
 import online.nwen.server.repository.IAnthologyRepository;
 import online.nwen.server.service.api.IAnthologyService;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ class AnthologyService implements IAnthologyService {
         this.anthologyRepository = anthologyRepository;
     }
 
+    @Cacheable("anthology")
     @Override
     public Anthology findById(String id) {
         Optional<Anthology> resultOptional = this.anthologyRepository.findById(id);
@@ -50,6 +53,7 @@ class AnthologyService implements IAnthologyService {
                 .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, publish, pageable);
     }
 
+    @CachePut(value = "anthology", key = "#result.id")
     @Override
     public Anthology save(Anthology anthology) {
         return this.anthologyRepository.save(anthology);

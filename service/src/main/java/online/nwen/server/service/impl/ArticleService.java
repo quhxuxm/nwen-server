@@ -3,6 +3,8 @@ package online.nwen.server.service.impl;
 import online.nwen.server.domain.Article;
 import online.nwen.server.repository.IArticleRepository;
 import online.nwen.server.service.api.IArticleService;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ class ArticleService implements IArticleService {
         this.articleRepository = articleRepository;
     }
 
+    @Cacheable("article")
     @Override
     public Article findById(String id) {
         Optional<Article> resultOptional = this.articleRepository.findById(id);
@@ -58,6 +61,7 @@ class ArticleService implements IArticleService {
                 .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, publish, pageable);
     }
 
+    @CachePut(value = "article", key = "#result.id")
     @Override
     public Article save(Article article) {
         return this.articleRepository.save(article);

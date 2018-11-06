@@ -3,6 +3,8 @@ package online.nwen.server.service.impl;
 import online.nwen.server.domain.Comment;
 import online.nwen.server.repository.ICommentRepository;
 import online.nwen.server.service.api.ICommentService;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ class CommentService implements ICommentService {
         this.commentRepository = commentRepository;
     }
 
+    @Cacheable("comment")
     @Override
     public Comment findById(String id) {
         Optional<Comment> resultOptional = this.commentRepository.findById(id);
@@ -28,6 +31,7 @@ class CommentService implements ICommentService {
         return this.commentRepository.findAllByTypeAndRefDocumentId(type, refDocumentId, pageable);
     }
 
+    @CachePut(value = "comment", key = "#result.id")
     @Override
     public Comment save(Comment comment) {
         return this.commentRepository.save(comment);
