@@ -53,7 +53,7 @@ class SecurityService implements ISecurityService {
         try {
             this.verifier.verify(secureToken);
         } catch (TokenExpiredException e) {
-            logger.error("Fail to verify secure token because of token expired.", e);
+            logger.debug("Fail to verify secure token because of token expired.", e);
             throw new SecurityServiceException("Fail to verify secure token because of token expired.", e,
                     SecurityServiceException.Code.SECURE_TOKEN_EXPIRED);
         } catch (Exception e) {
