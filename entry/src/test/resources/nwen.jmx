@@ -18,7 +18,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.num_threads">100</stringProp>
         <stringProp name="ThreadGroup.ramp_time">5</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -48,6 +48,15 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
         </ConfigTestElement>
         <hashTree/>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Index Generator" enabled="true">
+          <stringProp name="CounterConfig.start">0</stringProp>
+          <stringProp name="CounterConfig.end"></stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">INDEX</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
         <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Api response status checking" enabled="true">
           <stringProp name="JSON_PATH">$.success</stringProp>
           <stringProp name="EXPECTED_VALUE">true</stringProp>
@@ -64,6 +73,10 @@
           <boolProp name="displaySystemProperties">false</boolProp>
         </DebugPostProcessor>
         <hashTree/>
+        <ResultAction guiclass="ResultActionGui" testclass="ResultAction" testname="Stop Testing On Fail Processor" enabled="true">
+          <intProp name="OnError.action">3</intProp>
+        </ResultAction>
+        <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Register" enabled="true">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -73,9 +86,9 @@
                 <stringProp name="Argument.value">{&#xd;
 	&quot;header&quot;:{},&#xd;
 	&quot;payload&quot;:{&#xd;
-		&quot;username&quot;:&quot;${USERNAME}&quot;,&#xd;
+		&quot;username&quot;:&quot;USERNAME_${INDEX}&quot;,&#xd;
 		&quot;password&quot;:&quot;password&quot;,&#xd;
-		&quot;nickname&quot;:&quot;${USERNAME}&quot;&#xd;
+		&quot;nickname&quot;:&quot;USERNAME_${INDEX}&quot;&#xd;
 	}&#xd;
 }&#xd;
 </stringProp>
@@ -99,19 +112,6 @@
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Username" enabled="true">
-            <stringProp name="maximumValue">99999999</stringProp>
-            <stringProp name="minimumValue">10000000</stringProp>
-            <stringProp name="outputFormat">USER_00000000</stringProp>
-            <boolProp name="perThread">false</boolProp>
-            <stringProp name="randomSeed"></stringProp>
-            <stringProp name="variableName">USERNAME</stringProp>
-          </RandomVariableConfig>
-          <hashTree/>
-          <ResultAction guiclass="ResultActionGui" testclass="ResultAction" testname="stop" enabled="true">
-            <intProp name="OnError.action">3</intProp>
-          </ResultAction>
-          <hashTree/>
           <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
@@ -236,7 +236,7 @@
 	&quot;header&quot;:{&#xd;
 	},&#xd;
 	&quot;payload&quot;:{&#xd;
-		&quot;username&quot;:&quot;${USERNAME}&quot;,&#xd;
+		&quot;username&quot;:&quot;USERNAME_${INDEX}&quot;,&#xd;
 		&quot;password&quot;:&quot;password&quot;&#xd;
 	}&#xd;
 }&#xd;
@@ -268,10 +268,6 @@
             <stringProp name="Scope.variable"></stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">${SECURETOKEN}</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
-          <ResultAction guiclass="ResultActionGui" testclass="ResultAction" testname="stop" enabled="true">
-            <intProp name="OnError.action">3</intProp>
-          </ResultAction>
           <hashTree/>
           <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -389,7 +385,7 @@
         </hashTree>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop to create anthology" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
-          <stringProp name="LoopController.loops">100</stringProp>
+          <stringProp name="LoopController.loops">10</stringProp>
         </LoopController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create Anthology" enabled="true">
@@ -444,10 +440,6 @@
               <stringProp name="Scope.variable"></stringProp>
               <stringProp name="JSONPostProcessor.defaultValues">${SECURETOKEN}</stringProp>
             </JSONPostProcessor>
-            <hashTree/>
-            <ResultAction guiclass="ResultActionGui" testclass="ResultAction" testname="stop" enabled="true">
-              <intProp name="OnError.action">3</intProp>
-            </ResultAction>
             <hashTree/>
             <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
               <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -565,7 +557,7 @@
           </hashTree>
           <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop create article" enabled="true">
             <boolProp name="LoopController.continue_forever">true</boolProp>
-            <stringProp name="LoopController.loops">100</stringProp>
+            <stringProp name="LoopController.loops">10</stringProp>
           </LoopController>
           <hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create article" enabled="true">
@@ -621,10 +613,6 @@
                 <stringProp name="Scope.variable"></stringProp>
                 <stringProp name="JSONPostProcessor.defaultValues">${SECURETOKEN}</stringProp>
               </JSONPostProcessor>
-              <hashTree/>
-              <ResultAction guiclass="ResultActionGui" testclass="ResultAction" testname="stop" enabled="true">
-                <intProp name="OnError.action">3</intProp>
-              </ResultAction>
               <hashTree/>
               <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
                 <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -742,7 +730,7 @@
             </hashTree>
             <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create comment" enabled="true">
               <boolProp name="LoopController.continue_forever">true</boolProp>
-              <stringProp name="LoopController.loops">100</stringProp>
+              <stringProp name="LoopController.loops">10</stringProp>
             </LoopController>
             <hashTree>
               <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create comment" enabled="true">
@@ -789,10 +777,6 @@
                   <stringProp name="Scope.variable"></stringProp>
                   <stringProp name="JSONPostProcessor.defaultValues">${SECURETOKEN}</stringProp>
                 </JSONPostProcessor>
-                <hashTree/>
-                <ResultAction guiclass="ResultActionGui" testclass="ResultAction" testname="stop" enabled="true">
-                  <intProp name="OnError.action">3</intProp>
-                </ResultAction>
                 <hashTree/>
                 <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
                   <boolProp name="ResultCollector.error_logging">false</boolProp>
