@@ -67,6 +67,7 @@ public class CreateAnthologyExecutor
         anthology.setCreateDate(new Date());
         anthology.setSummary(requestPayload.getSummary());
         anthology.setPublish(requestPayload.isPublish());
+        anthology.setTags(requestPayload.getTags());
         if (requestPayload.isPublish()) {
             anthology.setPublishDate(new Date());
         }

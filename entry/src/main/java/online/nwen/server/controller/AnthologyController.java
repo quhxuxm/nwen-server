@@ -23,12 +23,14 @@ class AnthologyController extends AbstractEntryController {
                                CreateAnthologyExecutor createAnthologyExecutor,
                                UpdateAnthologyExecutor updateAnthologyExecutor,
                                PublishAnthologyExecutor publishAnthologyExecutor,
-                               ViewAnthologySummaryExecutor viewAnthologySummaryExecutor) {
+                               ViewAnthologySummaryExecutor viewAnthologySummaryExecutor,
+                               SearchAnthologyExecutor searchAnthologyExecutor) {
         super(executorInvoker);
         this.createAnthologyExecutor = createAnthologyExecutor;
         this.updateAnthologyExecutor = updateAnthologyExecutor;
         this.publishAnthologyExecutor = publishAnthologyExecutor;
         this.viewAnthologySummaryExecutor = viewAnthologySummaryExecutor;
+        this.searchAnthologyExecutor = searchAnthologyExecutor;
     }
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
