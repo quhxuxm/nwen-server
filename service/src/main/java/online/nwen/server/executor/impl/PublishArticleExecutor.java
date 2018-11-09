@@ -57,8 +57,15 @@ public class PublishArticleExecutor implements IExecutor<PublishArticleResponseP
         }
         targetArticle.setAuthorConfirmedPublish(requestPayload.isPublish());
         this.articleService.save(targetArticle);
+        this.systemConfirmPublish(targetArticle);
         PublishArticleResponsePayload publishArticleResponsePayload = new PublishArticleResponsePayload();
         publishArticleResponsePayload.setArticleId(targetArticle.getId());
         response.setPayload(publishArticleResponsePayload);
+    }
+
+    private void systemConfirmPublish(Article article) {
+        article.setSystemConfirmedPublishDate(new Date());
+        article.setSystemConfirmedPublish(true);
+        this.articleService.save(article);
     }
 }
