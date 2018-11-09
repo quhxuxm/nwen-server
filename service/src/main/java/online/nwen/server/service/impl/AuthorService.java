@@ -5,7 +5,6 @@ import online.nwen.server.repository.IAuthorRepository;
 import online.nwen.server.service.api.IAuthorService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,6 +24,7 @@ class AuthorService implements IAuthorService {
         return resultOptional.orElse(null);
     }
 
+    @Cacheable(value = "author", key = "#result.id")
     @Override
     public Author findByUsername(String username) {
         return this.authorRepository.findByUsername(username);

@@ -16,11 +16,13 @@
         </listeners>
         <resources>
             <heap unit="entries">20480</heap>
-            <offheap unit="MB">200</offheap>
+            <offheap unit="MB">256</offheap>
         </resources>
     </cache-template>
     <cache alias="article" uses-template="heap-cache"/>
+    <cache alias="article-owner" uses-template="heap-cache"/>
     <cache alias="anthology" uses-template="heap-cache"/>
+    <cache alias="anthology-owner" uses-template="heap-cache"/>
     <cache alias="author" uses-template="heap-cache"/>
     <cache alias="resource_by_id" uses-template="heap-cache"/>
     <cache alias="resource_by_md5" uses-template="heap-cache"/>

@@ -27,11 +27,13 @@ class AnthologyService implements IAnthologyService {
         return resultOptional.orElse(null);
     }
 
+    @Cacheable(value = "anthology", key = "#p0")
     @Override
     public Anthology findByIdAndSystemConfirmedPublish(String id, boolean systemConfirmedPublish) {
         return this.anthologyRepository.findByIdAndSystemConfirmedPublish(id, systemConfirmedPublish);
     }
 
+    @Cacheable(value = "anthology-owner", key = "#anthologyId+'_'+#authorId")
     @Override
     public boolean isOwner(String authorId, String anthologyId) {
         return this.anthologyRepository.existsByIdAndAuthorId(anthologyId, authorId);
@@ -89,6 +91,7 @@ class AnthologyService implements IAnthologyService {
         return this.anthologyRepository.save(anthology);
     }
 
+    @CachePut(value = "anthology", key = "#p0.id")
     @Override
     public void systemPublishAnthology(Anthology anthology) {
         anthology.setSystemConfirmedPublish(true);

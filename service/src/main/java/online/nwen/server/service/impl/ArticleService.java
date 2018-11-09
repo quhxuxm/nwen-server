@@ -27,11 +27,13 @@ class ArticleService implements IArticleService {
         return resultOptional.orElse(null);
     }
 
+    @Cacheable(value = "article-owner", key = "#articleId+'_'+#authorId")
     @Override
     public boolean isOwner(String authorId, String articleId) {
         return this.articleRepository.existsByIdAndAuthorId(articleId, authorId);
     }
 
+    @Cacheable(value = "article", key = "#p0")
     @Override
     public Article findByIdAndSystemConfirmedPublish(String id, boolean systemConfirmedPublish) {
         return this.articleRepository.findByIdAndSystemConfirmedPublish(id, systemConfirmedPublish);
@@ -126,6 +128,7 @@ class ArticleService implements IArticleService {
         return this.articleRepository.save(article);
     }
 
+    @CachePut(value = "article", key = "#p0.id")
     @Override
     public void systemPublishArticle(Article article) {
         article.setSystemConfirmedPublish(true);
