@@ -1,39 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://www.ehcache.org/v3">
-    <cache alias="article">
+<config
+        xmlns='http://www.ehcache.org/v3'>
+    <cache-template name="heap-cache">
+        <listeners>
+            <listener>
+                <class>online.nwen.server.service.impl.CacheEventLogger</class>
+                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
         <resources>
-            <heap unit="entries">200000</heap>
-            <offheap unit="MB">500</offheap>
+            <heap unit="entries">20480</heap>
+            <offheap unit="MB">200</offheap>
         </resources>
-    </cache>
-    <cache alias="anthology">
-        <resources>
-            <heap unit="entries">2000</heap>
-            <offheap unit="MB">500</offheap>
-        </resources>
-    </cache>
-    <cache alias="comment">
-        <resources>
-            <heap unit="entries">2000</heap>
-            <offheap unit="MB">500</offheap>
-        </resources>
-    </cache>
-    <cache alias="author">
-        <resources>
-            <heap unit="entries">200000</heap>
-            <offheap unit="MB">500</offheap>
-        </resources>
-    </cache>
-    <cache alias="resource_by_id">
-        <resources>
-            <heap unit="entries">20000</heap>
-            <offheap unit="MB">500</offheap>
-        </resources>
-    </cache>
-    <cache alias="resource_by_md5">
-        <resources>
-            <heap unit="entries">20000</heap>
-            <offheap unit="MB">500</offheap>
-        </resources>
-    </cache>
+    </cache-template>
+    <cache alias="article" uses-template="heap-cache"/>
+    <cache alias="anthology" uses-template="heap-cache"/>
+    <cache alias="author" uses-template="heap-cache"/>
+    <cache alias="resource_by_id" uses-template="heap-cache"/>
+    <cache alias="resource_by_md5" uses-template="heap-cache"/>
+    <cache alias="comment" uses-template="heap-cache"/>
 </config>
