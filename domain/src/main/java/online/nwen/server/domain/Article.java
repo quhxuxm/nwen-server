@@ -12,6 +12,7 @@ public class Article implements Serializable {
     private static final long serialVersionUID = 8070388670184979679L;
     @Id
     private String id;
+    @Indexed
     private String title;
     private Date authorConfirmedPublishDate;
     private Date systemConfirmedPublishDate;
@@ -19,10 +20,14 @@ public class Article implements Serializable {
     private Date createDate;
     private String content;
     private String summary;
+    @Indexed
     private String anthologyId;
+    @Indexed
     private String authorId;
     private String coverResourceId;
+    @Indexed
     private boolean authorConfirmedPublish;
+    @Indexed
     private boolean systemConfirmedPublish;
     @Indexed
     private Set<String> tags;

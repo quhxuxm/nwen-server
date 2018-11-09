@@ -12,6 +12,7 @@ public class Resource implements Serializable {
     @Id
     private String id;
     private byte[] content;
+    @Indexed
     private String contentType;
     @Indexed(unique = true)
     private String md5;

@@ -1,6 +1,7 @@
 package online.nwen.server.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -14,16 +15,22 @@ public class Anthology implements Serializable {
     private static final long serialVersionUID = -190322673132950827L;
     @Id
     private String id;
+    @Indexed
     private String title;
     private String summary;
+    @Indexed
     private Date createDate;
+    @Indexed
     private Date updateDate;
     private Date authorConfirmedPublishDate;
     private Date systemConfirmedPublishDate;
     private Date sharedDate;
+    @Indexed
     private String authorId;
     private String coverImageId;
+    @Indexed
     private boolean systemConfirmedPublish;
+    @Indexed
     private boolean authorConfirmedPublish;
     private boolean share;
     private long praiseNumber;
@@ -32,6 +39,7 @@ public class Anthology implements Serializable {
     private long articleNumber;
     private long viewersNumber;
     private long praisesNumber;
+    @Indexed
     private Set<String> tags;
     private Set<String> participantAuthorIds;
     private Map<String, Date> bookmarks;

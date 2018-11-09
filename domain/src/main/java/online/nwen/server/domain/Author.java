@@ -22,6 +22,7 @@ public class Author implements Serializable {
     private Set<Role> roles;
     private Date registerDate;
     private Date lastLoginDate;
+    @Indexed
     private Set<String> tags;
     private Map<String, Date> followers;
     private Map<String, Date> following;

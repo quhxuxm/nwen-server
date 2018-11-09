@@ -1,6 +1,7 @@
 package online.nwen.server.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -16,11 +17,16 @@ public class Comment implements Serializable {
 
     @Id
     private String id;
+    @Indexed
     private String authorId;
+    @Indexed
     private Date createDate;
+    @Indexed
     private Date updateDate;
     private String content;
+    @Indexed
     private String refDocumentId;
+    @Indexed
     private Type type;
     private long commentNumber;
 
