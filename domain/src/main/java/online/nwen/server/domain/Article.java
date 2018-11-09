@@ -1,6 +1,8 @@
 package online.nwen.server.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,6 +10,12 @@ import java.io.Serializable;
 import java.util.*;
 
 @Document(collection = "articles")
+@CompoundIndexes({
+        @CompoundIndex(def = "{'_id': 1, 'systemConfirmedPublish': 1}"),
+        @CompoundIndex(def = "{'authorId': 1, 'systemConfirmedPublish': 1}"),
+        @CompoundIndex(def = "{'anthologyId': 1, 'systemConfirmedPublish': 1}"),
+        @CompoundIndex(def = "{'tags': 1, 'systemConfirmedPublish': 1}")
+})
 public class Article implements Serializable {
     private static final long serialVersionUID = 8070388670184979679L;
     @Id
