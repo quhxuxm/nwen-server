@@ -88,4 +88,11 @@ class AnthologyService implements IAnthologyService {
     public Anthology save(Anthology anthology) {
         return this.anthologyRepository.save(anthology);
     }
+
+    @Override
+    public void systemPublishAnthology(Anthology anthology) {
+        anthology.setSystemConfirmedPublish(true);
+        anthology.setSystemConfirmedPublishDate(new Date());
+        this.anthologyRepository.save(anthology);
+    }
 }

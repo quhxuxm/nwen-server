@@ -96,11 +96,14 @@ public class CreateArticleExecutor
         article.setCreateDate(new Date());
         article.setSummary(requestPayload.getSummary());
         article.setTags(requestPayload.getTags());
-        article.setAuthorConfirmedPublish(requestPayload.isPublished());
-        if (requestPayload.isPublished()) {
+        article.setAuthorConfirmedPublish(requestPayload.isPublish());
+        if (requestPayload.isPublish()) {
             article.setAuthorConfirmedPublishDate(new Date());
         }
         this.articleService.save(article);
+        if (requestPayload.isPublish()) {
+            this.articleService.systemPublishArticle(article);
+        }
         String resourceSaveAuthorId = currentAuthor.getId();
         saveMediaResources(articleContentAnalyzeResponse, resourceSaveAuthorId);
         targetAnthology.setArticleNumber(targetAnthology.getArticleNumber() + 1);

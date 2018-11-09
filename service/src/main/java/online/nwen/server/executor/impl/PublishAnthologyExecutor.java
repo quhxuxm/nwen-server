@@ -58,15 +58,9 @@ public class PublishAnthologyExecutor
         }
         targetAnthology.setAuthorConfirmedPublish(requestPayload.isPublish());
         this.anthologyService.save(targetAnthology);
-        this.systemConfirmPublish(targetAnthology);
+        this.anthologyService.systemPublishAnthology(targetAnthology);
         PublishAnthologyResponsePayload publishAnthologyResponsePayload = new PublishAnthologyResponsePayload();
         publishAnthologyResponsePayload.setAnthologyId(targetAnthology.getId());
         response.setPayload(publishAnthologyResponsePayload);
-    }
-
-    private void systemConfirmPublish(Anthology anthology) {
-        anthology.setSystemConfirmedPublishDate(new Date());
-        anthology.setSystemConfirmedPublish(true);
-        this.anthologyService.save(anthology);
     }
 }

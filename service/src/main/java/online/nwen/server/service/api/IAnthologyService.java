@@ -36,4 +36,6 @@ public interface IAnthologyService {
                                                                                             Pageable pageable);
 
     Anthology save(Anthology anthology);
+
+    void systemPublishAnthology(Anthology anthology);
 }

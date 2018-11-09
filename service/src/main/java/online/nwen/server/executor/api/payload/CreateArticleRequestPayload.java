@@ -8,7 +8,7 @@ public class CreateArticleRequestPayload {
     private String title;
     private String summary;
     private String content;
-    private boolean published;
+    private boolean publish;
     private Set<String> tags;
 
     public CreateArticleRequestPayload() {
@@ -51,11 +51,11 @@ public class CreateArticleRequestPayload {
         return tags;
     }
 
-    public boolean isPublished() {
-        return published;
+    public boolean isPublish() {
+        return publish;
     }
 
-    public void setPublished(boolean published) {
-        this.published = published;
+    public void setPublish(boolean publish) {
+        this.publish = publish;
     }
 }

@@ -125,4 +125,11 @@ class ArticleService implements IArticleService {
     public Article save(Article article) {
         return this.articleRepository.save(article);
     }
+
+    @Override
+    public void systemPublishArticle(Article article) {
+        article.setSystemConfirmedPublish(true);
+        article.setSystemConfirmedPublishDate(new Date());
+        this.articleRepository.save(article);
+    }
 }

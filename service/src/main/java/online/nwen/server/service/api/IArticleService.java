@@ -54,4 +54,6 @@ public interface IArticleService {
                                                                                           Pageable pageable);
 
     Article save(Article article);
+
+    void systemPublishArticle(Article article);
 }

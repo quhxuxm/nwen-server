@@ -67,6 +67,9 @@ public class CreateAnthologyExecutor
         }
         logger.debug("Begin to save anthology: {}", anthology);
         this.anthologyService.save(anthology);
+        if (requestPayload.isPublish()) {
+            this.anthologyService.systemPublishAnthology(anthology);
+        }
         logger.debug("Success to save anthology: {}", anthology.getId());
         currentAuthor.setAnthologyNumber(currentAuthor.getAnthologyNumber() + 1);
         this.authorService.save(currentAuthor);

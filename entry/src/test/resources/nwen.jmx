@@ -259,7 +259,8 @@
 		&quot;title&quot;:&quot;title&quot;,&#xd;
 		&quot;summary&quot;:&quot;summary&quot;,&#xd;
 		&quot;content&quot;:&quot;content&quot;,&#xd;
-		&quot;tags&quot;:[&quot;TAG1&quot;]&#xd;
+		&quot;tags&quot;:[&quot;TAG1&quot;],&#xd;
+		&quot;publish&quot;:true&#xd;
 	}&#xd;
 }&#xd;
 </stringProp>
@@ -356,7 +357,8 @@
 		&quot;title&quot;:&quot;title&quot;,&#xd;
 		&quot;summary&quot;:&quot;summary&quot;,&#xd;
 		&quot;content&quot;:&quot;content&quot;,&#xd;
-		&quot;tags&quot;:[&quot;TAG1&quot;]&#xd;
+		&quot;tags&quot;:[&quot;TAG1&quot;],&#xd;
+		&quot;publish&quot;:true&#xd;
 	}&#xd;
 }&#xd;
 </stringProp>
