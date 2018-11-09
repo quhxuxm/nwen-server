@@ -18,11 +18,13 @@ public class Anthology implements Serializable {
     private String summary;
     private Date createDate;
     private Date updateDate;
-    private Date publishDate;
+    private Date authorConfirmedPublishDate;
+    private Date systemConfirmedPublishDate;
     private Date sharedDate;
     private String authorId;
     private String coverImageId;
-    private boolean publish;
+    private boolean systemConfirmedPublish;
+    private boolean authorConfirmedPublish;
     private boolean share;
     private long praiseNumber;
     private long commentsNumber;
@@ -39,13 +41,30 @@ public class Anthology implements Serializable {
     public Anthology() {
         this.createDate = new Date();
         this.updateDate = this.createDate;
-        this.publish = false;
+        this.authorConfirmedPublish = false;
+        this.systemConfirmedPublish = false;
         this.share = false;
         this.praiseNumber = 0L;
         this.commentsNumber = 0L;
         this.bookmarksNumber = 0L;
         this.tags = new HashSet<>();
         this.participantAuthorIds = new HashSet<>();
+    }
+
+    public boolean isSystemConfirmedPublish() {
+        return systemConfirmedPublish;
+    }
+
+    public void setSystemConfirmedPublish(boolean systemConfirmedPublish) {
+        this.systemConfirmedPublish = systemConfirmedPublish;
+    }
+
+    public Date getSystemConfirmedPublishDate() {
+        return systemConfirmedPublishDate;
+    }
+
+    public void setSystemConfirmedPublishDate(Date systemConfirmedPublishDate) {
+        this.systemConfirmedPublishDate = systemConfirmedPublishDate;
     }
 
     public String getId() {
@@ -88,12 +107,12 @@ public class Anthology implements Serializable {
         this.updateDate = updateDate;
     }
 
-    public Date getPublishDate() {
-        return publishDate;
+    public Date getAuthorConfirmedPublishDate() {
+        return authorConfirmedPublishDate;
     }
 
-    public void setPublishDate(Date publishDate) {
-        this.publishDate = publishDate;
+    public void setAuthorConfirmedPublishDate(Date publishDate) {
+        this.authorConfirmedPublishDate = publishDate;
     }
 
     public Date getSharedDate() {
@@ -120,12 +139,12 @@ public class Anthology implements Serializable {
         this.coverImageId = coverImageId;
     }
 
-    public boolean isPublish() {
-        return publish;
+    public boolean isAuthorConfirmedPublish() {
+        return authorConfirmedPublish;
     }
 
-    public void setPublish(boolean publish) {
-        this.publish = publish;
+    public void setAuthorConfirmedPublish(boolean authorConfirmedPublish) {
+        this.authorConfirmedPublish = authorConfirmedPublish;
     }
 
     public void setShare(boolean share) {
@@ -232,11 +251,12 @@ public class Anthology implements Serializable {
                 ", summary='" + summary + '\'' +
                 ", createDate=" + createDate +
                 ", updateDate=" + updateDate +
-                ", publishDate=" + publishDate +
+                ", authorConfirmedPublishDate=" + authorConfirmedPublishDate +
                 ", sharedDate=" + sharedDate +
                 ", authorId='" + authorId + '\'' +
                 ", coverImageId='" + coverImageId + '\'' +
-                ", publish=" + publish +
+                ", systemConfirmedPublish=" + systemConfirmedPublish +
+                ", authorConfirmedPublish=" + authorConfirmedPublish +
                 ", share=" + share +
                 ", praiseNumber=" + praiseNumber +
                 ", commentsNumber=" + commentsNumber +

@@ -44,7 +44,17 @@ public class ViewArticleSummaryExecutor implements
             logger.error("Fail to view article summary because of article id is empty.");
             throw new ExecutorException(ExecutorException.Code.ARTICLE_ID_IS_EMPTY);
         }
-        Article targetArticle = this.articleService.findById(requestPayload.getArticleId());
+        boolean currentAuthorIsOwner = false;
+        if (securityContext != null) {
+            currentAuthorIsOwner =
+                    this.articleService.isOwner(securityContext.getAuthorId(), requestPayload.getArticleId());
+        }
+        Article targetArticle = null;
+        if (currentAuthorIsOwner) {
+            targetArticle = this.articleService.findById(requestPayload.getArticleId());
+        } else {
+            targetArticle = this.articleService.findByIdAndSystemConfirmedPublish(requestPayload.getArticleId(), true);
+        }
         if (targetArticle == null) {
             logger.error("Fail to view article summary because of article not exist, article id = [{}].",
                     requestPayload.getArticleId());
@@ -73,8 +83,8 @@ public class ViewArticleSummaryExecutor implements
         viewArticleSummaryResponsePayload.setAnthologyId(articleAnthology.getId());
         viewArticleSummaryResponsePayload.setAnthologyCoverImageId(articleAnthology.getCoverImageId());
         viewArticleSummaryResponsePayload.setAnthologyTitle(articleAnthology.getTitle());
-        viewArticleSummaryResponsePayload.setPublish(targetArticle.isPublish());
-        viewArticleSummaryResponsePayload.setPublishDate(targetArticle.getPublishDate());
+        viewArticleSummaryResponsePayload.setPublish(targetArticle.isAuthorConfirmedPublish());
+        viewArticleSummaryResponsePayload.setPublishDate(targetArticle.getAuthorConfirmedPublishDate());
         viewArticleSummaryResponsePayload.setUpdateDate(targetArticle.getUpdateDate());
         viewArticleSummaryResponsePayload.setPraisesNumber(targetArticle.getPraisesNumber());
         response.setPayload(viewArticleSummaryResponsePayload);

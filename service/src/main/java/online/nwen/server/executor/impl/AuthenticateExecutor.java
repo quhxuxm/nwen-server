@@ -52,13 +52,8 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
             throw new ExecutorException(ExecutorException.Code.AUTH_ERROR);
         }
         author.setLastLoginDate(new Date());
-        try {
-            this.authorService.save(author);
-        } catch (Exception e) {
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        this.authorService.save(author);
         AuthenticateResponsePayload responsePayload = new AuthenticateResponsePayload();
-        responsePayload.setUsername(author.getUsername());
         responsePayload.setAuthorId(author.getId());
         logger.debug("Begin to generate security context for new authentication.");
         ISecurityContext newSecurityContext =
@@ -66,12 +61,12 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
         try {
             String secureToken = this.securityService.generateSecureToken(newSecurityContext);
             logger.debug("New security token [{}] generated for author {}.", secureToken,
-                    responsePayload.getUsername());
+                    responsePayload.getAuthorId());
             response.setPayload(responsePayload);
             response.getHeader().put(IExecutorResponse.ResponseHeader.SECURE_TOKEN, secureToken);
         } catch (SecurityServiceException e) {
             logger.error("Fail to generate security token for author [{}] because of exception.",
-                    responsePayload.getUsername(), e);
+                    responsePayload.getAuthorId(), e);
             throw new ExecutorException(e, ExecutorException.Code.AUTH_ERROR);
         }
     }

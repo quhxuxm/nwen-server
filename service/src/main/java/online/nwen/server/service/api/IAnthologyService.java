@@ -9,17 +9,31 @@ import java.util.Date;
 public interface IAnthologyService {
     Anthology findById(String id);
 
-    Page<Anthology> findAllByAuthorIdAndPublishOrderByUpdateDateDesc(String authorId, boolean publish,
-                                                                     Pageable pageable);
+    Anthology findByIdAndSystemConfirmedPublish(String id, boolean systemConfirmedPublish);
 
-    Page<Anthology> findAllByTagsContainingAndPublishOrderByUpdateDateDesc(String[] tags, boolean publish,
-                                                                           Pageable pageable);
+    boolean isOwner(String authorId, String anthologyId);
 
-    Page<Anthology> findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(Date relativeDate, boolean publish,
-                                                                             Pageable pageable);
+    Page<Anthology> findAllByAuthorIdOrderByCreateDateDesc(String authorId,
+                                                           Pageable pageable);
 
-    Page<Anthology> findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(Date relativeDate, boolean publish,
-                                                                             Pageable pageable);
+    Page<Anthology> findAllByAuthorIdOrderByUpdateDateDesc(String authorId,
+                                                           Pageable pageable);
+
+    Page<Anthology> findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDateDesc(String authorId,
+                                                                                    boolean systemConfirmedPublish,
+                                                                                    Pageable pageable);
+
+    Page<Anthology> findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(String[] tags,
+                                                                                          boolean systemConfirmedPublish,
+                                                                                          Pageable pageable);
+
+    Page<Anthology> findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(Date relativeDate,
+                                                                                            boolean systemConfirmedPublish,
+                                                                                            Pageable pageable);
+
+    Page<Anthology> findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDateDesc(Date relativeDate,
+                                                                                            boolean systemConfirmedPublish,
+                                                                                            Pageable pageable);
 
     Anthology save(Anthology anthology);
 }

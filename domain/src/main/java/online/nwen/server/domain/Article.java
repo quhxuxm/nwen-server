@@ -13,7 +13,8 @@ public class Article implements Serializable {
     @Id
     private String id;
     private String title;
-    private Date publishDate;
+    private Date authorConfirmedPublishDate;
+    private Date systemConfirmedPublishDate;
     private Date updateDate;
     private Date createDate;
     private String content;
@@ -21,7 +22,8 @@ public class Article implements Serializable {
     private String anthologyId;
     private String authorId;
     private String coverResourceId;
-    private boolean publish;
+    private boolean authorConfirmedPublish;
+    private boolean systemConfirmedPublish;
     @Indexed
     private Set<String> tags;
     private Map<String, Date> bookmarks;
@@ -39,7 +41,8 @@ public class Article implements Serializable {
         this.praises = new HashMap<>();
         this.viewers = new HashMap<>();
         this.updateDate = this.createDate;
-        this.publish = false;
+        this.authorConfirmedPublish = false;
+        this.systemConfirmedPublish = false;
         this.bookmarksNumber = 0L;
         this.praisesNumber = 0L;
         this.viewersNumber = 0L;
@@ -53,6 +56,22 @@ public class Article implements Serializable {
         this.id = id;
     }
 
+    public boolean isSystemConfirmedPublish() {
+        return systemConfirmedPublish;
+    }
+
+    public void setSystemConfirmedPublish(boolean systemConfirmedPublish) {
+        this.systemConfirmedPublish = systemConfirmedPublish;
+    }
+
+    public Date getSystemConfirmedPublishDate() {
+        return systemConfirmedPublishDate;
+    }
+
+    public void setSystemConfirmedPublishDate(Date systemConfirmedPublishDate) {
+        this.systemConfirmedPublishDate = systemConfirmedPublishDate;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -61,12 +80,12 @@ public class Article implements Serializable {
         this.title = title;
     }
 
-    public Date getPublishDate() {
-        return publishDate;
+    public Date getAuthorConfirmedPublishDate() {
+        return authorConfirmedPublishDate;
     }
 
-    public void setPublishDate(Date publishDate) {
-        this.publishDate = publishDate;
+    public void setAuthorConfirmedPublishDate(Date authorConfirmedPublishDate) {
+        this.authorConfirmedPublishDate = authorConfirmedPublishDate;
     }
 
     public Date getUpdateDate() {
@@ -101,12 +120,12 @@ public class Article implements Serializable {
         this.summary = summary;
     }
 
-    public void setPublish(boolean publish) {
-        this.publish = publish;
+    public void setAuthorConfirmedPublish(boolean authorConfirmedPublish) {
+        this.authorConfirmedPublish = authorConfirmedPublish;
     }
 
-    public boolean isPublish() {
-        return publish;
+    public boolean isAuthorConfirmedPublish() {
+        return authorConfirmedPublish;
     }
 
     public String getAnthologyId() {
@@ -202,7 +221,7 @@ public class Article implements Serializable {
         return "Article{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
-                ", publishDate=" + publishDate +
+                ", authorConfirmedPublishDate=" + authorConfirmedPublishDate +
                 ", updateDate=" + updateDate +
                 ", createDate=" + createDate +
                 ", content='" + content + '\'' +
@@ -210,7 +229,8 @@ public class Article implements Serializable {
                 ", anthologyId='" + anthologyId + '\'' +
                 ", authorId='" + authorId + '\'' +
                 ", coverResourceId='" + coverResourceId + '\'' +
-                ", publish=" + publish +
+                ", authorConfirmedPublish=" + authorConfirmedPublish +
+                ", systemConfirmedPublish=" + systemConfirmedPublish +
                 ", tags=" + tags +
                 ", bookmarks=" + bookmarks +
                 ", praises=" + praises +

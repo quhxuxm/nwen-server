@@ -44,37 +44,43 @@ public class ViewArticleDetailExecutor implements
             logger.error("Fail to view article detail because of article id is empty.");
             throw new ExecutorException(ExecutorException.Code.ARTICLE_ID_IS_EMPTY);
         }
-        Author currentAuthor = null;
+        boolean currentAuthorIsOwner = false;
         if (securityContext != null) {
-            try {
-                currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
-            } catch (Exception e) {
-                logger.error(
-                        "Can not find current author for view article because of exception happen on search current author.",
-                        e);
-            }
-            if (currentAuthor == null) {
-                logger.error("Can not find current author view article because of can not find current author [{}].",
-                        securityContext.getUsername());
-            }
+            currentAuthorIsOwner =
+                    this.articleService.isOwner(securityContext.getAuthorId(), requestPayload.getArticleId());
         }
-        Article targetArticle = this.articleService.findById(requestPayload.getArticleId());
+        logger.debug("Current author id the owner of the article: {}", currentAuthorIsOwner);
+        Article targetArticle = null;
+        if (currentAuthorIsOwner) {
+            logger.debug(
+                    "Current author id the owner of the article, search ignore the system confirmed publish status.");
+            targetArticle = this.articleService.findById(requestPayload.getArticleId());
+        } else {
+            logger.debug(
+                    "Current author id the owner of the article, search with the system confirmed publish status.");
+            targetArticle = this.articleService.findByIdAndSystemConfirmedPublish(requestPayload.getArticleId(), true);
+        }
         if (targetArticle == null) {
             logger.error("Fail to view article detail because of article not exist, article id = [{}].",
                     requestPayload.getArticleId());
             throw new ExecutorException(ExecutorException.Code.ARTICLE_NOT_EXIST);
         }
-        Author articleOwner = this.authorService.findById(targetArticle.getAuthorId());
-        if (articleOwner == null) {
-            throw new ExecutorException(ExecutorException.Code.ARTICLE_AUTHOR_NOT_EXIST);
-        }
         Anthology articleAnthology =
-                this.anthologyService.findById(targetArticle.getAnthologyId());
+                this.anthologyService.findByIdAndSystemConfirmedPublish(targetArticle.getAnthologyId(), true);
         if (articleAnthology == null) {
+            logger.error("Fail to view article detail because of can not find anthology [{}].",
+                    targetArticle.getAnthologyId());
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_NOT_EXIST);
         }
-        if (currentAuthor != null) {
+        if (securityContext != null) {
             targetArticle.setViewersNumber(targetArticle.getViewersNumber() + 1);
+            this.articleService.save(targetArticle);
+        }
+        Author articleAuthor = this.authorService.findById(targetArticle.getAuthorId());
+        if (articleAuthor == null) {
+            logger.error("Fail to view article detail because of can not find author [{}].",
+                    targetArticle.getAuthorId());
+            throw new ExecutorException(ExecutorException.Code.AUTHOR_NOT_EXIST);
         }
         ViewArticleDetailResponsePayload viewArticleDetailResponsePayload = new ViewArticleDetailResponsePayload();
         viewArticleDetailResponsePayload.setTitle(targetArticle.getTitle());
@@ -85,14 +91,16 @@ public class ViewArticleDetailExecutor implements
         viewArticleDetailResponsePayload.setCommentNumber(targetArticle.getCommentNumber());
         viewArticleDetailResponsePayload.setViewersNumber(targetArticle.getViewersNumber());
         viewArticleDetailResponsePayload.setCreateDate(targetArticle.getCreateDate());
-        viewArticleDetailResponsePayload.setAuthorNickname(articleOwner.getNickname());
-        viewArticleDetailResponsePayload.setAuthorId(articleOwner.getId());
-        viewArticleDetailResponsePayload.setAuthorIconImageId(articleOwner.getIconImageId());
+        viewArticleDetailResponsePayload.setAuthorNickname(articleAuthor.getNickname());
+        viewArticleDetailResponsePayload.setAuthorId(articleAuthor.getId());
+        viewArticleDetailResponsePayload.setAuthorIconImageId(articleAuthor.getIconImageId());
         viewArticleDetailResponsePayload.setAnthologyId(articleAnthology.getId());
         viewArticleDetailResponsePayload.setAnthologyCoverImageId(articleAnthology.getCoverImageId());
         viewArticleDetailResponsePayload.setAnthologyTitle(articleAnthology.getTitle());
-        viewArticleDetailResponsePayload.setPublish(targetArticle.isPublish());
-        viewArticleDetailResponsePayload.setPublishDate(targetArticle.getPublishDate());
+        viewArticleDetailResponsePayload.setAuthorConfirmedPublish(targetArticle.isAuthorConfirmedPublish());
+        viewArticleDetailResponsePayload.setAuthorConfirmedPublishDate(targetArticle.getAuthorConfirmedPublishDate());
+        viewArticleDetailResponsePayload.setSystemConfirmedPublish(targetArticle.isSystemConfirmedPublish());
+        viewArticleDetailResponsePayload.setSystemConfirmedPublishDate(targetArticle.getSystemConfirmedPublishDate());
         viewArticleDetailResponsePayload.setUpdateDate(targetArticle.getUpdateDate());
         viewArticleDetailResponsePayload.setPraisesNumber(targetArticle.getPraisesNumber());
         response.setPayload(viewArticleDetailResponsePayload);

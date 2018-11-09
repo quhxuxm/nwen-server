@@ -67,28 +67,13 @@ public class RegisterExecutor implements IExecutor<RegisterResponsePayload, Regi
         Set<Role> roles = new HashSet<>();
         roles.add(Role.AUTHOR);
         author.setRoles(roles);
-        try {
-            this.authorService.save(author);
-        } catch (Exception e) {
-            logger.error("Fail to register author because of exception.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        this.authorService.save(author);
         Anthology anthology = new Anthology();
         anthology.setAuthorId(author.getId());
         anthology.setCreateDate(new Date());
-        try {
-            this.anthologyService.save(anthology);
-        } catch (Exception e) {
-            logger.error("Fail to register author because of exception.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        this.anthologyService.save(anthology);
         author.setDefaultAnthologyId(anthology.getId());
-        try {
-            this.authorService.save(author);
-        } catch (Exception e) {
-            logger.error("Fail to register author because of exception.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        this.authorService.save(author);
         RegisterResponsePayload registerResponsePayload = new RegisterResponsePayload();
         registerResponsePayload.setAuthorId(author.getId());
         response.setPayload(registerResponsePayload);

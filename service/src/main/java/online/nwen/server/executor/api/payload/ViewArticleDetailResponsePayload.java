@@ -21,8 +21,10 @@ public class ViewArticleDetailResponsePayload {
     private String anthologyCoverImageId;
     private Date updateDate;
     private Date createDate;
-    private Date publishDate;
-    private boolean publish;
+    private Date authorConfirmedPublishDate;
+    private Date systemConfirmedPublishDate;
+    private boolean authorConfirmedPublish;
+    private boolean systemConfirmedPublish;
 
     public String getId() {
         return id;
@@ -160,19 +162,35 @@ public class ViewArticleDetailResponsePayload {
         this.createDate = createDate;
     }
 
-    public Date getPublishDate() {
-        return publishDate;
+    public Date getAuthorConfirmedPublishDate() {
+        return authorConfirmedPublishDate;
     }
 
-    public void setPublishDate(Date publishDate) {
-        this.publishDate = publishDate;
+    public void setAuthorConfirmedPublishDate(Date authorConfirmedPublishDate) {
+        this.authorConfirmedPublishDate = authorConfirmedPublishDate;
     }
 
-    public void setPublish(boolean publish) {
-        this.publish = publish;
+    public void setAuthorConfirmedPublish(boolean authorConfirmedPublish) {
+        this.authorConfirmedPublish = authorConfirmedPublish;
     }
 
-    public boolean isPublish() {
-        return publish;
+    public boolean isAuthorConfirmedPublish() {
+        return authorConfirmedPublish;
+    }
+
+    public boolean isSystemConfirmedPublish() {
+        return systemConfirmedPublish;
+    }
+
+    public void setSystemConfirmedPublish(boolean systemConfirmedPublish) {
+        this.systemConfirmedPublish = systemConfirmedPublish;
+    }
+
+    public Date getSystemConfirmedPublishDate() {
+        return systemConfirmedPublishDate;
+    }
+
+    public void setSystemConfirmedPublishDate(Date systemConfirmedPublishDate) {
+        this.systemConfirmedPublishDate = systemConfirmedPublishDate;
     }
 }

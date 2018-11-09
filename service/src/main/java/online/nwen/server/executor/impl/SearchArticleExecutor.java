@@ -1,6 +1,5 @@
 package online.nwen.server.executor.impl;
 
-import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.Article;
 import online.nwen.server.executor.api.IExecutor;
 import online.nwen.server.executor.api.IExecutorRequest;
@@ -76,26 +75,18 @@ public class SearchArticleExecutor
             throws ExecutorException {
         String anthologyId = condition.getParams().get("anthologyId");
         logger.debug("Search articles by anthology id {}", anthologyId);
-        boolean includePublish = false;
+        boolean currentAuthorIsOwner = false;
         if (securityContext != null) {
-            Anthology targetAnthology = this.anthologyService.findById(anthologyId);
-            if (targetAnthology == null) {
-                logger.error("Fail to search articles by anthology id because of anthology not exist.");
-                throw new ExecutorException("Fail to search articles by anthology id because of anthology not exist.",
-                        ExecutorException.Code.SYS_ERROR);
-            }
-            if (targetAnthology.getAuthorId().equals(securityContext.getAuthorId())) {
-                includePublish = true;
-            }
+            currentAuthorIsOwner = this.anthologyService.isOwner(securityContext.getAuthorId(), anthologyId);
         }
         Page<Article> articlePage = null;
-        try {
+        if (currentAuthorIsOwner) {
             articlePage = articleService
-                    .findAllByAnthologyIdAndPublishOrderByUpdateDateDesc(anthologyId, includePublish, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search articles by anthology id because of exception.", e);
-            throw new ExecutorException("Fail to search articles by anthology id because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
+                    .findAllByAnthologyIdOrderByCreateDateDesc(anthologyId, pageable);
+        } else {
+            articlePage = articleService
+                    .findAllByAnthologyIdAndSystemConfirmedPublishOrderByCreateDateDesc(anthologyId, true,
+                            pageable);
         }
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
@@ -108,15 +99,9 @@ public class SearchArticleExecutor
         String tagsStr = condition.getParams().get("tags");
         logger.debug("Search articles by tags {}", tagsStr);
         String[] tags = tagsStr.split(",");
-        Page<Article> articlePage = null;
-        try {
-            articlePage =
-                    articleService.findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search articles by tags because of exception.", e);
-            throw new ExecutorException("Fail to search articles by tags because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
-        }
+        Page<Article> articlePage =
+                articleService.findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(tags, true,
+                        pageable);
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
         return result;
@@ -127,18 +112,17 @@ public class SearchArticleExecutor
             throws ExecutorException {
         String authorId = condition.getParams().get("authorId");
         logger.debug("Search articles by author id {}", authorId);
-        boolean includePublish = false;
-        if (securityContext != null && securityContext.getAuthorId().equals(authorId)) {
-            includePublish = true;
+        boolean currentAuthorIsOwner = false;
+        if (securityContext != null) {
+            currentAuthorIsOwner = securityContext.getAuthorId().equals(authorId);
         }
         Page<Article> articlePage = null;
-        try {
+        if (currentAuthorIsOwner) {
             articlePage = articleService
-                    .findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, includePublish, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search articles by author id because of exception.", e);
-            throw new ExecutorException("Fail to search articles by author id because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
+                    .findAllByAuthorIdOrderByCreateDateDesc(authorId, pageable);
+        } else {
+            articlePage = articleService
+                    .findAllByAuthorIdAndSystemConfirmedPublishOrderByCreateDateDesc(authorId, true, pageable);
         }
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
@@ -151,16 +135,10 @@ public class SearchArticleExecutor
         String relativeDateString = condition.getParams().get("relativeDate");
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
-        Page<Article> articlePage = null;
-        try {
-            articlePage =
-                    articleService
-                            .findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(relativeDate, false, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search articles by author id because of exception.", e);
-            throw new ExecutorException("Fail to search articles by author id because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
-        }
+        Page<Article> articlePage =
+                articleService
+                        .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(relativeDate, true,
+                                pageable);
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
         return result;
@@ -172,16 +150,10 @@ public class SearchArticleExecutor
         String relativeDateString = condition.getParams().get("relativeDate");
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
-        Page<Article> articlePage = null;
-        try {
-            articlePage =
-                    articleService
-                            .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, false, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search articles by author id because of exception.", e);
-            throw new ExecutorException("Fail to search articles by author id because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
-        }
+        Page<Article> articlePage =
+                articleService
+                        .findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDateDesc(relativeDate, true,
+                                pageable);
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
         return result;
@@ -207,7 +179,7 @@ public class SearchArticleExecutor
             SearchArticleResponsePayload.SearchArticleRecord record =
                     new SearchArticleResponsePayload.SearchArticleRecord();
             record.setId(article.getId());
-            record.setPublish(article.isPublish());
+            record.setPublish(article.isAuthorConfirmedPublish());
             return record;
         });
     }

@@ -28,29 +28,59 @@ class AnthologyService implements IAnthologyService {
     }
 
     @Override
-    public Page<Anthology> findAllByAuthorIdAndPublishOrderByUpdateDateDesc(String authorId, boolean publish,
-                                                                            Pageable pageable) {
-        return this.anthologyRepository.findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, publish, pageable);
+    public Anthology findByIdAndSystemConfirmedPublish(String id, boolean systemConfirmedPublish) {
+        return this.anthologyRepository.findByIdAndSystemConfirmedPublish(id, systemConfirmedPublish);
     }
 
     @Override
-    public Page<Anthology> findAllByTagsContainingAndPublishOrderByUpdateDateDesc(String[] tags, boolean publish,
-                                                                                  Pageable pageable) {
-        return this.anthologyRepository.findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, publish, pageable);
+    public boolean isOwner(String authorId, String anthologyId) {
+        return this.anthologyRepository.existsByIdAndAuthorId(anthologyId, authorId);
     }
 
     @Override
-    public Page<Anthology> findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(Date relativeDate, boolean publish,
-                                                                                    Pageable pageable) {
+    public Page<Anthology> findAllByAuthorIdOrderByCreateDateDesc(String authorId, Pageable pageable) {
+        return this.anthologyRepository.findAllByAuthorIdOrderByCreateDateDesc(authorId, pageable);
+    }
+
+    @Override
+    public Page<Anthology> findAllByAuthorIdOrderByUpdateDateDesc(String authorId, Pageable pageable) {
+        return this.anthologyRepository.findAllByAuthorIdOrderByUpdateDateDesc(authorId, pageable);
+    }
+
+    @Override
+    public Page<Anthology> findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDateDesc(String authorId,
+                                                                                           boolean systemConfirmedPublish,
+                                                                                           Pageable pageable) {
         return this.anthologyRepository
-                .findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(relativeDate, publish, pageable);
+                .findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDateDesc(authorId, systemConfirmedPublish,
+                        pageable);
     }
 
     @Override
-    public Page<Anthology> findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(Date relativeDate, boolean publish,
-                                                                                    Pageable pageable) {
+    public Page<Anthology> findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(String[] tags,
+                                                                                                 boolean systemConfirmedPublish,
+                                                                                                 Pageable pageable) {
         return this.anthologyRepository
-                .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, publish, pageable);
+                .findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(tags, systemConfirmedPublish,
+                        pageable);
+    }
+
+    @Override
+    public Page<Anthology> findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(Date relativeDate,
+                                                                                                   boolean systemConfirmedPublish,
+                                                                                                   Pageable pageable) {
+        return this.anthologyRepository
+                .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(relativeDate,
+                        systemConfirmedPublish, pageable);
+    }
+
+    @Override
+    public Page<Anthology> findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDateDesc(Date relativeDate,
+                                                                                                   boolean systemConfirmedPublish,
+                                                                                                   Pageable pageable) {
+        return this.anthologyRepository
+                .findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDateDesc(relativeDate,
+                        systemConfirmedPublish, pageable);
     }
 
     @CachePut(value = "anthology", key = "#result.id")

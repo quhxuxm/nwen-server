@@ -40,8 +40,18 @@ public class ViewAnthologySummaryExecutor implements
             logger.error("Fail to view anthology summary because of anthology id is empty.");
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_ID_IS_EMPTY);
         }
-        Anthology targetAnthology =
-                this.anthologyService.findById(requestPayload.getAnthologyId());
+        boolean currentAuthorIsOwner = false;
+        if (securityContext != null) {
+            currentAuthorIsOwner =
+                    this.anthologyService.isOwner(securityContext.getAuthorId(), requestPayload.getAnthologyId());
+        }
+        Anthology targetAnthology = null;
+        if (currentAuthorIsOwner) {
+            targetAnthology = this.anthologyService.findById(requestPayload.getAnthologyId());
+        } else {
+            targetAnthology =
+                    this.anthologyService.findByIdAndSystemConfirmedPublish(requestPayload.getAnthologyId(), true);
+        }
         if (targetAnthology == null) {
             logger.error("Fail to view anthology summary because of anthology not exist, anthology id = [{}].",
                     requestPayload.getAnthologyId());
@@ -65,8 +75,8 @@ public class ViewAnthologySummaryExecutor implements
         viewAnthologySummaryResponsePayload.setAuthorId(targetAnthology.getId());
         viewAnthologySummaryResponsePayload.setAuthorIconImageId(anthologyOwner.getIconImageId());
         viewAnthologySummaryResponsePayload.setArticleNumber(targetAnthology.getArticleNumber());
-        viewAnthologySummaryResponsePayload.setPublishDate(targetAnthology.getPublishDate());
-        viewAnthologySummaryResponsePayload.setPublish(targetAnthology.isPublish());
+        viewAnthologySummaryResponsePayload.setPublishDate(targetAnthology.getAuthorConfirmedPublishDate());
+        viewAnthologySummaryResponsePayload.setPublish(targetAnthology.isAuthorConfirmedPublish());
         viewAnthologySummaryResponsePayload.setPraisesNumber(targetAnthology.getPraisesNumber());
         viewAnthologySummaryResponsePayload.setUpdateDate(targetAnthology.getUpdateDate());
         response.setPayload(viewAnthologySummaryResponsePayload);

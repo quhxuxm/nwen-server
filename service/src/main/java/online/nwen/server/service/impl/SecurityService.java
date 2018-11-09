@@ -77,21 +77,20 @@ class SecurityService implements ISecurityService {
 
     @Override
     public ISecurityContext refreshSecurityContext(ISecurityContext securityContext) {
-        return createSecurityContentInstance(securityContext.getUsername(), securityContext.getAuthorId()
+        return createSecurityContentInstance(securityContext.getAuthorId()
         );
     }
 
     @Override
     public ISecurityContext createSecurityContext(AuthenticateResponsePayload authenticateResponsePayload) {
-        return createSecurityContentInstance(authenticateResponsePayload.getUsername(),
+        return createSecurityContentInstance(
                 authenticateResponsePayload.getAuthorId());
     }
 
-    private ISecurityContext createSecurityContentInstance(String username, String authorId) {
+    private ISecurityContext createSecurityContentInstance(String authorId) {
         SecurityContext result = new SecurityContext();
         result.setRefreshExpiration(
                 System.currentTimeMillis() + this.globalConfiguration.getSecurityContextRefreshableInterval());
-        result.setUsername(username);
         result.setAuthorId(authorId);
         return result;
     }

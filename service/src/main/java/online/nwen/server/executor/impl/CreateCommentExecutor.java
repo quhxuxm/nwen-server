@@ -11,12 +11,15 @@ import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.CreateCommentRequestPayload;
 import online.nwen.server.executor.api.payload.CreateCommentResponsePayload;
 import online.nwen.server.service.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
 public class CreateCommentExecutor implements IExecutor<CreateCommentResponsePayload, CreateCommentRequestPayload> {
+    private static final Logger logger = LoggerFactory.getLogger(CreateCommentExecutor.class);
     private IArticleService articleService;
     private IAnthologyService anthologyService;
     private IAuthorService authorService;
@@ -39,6 +42,8 @@ public class CreateCommentExecutor implements IExecutor<CreateCommentResponsePay
         CreateCommentRequestPayload requestPayload = request.getPayload();
         Author currentAuthor = this.authorService.findById(securityContext.getAuthorId());
         if (currentAuthor == null) {
+            logger.error("Can not create comment because of author not exist, author id: {}",
+                    securityContext.getAuthorId());
             throw new ExecutorException(ExecutorException.Code.AUTHOR_NOT_EXIST);
         }
         Comment comment = new Comment();

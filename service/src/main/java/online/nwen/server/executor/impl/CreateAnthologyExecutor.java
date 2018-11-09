@@ -39,7 +39,7 @@ public class CreateAnthologyExecutor
     public void exec(IExecutorRequest<CreateAnthologyRequestPayload> request,
                      IExecutorResponse<CreateAnthologyResponsePayload> response, ISecurityContext securityContext)
             throws ExecutorException {
-        logger.debug("Create anthology for author: {}", securityContext.getUsername());
+        logger.debug("Create anthology for author: {}", securityContext.getAuthorId());
         CreateAnthologyRequestPayload requestPayload = request.getPayload();
         if (StringUtils.isEmpty(requestPayload.getTitle())) {
             logger.error("Fail to create anthology because of title is empty.");
@@ -49,16 +49,10 @@ public class CreateAnthologyExecutor
             logger.error("Fail to create anthology because of title length exceed.");
             throw new ExecutorException(ExecutorException.Code.ANTHOLOGY_TITLE_IS_TOO_LONG);
         }
-        Author currentAuthor = null;
-        try {
-            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
-        } catch (Exception e) {
-            logger.error("Fail to create anthology because of exception happen on search current author.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        Author currentAuthor = this.authorService.findById(securityContext.getAuthorId());
         if (currentAuthor == null) {
             logger.error("Fail to create anthology because of can not find current author [{}].",
-                    securityContext.getUsername());
+                    securityContext.getAuthorId());
             throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
         Anthology anthology = new Anthology();
@@ -66,26 +60,16 @@ public class CreateAnthologyExecutor
         anthology.setTitle(requestPayload.getTitle());
         anthology.setCreateDate(new Date());
         anthology.setSummary(requestPayload.getSummary());
-        anthology.setPublish(requestPayload.isPublish());
+        anthology.setAuthorConfirmedPublish(requestPayload.isPublish());
         anthology.setTags(requestPayload.getTags());
         if (requestPayload.isPublish()) {
-            anthology.setPublishDate(new Date());
+            anthology.setAuthorConfirmedPublishDate(new Date());
         }
-        try {
-            logger.debug("Begin to save anthology: {}", anthology);
-            this.anthologyService.save(anthology);
-            logger.debug("Success to save anthology: {}", anthology.getId());
-        } catch (Exception e) {
-            logger.error("Fail to save anthology because of exception.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        logger.debug("Begin to save anthology: {}", anthology);
+        this.anthologyService.save(anthology);
+        logger.debug("Success to save anthology: {}", anthology.getId());
         currentAuthor.setAnthologyNumber(currentAuthor.getAnthologyNumber() + 1);
-        try {
-            this.authorService.save(currentAuthor);
-        } catch (Exception e) {
-            logger.error("Fail to save anthology because of exception when update anthology number for the author.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        this.authorService.save(currentAuthor);
         CreateAnthologyResponsePayload createAnthologyResponsePayload = new CreateAnthologyResponsePayload();
         createAnthologyResponsePayload.setAnthologyId(anthology.getId());
         response.setPayload(createAnthologyResponsePayload);

@@ -2,7 +2,6 @@ package online.nwen.server.executor.impl;
 
 import online.nwen.server.configuration.GlobalConfiguration;
 import online.nwen.server.domain.Article;
-import online.nwen.server.domain.Author;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.IExecutorResponse;
 import online.nwen.server.executor.api.exception.ExecutorException;
@@ -41,7 +40,7 @@ public class UpdateArticleExecutor
     public void exec(IExecutorRequest<UpdateArticleRequestPayload> request,
                      IExecutorResponse<UpdateArticleResponsePayload> response, ISecurityContext securityContext)
             throws ExecutorException {
-        logger.debug("Update article for author: {}", securityContext.getUsername());
+        logger.debug("Update article for author: {}", securityContext.getAuthorId());
         UpdateArticleRequestPayload requestPayload = request.getPayload();
         if (StringUtils.isEmpty(requestPayload.getArticleId())) {
             logger.error("Fail to update article because of article id is empty.");
@@ -55,33 +54,21 @@ public class UpdateArticleExecutor
             logger.error("Fail to update article because of title length exceed.");
             throw new ExecutorException(ExecutorException.Code.ARTICLE_TITLE_IS_TOO_LONG);
         }
-        Author currentAuthor = null;
-        try {
-            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
-        } catch (Exception e) {
-            logger.error("Fail to update article because of exception happen on search current author.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
-        if (currentAuthor == null) {
-            logger.error("Fail to update article because of can not find current author [{}].",
-                    securityContext.getUsername());
-            throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
-        }
         Article targetArticle = this.articleService.findById(requestPayload.getArticleId());
         if (targetArticle == null) {
             logger.error("Fail to update article because of article not exist, article id = [{}].",
                     requestPayload.getArticleId());
             throw new ExecutorException(ExecutorException.Code.ARTICLE_NOT_EXIST);
         }
-        if (!targetArticle.getAuthorId().equals(currentAuthor.getId())) {
+        if (!targetArticle.getAuthorId().equals(securityContext.getAuthorId())) {
             logger.error(
                     "Fail to update article because of author is not the owner, author is [{}], article is [{}].",
-                    securityContext.getUsername(), targetArticle.getId());
+                    securityContext.getAuthorId(), targetArticle.getId());
             throw new ExecutorException(ExecutorException.Code.NOT_ARTICLE_OWNER);
         }
         targetArticle.setTitle(requestPayload.getTitle());
         ArticleContentAnalyzeRequest articleContentAnalyzeRequest = new ArticleContentAnalyzeRequest();
-        articleContentAnalyzeRequest.setAuthorId(currentAuthor.getId());
+        articleContentAnalyzeRequest.setAuthorId(securityContext.getAuthorId());
         articleContentAnalyzeRequest.setContent(requestPayload.getContent());
         ArticleContentAnalyzeResponse articleContentAnalyzeResponse =
                 this.articleContentAnalyzeService.analyze(articleContentAnalyzeRequest);
@@ -89,13 +76,8 @@ public class UpdateArticleExecutor
         targetArticle.setUpdateDate(new Date());
         targetArticle.setSummary(requestPayload.getSummary());
         targetArticle.setTags(requestPayload.getTags());
-        try {
-            this.articleService.save(targetArticle);
-        } catch (Exception e) {
-            logger.error("Fail to update article because of exception.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
-        String resourceSaveAuthorId = currentAuthor.getId();
+        this.articleService.save(targetArticle);
+        String resourceSaveAuthorId = securityContext.getAuthorId();
         saveMediaResources(articleContentAnalyzeResponse, resourceSaveAuthorId);
         UpdateArticleResponsePayload updateArticleResponsePayload = new UpdateArticleResponsePayload();
         updateArticleResponsePayload.setArticleId(targetArticle.getId());

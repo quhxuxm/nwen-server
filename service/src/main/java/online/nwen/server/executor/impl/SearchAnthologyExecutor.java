@@ -65,19 +65,18 @@ public class SearchAnthologyExecutor
             SearchAnthologyRequestPayload.Condition condition, Pageable pageable, ISecurityContext securityContext)
             throws ExecutorException {
         String authorId = condition.getParams().get("authorId");
-        boolean includePublish = false;
-        if (securityContext != null && securityContext.getAuthorId().equals(authorId)) {
-            includePublish = true;
+        boolean currentAuthorIsOwner = false;
+        if (securityContext != null) {
+            currentAuthorIsOwner = securityContext.getAuthorId().equals(authorId);
         }
         logger.debug("Search anthologies by author id {}", authorId);
         Page<Anthology> anthologyPage = null;
-        try {
+        if (currentAuthorIsOwner) {
             anthologyPage = this.anthologyService
-                    .findAllByAuthorIdAndPublishOrderByUpdateDateDesc(authorId, includePublish, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search anthologies by author id because of exception.", e);
-            throw new ExecutorException("Fail to search anthologies by author id because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
+                    .findAllByAuthorIdOrderByCreateDateDesc(authorId, pageable);
+        } else {
+            anthologyPage = this.anthologyService
+                    .findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDateDesc(authorId, true, pageable);
         }
         SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
         result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
@@ -90,15 +89,8 @@ public class SearchAnthologyExecutor
         String tagsStr = condition.getParams().get("tags");
         logger.debug("Search anthologies by tags {}", tagsStr);
         String[] tags = tagsStr.split(",");
-        Page<Anthology> anthologyPage = null;
-        try {
-            anthologyPage = this.anthologyService
-                    .findAllByTagsContainingAndPublishOrderByUpdateDateDesc(tags, false, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search anthologies by tags because of exception.", e);
-            throw new ExecutorException("Fail to search anthologies by tags because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
-        }
+        Page<Anthology> anthologyPage = this.anthologyService
+                .findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(tags, true, pageable);
         SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
         result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
         return result;
@@ -110,15 +102,9 @@ public class SearchAnthologyExecutor
         String relativeDateString = condition.getParams().get("relativeDate");
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
-        Page<Anthology> anthologyPage = null;
-        try {
-            anthologyPage = this.anthologyService
-                    .findAllByCreateDateBeforeAndPublishOrderByCreateDateDesc(relativeDate, false, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search anthologies by recent created because of exception.", e);
-            throw new ExecutorException("Fail to search anthologies by recent created because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
-        }
+        Page<Anthology> anthologyPage = this.anthologyService
+                .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(relativeDate, true,
+                        pageable);
         SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
         result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
         return result;
@@ -130,15 +116,9 @@ public class SearchAnthologyExecutor
         String relativeDateString = condition.getParams().get("relativeDate");
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
-        Page<Anthology> anthologyPage = null;
-        try {
-            anthologyPage = this.anthologyService
-                    .findAllByUpdateDateBeforeAndPublishOrderByUpdateDateDesc(relativeDate, false, pageable);
-        } catch (Exception e) {
-            logger.error("Fail to search anthologies by recent updated because of exception.", e);
-            throw new ExecutorException("Fail to search anthologies by recent updated because of exception.", e,
-                    ExecutorException.Code.SYS_ERROR);
-        }
+        Page<Anthology> anthologyPage = this.anthologyService
+                .findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDateDesc(relativeDate, true,
+                        pageable);
         SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
         result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
         return result;
@@ -164,7 +144,7 @@ public class SearchAnthologyExecutor
             SearchAnthologyResponsePayload.SearchAnthologyRecord record =
                     new SearchAnthologyResponsePayload.SearchAnthologyRecord();
             record.setId(anthology.getId());
-            record.setPublish(anthology.isPublish());
+            record.setPublish(anthology.isAuthorConfirmedPublish());
             return record;
         });
     }

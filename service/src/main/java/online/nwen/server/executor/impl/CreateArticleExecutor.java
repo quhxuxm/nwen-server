@@ -45,7 +45,7 @@ public class CreateArticleExecutor
     public void exec(IExecutorRequest<CreateArticleRequestPayload> request,
                      IExecutorResponse<CreateArticleResponsePayload> response, ISecurityContext securityContext)
             throws ExecutorException {
-        logger.debug("Create article for author: {}", securityContext.getUsername());
+        logger.debug("Create article for author: {}", securityContext.getAuthorId());
         CreateArticleRequestPayload requestPayload = request.getPayload();
         if (StringUtils.isEmpty(requestPayload.getTitle())) {
             logger.error("Fail to create article because of title is empty.");
@@ -55,16 +55,10 @@ public class CreateArticleExecutor
             logger.error("Fail to create article because of title length exceed.");
             throw new ExecutorException(ExecutorException.Code.ARTICLE_TITLE_IS_TOO_LONG);
         }
-        Author currentAuthor = null;
-        try {
-            currentAuthor = this.authorService.findByUsername(securityContext.getUsername());
-        } catch (Exception e) {
-            logger.error("Fail to create article because of exception happen on search current author.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        Author currentAuthor = this.authorService.findById(securityContext.getAuthorId());
         if (currentAuthor == null) {
             logger.error("Fail to create article because of can not find current author [{}].",
-                    securityContext.getUsername());
+                    securityContext.getAuthorId());
             throw new ExecutorException(ExecutorException.Code.CURRENT_AUTHOR_NOT_EXIST);
         }
         String targetAnthologyId = requestPayload.getAnthologyId();
@@ -81,11 +75,11 @@ public class CreateArticleExecutor
         if (!targetAnthology.getAuthorId().equals(currentAuthor.getId())) {
             logger.debug(
                     "Current author is not the owner of the anthology, author is [{}], anthology is [{}].",
-                    securityContext.getUsername(), targetAnthology.getId());
+                    securityContext.getAuthorId(), targetAnthology.getId());
             if (!targetAnthology.getParticipantAuthorIds().contains(currentAuthor.getId())) {
                 logger.error(
                         "Fail to create article because of author is not the participant of the anthology, author is [{}], anthology is [{}].",
-                        securityContext.getUsername(), targetAnthology.getId());
+                        securityContext.getAuthorId(), targetAnthology.getId());
                 throw new ExecutorException(ExecutorException.Code.NOT_ANTHOLOGY_PARTICIPANT);
             }
         }
@@ -102,33 +96,18 @@ public class CreateArticleExecutor
         article.setCreateDate(new Date());
         article.setSummary(requestPayload.getSummary());
         article.setTags(requestPayload.getTags());
-        article.setPublish(requestPayload.isPublished());
+        article.setAuthorConfirmedPublish(requestPayload.isPublished());
         if (requestPayload.isPublished()) {
-            article.setPublishDate(new Date());
+            article.setAuthorConfirmedPublishDate(new Date());
         }
-        try {
-            this.articleService.save(article);
-        } catch (Exception e) {
-            logger.error("Fail to create article because of exception.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        this.articleService.save(article);
         String resourceSaveAuthorId = currentAuthor.getId();
         saveMediaResources(articleContentAnalyzeResponse, resourceSaveAuthorId);
         targetAnthology.setArticleNumber(targetAnthology.getArticleNumber() + 1);
         targetAnthology.setUpdateDate(new Date());
-        try {
-            this.anthologyService.save(targetAnthology);
-        } catch (Exception e) {
-            logger.error("Fail to create article because of exception on update anthology information.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        this.anthologyService.save(targetAnthology);
         currentAuthor.setArticleNumber(currentAuthor.getArticleNumber() + 1);
-        try {
-            this.authorService.save(currentAuthor);
-        } catch (Exception e) {
-            logger.error("Fail to save article because of exception when update article number for the author.", e);
-            throw new ExecutorException(ExecutorException.Code.SYS_ERROR);
-        }
+        this.authorService.save(currentAuthor);
         CreateArticleResponsePayload createArticleResponsePayload = new CreateArticleResponsePayload();
         createArticleResponsePayload.setArticleId(article.getId());
         createArticleResponsePayload.setAnthologyId(targetAnthologyId);
