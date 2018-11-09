@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.ehcache.org/v3">
+    <cache alias="article">
+        <resources>
+            <heap unit="entries">200000</heap>
+            <offheap unit="MB">500</offheap>
+        </resources>
+    </cache>
+    <cache alias="anthology">
+        <resources>
+            <heap unit="entries">2000</heap>
+            <offheap unit="MB">500</offheap>
+        </resources>
+    </cache>
+    <cache alias="comment">
+        <resources>
+            <heap unit="entries">2000</heap>
+            <offheap unit="MB">500</offheap>
+        </resources>
+    </cache>
+    <cache alias="author">
+        <resources>
+            <heap unit="entries">200000</heap>
+            <offheap unit="MB">500</offheap>
+        </resources>
+    </cache>
+    <cache alias="resource_by_id">
+        <resources>
+            <heap unit="entries">20000</heap>
+            <offheap unit="MB">500</offheap>
+        </resources>
+    </cache>
+    <cache alias="resource_by_md5">
+        <resources>
+            <heap unit="entries">20000</heap>
+            <offheap unit="MB">500</offheap>
+        </resources>
+    </cache>
+</config>

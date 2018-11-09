@@ -18,14 +18,13 @@ class AuthorService implements IAuthorService {
         this.authorRepository = authorRepository;
     }
 
-    @Cacheable("author_by_id")
+    @Cacheable("author")
     @Override
     public Author findById(String id) {
         Optional<Author> resultOptional = this.authorRepository.findById(id);
         return resultOptional.orElse(null);
     }
 
-    @Cacheable("author_by_username")
     @Override
     public Author findByUsername(String username) {
         return this.authorRepository.findByUsername(username);
@@ -41,10 +40,7 @@ class AuthorService implements IAuthorService {
         return this.authorRepository.existsByNickname(nickname);
     }
 
-    @Caching(put = {
-            @CachePut(value = "author_by_id", key = "#result.id"),
-            @CachePut(value = "author_by_username", key = "#result.username")
-    })
+    @CachePut(value = "author", key = "#result.id")
     @Override
     public Author save(Author author) {
         return this.authorRepository.save(author);
