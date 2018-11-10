@@ -42,9 +42,11 @@ public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePay
         }
         Pageable pageable = null;
         if (requestPayload.getCondition().isAsc()) {
-            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC);
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC,
+                    requestPayload.getCondition().getSortPropertyNames());
         } else {
-            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC);
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC,
+                    requestPayload.getCondition().getSortPropertyNames());
         }
         if (SearchCommentRequestPayload.Condition.Type.ARTICLE == requestPayload.getCondition().getType()) {
             String articleId = requestPayload.getCondition().getParams().get("articleId");

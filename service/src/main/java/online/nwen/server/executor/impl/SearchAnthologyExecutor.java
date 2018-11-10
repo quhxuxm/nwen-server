@@ -40,9 +40,11 @@ public class SearchAnthologyExecutor
         }
         Pageable pageable = null;
         if (requestPayload.getCondition().isAsc()) {
-            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC);
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC,
+                    requestPayload.getCondition().getSortPropertyNames());
         } else {
-            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC);
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC,
+                    requestPayload.getCondition().getSortPropertyNames());
         }
         if (SearchAnthologyRequestPayload.Condition.Type.AUTHOR_ID == requestPayload.getCondition().getType()) {
             logger.debug("Search anthologies by author id.");

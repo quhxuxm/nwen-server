@@ -12,6 +12,7 @@ public class SearchCommentRequestPayload {
         private Type type;
         private Map<String, String> params;
         private boolean asc;
+        private String[] sortPropertyNames;
 
         public Condition() {
             this.params = new HashMap<>();
@@ -35,6 +36,14 @@ public class SearchCommentRequestPayload {
 
         public void setAsc(boolean asc) {
             this.asc = asc;
+        }
+
+        public String[] getSortPropertyNames() {
+            return sortPropertyNames;
+        }
+
+        public void setSortPropertyNames(String[] sortPropertyNames) {
+            this.sortPropertyNames = sortPropertyNames;
         }
     }
 

@@ -15,6 +15,7 @@ public class SearchAnthologyRequestPayload {
         private Type type;
         private Map<String, String> params;
         private boolean asc;
+        private String[] sortPropertyNames;
 
         public Condition() {
             this.params = new HashMap<>();
@@ -38,6 +39,14 @@ public class SearchAnthologyRequestPayload {
 
         public boolean isAsc() {
             return asc;
+        }
+
+        public String[] getSortPropertyNames() {
+            return sortPropertyNames;
+        }
+
+        public void setParams(Map<String, String> params) {
+            this.params = params;
         }
     }
 

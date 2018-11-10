@@ -44,9 +44,11 @@ public class SearchArticleExecutor
         }
         Pageable pageable = null;
         if (requestPayload.getCondition().isAsc()) {
-            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC);
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC,
+                    requestPayload.getCondition().getSortPropertyNames());
         } else {
-            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC);
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC,
+                    requestPayload.getCondition().getSortPropertyNames());
         }
         if (SearchArticleRequestPayload.Condition.Type.ANTHOLOGY_ID == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by anthology id.");

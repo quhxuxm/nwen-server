@@ -528,7 +528,7 @@
           </hashTree>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="search" enabled="false">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="search" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -562,7 +562,8 @@
 			&quot;type&quot;:&quot;TAGS&quot;,&#xd;
 			&quot;params&quot;:{&#xd;
 				&quot;tags&quot;:&quot;TAG1&quot;&#xd;
-			}&#xd;
+			},&#xd;
+			&quot;sortPropertyNames&quot;:[&quot;createDate&quot;]&#xd;
 		},&#xd;
 		&quot;pageIndex&quot;:${SEARCH_ANTHOLOGY_PAGE_INDEX},&#xd;
 		&quot;pageSize&quot;:10&#xd;
@@ -647,7 +648,8 @@
 			&quot;type&quot;:&quot;TAGS&quot;,&#xd;
 			&quot;params&quot;:{&#xd;
 				&quot;tags&quot;:&quot;TAG1&quot;&#xd;
-			}&#xd;
+			},&#xd;
+			&quot;sortPropertyNames&quot;:[&quot;createDate&quot;]&#xd;
 		},&#xd;
 		&quot;pageIndex&quot;:${SEARCH_ARTICLE_PAGE_INDEX},&#xd;
 		&quot;pageSize&quot;:10&#xd;
@@ -739,7 +741,8 @@
 			&quot;type&quot;:&quot;ARTICLE&quot;,&#xd;
 			&quot;params&quot;:{&#xd;
 				&quot;articleId&quot;:&quot;${SEARCH_COMMENT_ARTICLE_ID}&quot;&#xd;
-			}&#xd;
+			},&#xd;
+			&quot;sortPropertyNames&quot;:[&quot;createDate&quot;]&#xd;
 		},&#xd;
 		&quot;pageIndex&quot;:${SEARCH_ARTICLE_PAGE_INDEX},&#xd;
 		&quot;pageSize&quot;:10&#xd;
