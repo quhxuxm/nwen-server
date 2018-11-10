@@ -19,7 +19,7 @@ class CommentService implements ICommentService {
         this.commentRepository = commentRepository;
     }
 
-    @Cacheable("comment")
+    @Cacheable(value = "comment", key = "#p0", unless = "#result == null")
     @Override
     public Comment findById(String id) {
         Optional<Comment> resultOptional = this.commentRepository.findById(id);

@@ -6,7 +6,7 @@
             <listener>
                 <class>online.nwen.server.service.impl.CacheEventLogger</class>
                 <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
-                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <event-ordering-mode>ORDERED</event-ordering-mode>
                 <events-to-fire-on>CREATED</events-to-fire-on>
                 <events-to-fire-on>UPDATED</events-to-fire-on>
                 <events-to-fire-on>EXPIRED</events-to-fire-on>
@@ -15,14 +15,12 @@
             </listener>
         </listeners>
         <resources>
-            <heap unit="entries">20480</heap>
+            <heap unit="entries">2048</heap>
             <offheap unit="MB">256</offheap>
         </resources>
     </cache-template>
     <cache alias="article" uses-template="heap-cache"/>
-    <cache alias="article-owner" uses-template="heap-cache"/>
     <cache alias="anthology" uses-template="heap-cache"/>
-    <cache alias="anthology-owner" uses-template="heap-cache"/>
     <cache alias="author" uses-template="heap-cache"/>
     <cache alias="resource_by_id" uses-template="heap-cache"/>
     <cache alias="resource_by_md5" uses-template="heap-cache"/>

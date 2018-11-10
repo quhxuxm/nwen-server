@@ -20,20 +20,19 @@ class ArticleService implements IArticleService {
         this.articleRepository = articleRepository;
     }
 
-    @Cacheable("article")
+    @Cacheable(value = "article", key = "#p0", unless = "#result == null")
     @Override
     public Article findById(String id) {
         Optional<Article> resultOptional = this.articleRepository.findById(id);
         return resultOptional.orElse(null);
     }
 
-    @Cacheable(value = "article-owner", key = "#articleId+'_'+#authorId")
     @Override
     public boolean isOwner(String authorId, String articleId) {
         return this.articleRepository.existsByIdAndAuthorId(articleId, authorId);
     }
 
-    @Cacheable(value = "article", key = "#p0")
+    @Cacheable(value = "article", key = "#p0", unless = "#result == null")
     @Override
     public Article findByIdAndSystemConfirmedPublish(String id, boolean systemConfirmedPublish) {
         return this.articleRepository.findByIdAndSystemConfirmedPublish(id, systemConfirmedPublish);
@@ -122,13 +121,13 @@ class ArticleService implements IArticleService {
                         systemConfirmedPublish, pageable);
     }
 
-    @CachePut(value = "article", key = "#result.id")
+    @CachePut(value = "article", key = "#result.id", unless = "#result == null")
     @Override
     public Article save(Article article) {
         return this.articleRepository.save(article);
     }
 
-    @CachePut(value = "article", key = "#p0.id")
+    @CachePut(value = "article", key = "#p0.id", unless = "#result == null")
     @Override
     public void systemPublishArticle(Article article) {
         article.setSystemConfirmedPublish(true);

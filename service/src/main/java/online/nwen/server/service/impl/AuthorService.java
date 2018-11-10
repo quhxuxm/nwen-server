@@ -17,14 +17,14 @@ class AuthorService implements IAuthorService {
         this.authorRepository = authorRepository;
     }
 
-    @Cacheable("author")
+    @Cacheable(value = "author", unless = "#result == null ")
     @Override
     public Author findById(String id) {
         Optional<Author> resultOptional = this.authorRepository.findById(id);
         return resultOptional.orElse(null);
     }
 
-    @Cacheable(value = "author", key = "#result.id")
+    @CachePut(value = "author", key = "#result.id", unless = "#result == null")
     @Override
     public Author findByUsername(String username) {
         return this.authorRepository.findByUsername(username);
@@ -40,7 +40,7 @@ class AuthorService implements IAuthorService {
         return this.authorRepository.existsByNickname(nickname);
     }
 
-    @CachePut(value = "author", key = "#result.id")
+    @CachePut(value = "author", key = "#result.id", unless = "#result == null")
     @Override
     public Author save(Author author) {
         return this.authorRepository.save(author);

@@ -20,20 +20,19 @@ class AnthologyService implements IAnthologyService {
         this.anthologyRepository = anthologyRepository;
     }
 
-    @Cacheable("anthology")
+    @Cacheable(value = "anthology", key = "#p0", unless = "#result == null")
     @Override
     public Anthology findById(String id) {
         Optional<Anthology> resultOptional = this.anthologyRepository.findById(id);
         return resultOptional.orElse(null);
     }
 
-    @Cacheable(value = "anthology", key = "#p0")
+    @Cacheable(value = "anthology", key = "#p0", unless = "#result == null")
     @Override
     public Anthology findByIdAndSystemConfirmedPublish(String id, boolean systemConfirmedPublish) {
         return this.anthologyRepository.findByIdAndSystemConfirmedPublish(id, systemConfirmedPublish);
     }
 
-    @Cacheable(value = "anthology-owner", key = "#anthologyId+'_'+#authorId")
     @Override
     public boolean isOwner(String authorId, String anthologyId) {
         return this.anthologyRepository.existsByIdAndAuthorId(anthologyId, authorId);
@@ -85,13 +84,13 @@ class AnthologyService implements IAnthologyService {
                         systemConfirmedPublish, pageable);
     }
 
-    @CachePut(value = "anthology", key = "#result.id")
+    @CachePut(value = "anthology", key = "#result.id", unless = "#result == null")
     @Override
     public Anthology save(Anthology anthology) {
         return this.anthologyRepository.save(anthology);
     }
 
-    @CachePut(value = "anthology", key = "#p0.id")
+    @CachePut(value = "anthology", key = "#p0.id", unless = "#result == null")
     @Override
     public void systemPublishAnthology(Anthology anthology) {
         anthology.setSystemConfirmedPublish(true);
