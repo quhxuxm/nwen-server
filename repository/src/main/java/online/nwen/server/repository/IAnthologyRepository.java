@@ -12,25 +12,25 @@ public interface IAnthologyRepository extends MongoRepository<Anthology, String>
 
     Anthology findByIdAndSystemConfirmedPublish(String id, boolean systemConfirmedPublish);
 
-    Page<Anthology> findAllByAuthorIdOrderByCreateDateDesc(String authorId,
-                                                           Pageable pageable);
+    Page<Anthology> findAllByAuthorIdOrderByCreateDate(String authorId,
+                                                       Pageable pageable);
 
-    Page<Anthology> findAllByAuthorIdOrderByUpdateDateDesc(String authorId,
-                                                           Pageable pageable);
+    Page<Anthology> findAllByAuthorIdOrderByUpdateDate(String authorId,
+                                                       Pageable pageable);
 
-    Page<Anthology> findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDateDesc(String authorId,
-                                                                                    boolean systemConfirmedPublish,
-                                                                                    Pageable pageable);
+    Page<Anthology> findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDate(String authorId,
+                                                                                boolean systemConfirmedPublish,
+                                                                                Pageable pageable);
 
-    Page<Anthology> findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(String[] tags,
-                                                                                          boolean systemConfirmedPublish,
-                                                                                          Pageable pageable);
+    Page<Anthology> findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDate(String[] tags,
+                                                                                      boolean systemConfirmedPublish,
+                                                                                      Pageable pageable);
 
-    Page<Anthology> findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(Date relativeDate,
-                                                                                            boolean systemConfirmedPublish,
-                                                                                            Pageable pageable);
+    Page<Anthology> findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDate(Date relativeDate,
+                                                                                        boolean systemConfirmedPublish,
+                                                                                        Pageable pageable);
 
-    Page<Anthology> findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDateDesc(Date relativeDate,
-                                                                                            boolean systemConfirmedPublish,
-                                                                                            Pageable pageable);
+    Page<Anthology> findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDate(Date relativeDate,
+                                                                                        boolean systemConfirmedPublish,
+                                                                                        Pageable pageable);
 }

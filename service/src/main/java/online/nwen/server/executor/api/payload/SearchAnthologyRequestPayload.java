@@ -14,6 +14,7 @@ public class SearchAnthologyRequestPayload {
 
         private Type type;
         private Map<String, String> params;
+        private boolean asc;
 
         public Condition() {
             this.params = new HashMap<>();
@@ -29,6 +30,14 @@ public class SearchAnthologyRequestPayload {
 
         public Map<String, String> getParams() {
             return params;
+        }
+
+        public void setAsc(boolean asc) {
+            this.asc = asc;
+        }
+
+        public boolean isAsc() {
+            return asc;
         }
     }
 

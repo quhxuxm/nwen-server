@@ -11,6 +11,7 @@ public class SearchCommentRequestPayload {
 
         private Type type;
         private Map<String, String> params;
+        private boolean asc;
 
         public Condition() {
             this.params = new HashMap<>();
@@ -26,6 +27,14 @@ public class SearchCommentRequestPayload {
 
         public Map<String, String> getParams() {
             return params;
+        }
+
+        public boolean isAsc() {
+            return asc;
+        }
+
+        public void setAsc(boolean asc) {
+            this.asc = asc;
         }
     }
 

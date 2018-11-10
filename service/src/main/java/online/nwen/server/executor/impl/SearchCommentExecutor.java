@@ -11,13 +11,17 @@ import online.nwen.server.executor.api.payload.SearchCommentResponsePayload;
 import online.nwen.server.service.api.IAuthorService;
 import online.nwen.server.service.api.ICommentService;
 import online.nwen.server.service.api.ISecurityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePayload, SearchCommentRequestPayload> {
+    private static final Logger logger = LoggerFactory.getLogger(SearchCommentExecutor.class);
     private ICommentService commentService;
     private IAuthorService authorService;
 
@@ -33,15 +37,17 @@ public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePay
             throws ExecutorException {
         SearchCommentRequestPayload requestPayload = request.getPayload();
         if (requestPayload.getCondition() == null) {
+            logger.error("Can not search the comment because of condition is null.");
             throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
         }
-        SearchCommentRequestPayload.Condition condition = requestPayload.getCondition();
-        if (condition.getType() == null) {
-            throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
+        Pageable pageable = null;
+        if (requestPayload.getCondition().isAsc()) {
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC);
+        } else {
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC);
         }
-        Pageable pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize());
-        if (SearchCommentRequestPayload.Condition.Type.ARTICLE == condition.getType()) {
-            String articleId = condition.getParams().get("articleId");
+        if (SearchCommentRequestPayload.Condition.Type.ARTICLE == requestPayload.getCondition().getType()) {
+            String articleId = requestPayload.getCondition().getParams().get("articleId");
             Page<Comment> commentPage =
                     this.commentService.findAllByTypeAndRefDocumentId(Comment.Type.ARTICLE, articleId, pageable);
             Page<SearchCommentResponsePayload.CommentSearchRecord> recordPage =
@@ -51,8 +57,8 @@ public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePay
             response.setPayload(responsePayload);
             return;
         }
-        if (SearchCommentRequestPayload.Condition.Type.ANTHOLOGY == condition.getType()) {
-            String anthologyId = condition.getParams().get("anthologyId");
+        if (SearchCommentRequestPayload.Condition.Type.ANTHOLOGY == requestPayload.getCondition().getType()) {
+            String anthologyId = requestPayload.getCondition().getParams().get("anthologyId");
             Page<Comment> commentPage =
                     this.commentService.findAllByTypeAndRefDocumentId(Comment.Type.ANTHOLOGY, anthologyId, pageable);
             Page<SearchCommentResponsePayload.CommentSearchRecord> recordPage =
@@ -62,8 +68,8 @@ public class SearchCommentExecutor implements IExecutor<SearchCommentResponsePay
             response.setPayload(responsePayload);
             return;
         }
-        if (SearchCommentRequestPayload.Condition.Type.COMMENT == condition.getType()) {
-            String commentId = condition.getParams().get("commentId");
+        if (SearchCommentRequestPayload.Condition.Type.COMMENT == requestPayload.getCondition().getType()) {
+            String commentId = requestPayload.getCondition().getParams().get("commentId");
             Page<Comment> commentPage =
                     this.commentService.findAllByTypeAndRefDocumentId(Comment.Type.COMMENT, commentId, pageable);
             Page<SearchCommentResponsePayload.CommentSearchRecord> recordPage =

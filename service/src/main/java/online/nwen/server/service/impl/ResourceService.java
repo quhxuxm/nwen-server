@@ -18,14 +18,14 @@ class ResourceService implements IResourceService {
         this.resourceRepository = resourceRepository;
     }
 
-    @Cacheable("resource_by_id")
+    @Cacheable(value = "resource_by_id", key = "#p0", unless = "#result == null")
     @Override
     public Resource findById(String id) {
         Optional<Resource> resultOptional = this.resourceRepository.findById(id);
         return resultOptional.orElse(null);
     }
 
-    @Cacheable("resource_by_md5")
+    @Cacheable(value = "resource_by_md5", key = "#p0", unless = "#result == null")
     @Override
     public Resource findByMd5(String md5) {
         return this.resourceRepository.findByMd5(md5);

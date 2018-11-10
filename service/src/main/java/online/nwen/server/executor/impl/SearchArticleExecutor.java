@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -37,7 +38,16 @@ public class SearchArticleExecutor
                      IExecutorResponse<SearchArticleResponsePayload> response,
                      ISecurityContext securityContext) throws ExecutorException {
         SearchArticleRequestPayload requestPayload = request.getPayload();
-        Pageable pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize());
+        if (requestPayload.getCondition() == null) {
+            logger.error("Can not search the article because of condition is null.");
+            throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
+        }
+        Pageable pageable = null;
+        if (requestPayload.getCondition().isAsc()) {
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC);
+        } else {
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC);
+        }
         if (SearchArticleRequestPayload.Condition.Type.ANTHOLOGY_ID == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by anthology id.");
             response.setPayload(
@@ -82,10 +92,10 @@ public class SearchArticleExecutor
         Page<Article> articlePage = null;
         if (currentAuthorIsOwner) {
             articlePage = articleService
-                    .findAllByAnthologyIdOrderByCreateDateDesc(anthologyId, pageable);
+                    .findAllByAnthologyIdOrderByCreateDate(anthologyId, pageable);
         } else {
             articlePage = articleService
-                    .findAllByAnthologyIdAndSystemConfirmedPublishOrderByCreateDateDesc(anthologyId, true,
+                    .findAllByAnthologyIdAndSystemConfirmedPublishOrderByCreateDate(anthologyId, true,
                             pageable);
         }
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
@@ -100,7 +110,7 @@ public class SearchArticleExecutor
         logger.debug("Search articles by tags {}", tagsStr);
         String[] tags = tagsStr.split(",");
         Page<Article> articlePage =
-                articleService.findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(tags, true,
+                articleService.findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDate(tags, true,
                         pageable);
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
@@ -119,10 +129,10 @@ public class SearchArticleExecutor
         Page<Article> articlePage = null;
         if (currentAuthorIsOwner) {
             articlePage = articleService
-                    .findAllByAuthorIdOrderByCreateDateDesc(authorId, pageable);
+                    .findAllByAuthorIdOrderByCreateDate(authorId, pageable);
         } else {
             articlePage = articleService
-                    .findAllByAuthorIdAndSystemConfirmedPublishOrderByCreateDateDesc(authorId, true, pageable);
+                    .findAllByAuthorIdAndSystemConfirmedPublishOrderByCreateDate(authorId, true, pageable);
         }
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));

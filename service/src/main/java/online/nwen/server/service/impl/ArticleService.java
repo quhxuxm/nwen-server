@@ -39,67 +39,67 @@ class ArticleService implements IArticleService {
     }
 
     @Override
-    public Page<Article> findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(String[] tags,
-                                                                                               boolean systemConfirmedPublish,
-                                                                                               Pageable pageable) {
+    public Page<Article> findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDate(String[] tags,
+                                                                                           boolean systemConfirmedPublish,
+                                                                                           Pageable pageable) {
         return this.articleRepository
-                .findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(tags, systemConfirmedPublish,
+                .findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDate(tags, systemConfirmedPublish,
                         pageable);
     }
 
     @Override
-    public Page<Article> findAllByAnthologyIdOrderByCreateDateDesc(String anthologyId, Pageable pageable) {
-        return this.articleRepository.findAllByAnthologyIdOrderByCreateDateDesc(anthologyId, pageable);
+    public Page<Article> findAllByAnthologyIdOrderByCreateDate(String anthologyId, Pageable pageable) {
+        return this.articleRepository.findAllByAnthologyIdOrderByCreateDate(anthologyId, pageable);
     }
 
     @Override
-    public Page<Article> findAllByAnthologyIdOrderByUpdateDateDesc(String anthologyId, Pageable pageable) {
-        return this.articleRepository.findAllByAnthologyIdOrderByCreateDateDesc(anthologyId, pageable);
+    public Page<Article> findAllByAnthologyIdOrderByUpdateDate(String anthologyId, Pageable pageable) {
+        return this.articleRepository.findAllByAnthologyIdOrderByCreateDate(anthologyId, pageable);
     }
 
     @Override
-    public Page<Article> findAllByAnthologyIdAndSystemConfirmedPublishOrderByUpdateDateDesc(String anthologyId,
-                                                                                            boolean systemConfirmedPublish,
-                                                                                            Pageable pageable) {
+    public Page<Article> findAllByAnthologyIdAndSystemConfirmedPublishOrderByUpdateDate(String anthologyId,
+                                                                                        boolean systemConfirmedPublish,
+                                                                                        Pageable pageable) {
         return this.articleRepository
-                .findAllByAnthologyIdAndSystemConfirmedPublishOrderByUpdateDateDesc(anthologyId, systemConfirmedPublish,
+                .findAllByAnthologyIdAndSystemConfirmedPublishOrderByUpdateDate(anthologyId, systemConfirmedPublish,
                         pageable);
     }
 
     @Override
-    public Page<Article> findAllByAnthologyIdAndSystemConfirmedPublishOrderByCreateDateDesc(String anthologyId,
-                                                                                            boolean systemConfirmedPublish,
-                                                                                            Pageable pageable) {
+    public Page<Article> findAllByAnthologyIdAndSystemConfirmedPublishOrderByCreateDate(String anthologyId,
+                                                                                        boolean systemConfirmedPublish,
+                                                                                        Pageable pageable) {
         return this.articleRepository
-                .findAllByAnthologyIdAndSystemConfirmedPublishOrderByCreateDateDesc(anthologyId, systemConfirmedPublish,
+                .findAllByAnthologyIdAndSystemConfirmedPublishOrderByCreateDate(anthologyId, systemConfirmedPublish,
                         pageable);
     }
 
     @Override
-    public Page<Article> findAllByAuthorIdOrderByCreateDateDesc(String authorId, Pageable pageable) {
-        return this.articleRepository.findAllByAuthorIdOrderByCreateDateDesc(authorId, pageable);
+    public Page<Article> findAllByAuthorIdOrderByCreateDate(String authorId, Pageable pageable) {
+        return this.articleRepository.findAllByAuthorIdOrderByCreateDate(authorId, pageable);
     }
 
     @Override
-    public Page<Article> findAllByAuthorIdOrderByUpdateDateDesc(String authorId, Pageable pageable) {
-        return this.articleRepository.findAllByAuthorIdOrderByUpdateDateDesc(authorId, pageable);
+    public Page<Article> findAllByAuthorIdOrderByUpdateDate(String authorId, Pageable pageable) {
+        return this.articleRepository.findAllByAuthorIdOrderByUpdateDate(authorId, pageable);
     }
 
     @Override
-    public Page<Article> findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDateDesc(String authorId,
-                                                                                         boolean systemConfirmedPublish,
-                                                                                         Pageable pageable) {
+    public Page<Article> findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDate(String authorId,
+                                                                                     boolean systemConfirmedPublish,
+                                                                                     Pageable pageable) {
         return this.articleRepository
-                .findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDateDesc(authorId, systemConfirmedPublish,
+                .findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDate(authorId, systemConfirmedPublish,
                         pageable);
     }
 
     @Override
-    public Page<Article> findAllByAuthorIdAndSystemConfirmedPublishOrderByCreateDateDesc(String authorId,
-                                                                                         boolean systemConfirmedPublish,
-                                                                                         Pageable pageable) {
+    public Page<Article> findAllByAuthorIdAndSystemConfirmedPublishOrderByCreateDate(String authorId,
+                                                                                     boolean systemConfirmedPublish,
+                                                                                     Pageable pageable) {
         return this.articleRepository
-                .findAllByAuthorIdAndSystemConfirmedPublishOrderByCreateDateDesc(authorId, systemConfirmedPublish,
+                .findAllByAuthorIdAndSystemConfirmedPublishOrderByCreateDate(authorId, systemConfirmedPublish,
                         pageable);
     }
 
@@ -108,7 +108,7 @@ class ArticleService implements IArticleService {
                                                                                                  boolean systemConfirmedPublish,
                                                                                                  Pageable pageable) {
         return this.articleRepository
-                .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(relativeDate,
+                .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDate(relativeDate,
                         systemConfirmedPublish, pageable);
     }
 
@@ -117,7 +117,7 @@ class ArticleService implements IArticleService {
                                                                                                  boolean systemConfirmedPublish,
                                                                                                  Pageable pageable) {
         return this.articleRepository
-                .findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDateDesc(relativeDate,
+                .findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDate(relativeDate,
                         systemConfirmedPublish, pageable);
     }
 

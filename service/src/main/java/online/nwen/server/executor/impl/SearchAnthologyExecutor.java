@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,7 +34,16 @@ public class SearchAnthologyExecutor
                      IExecutorResponse<SearchAnthologyResponsePayload> response,
                      ISecurityContext securityContext) throws ExecutorException {
         SearchAnthologyRequestPayload requestPayload = request.getPayload();
-        Pageable pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize());
+        if (requestPayload.getCondition() == null) {
+            logger.error("Can not search the anthology because of condition is null.");
+            throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
+        }
+        Pageable pageable = null;
+        if (requestPayload.getCondition().isAsc()) {
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC);
+        } else {
+            pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC);
+        }
         if (SearchAnthologyRequestPayload.Condition.Type.AUTHOR_ID == requestPayload.getCondition().getType()) {
             logger.debug("Search anthologies by author id.");
             response.setPayload(
@@ -73,10 +83,10 @@ public class SearchAnthologyExecutor
         Page<Anthology> anthologyPage = null;
         if (currentAuthorIsOwner) {
             anthologyPage = this.anthologyService
-                    .findAllByAuthorIdOrderByCreateDateDesc(authorId, pageable);
+                    .findAllByAuthorIdOrderByCreateDate(authorId, pageable);
         } else {
             anthologyPage = this.anthologyService
-                    .findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDateDesc(authorId, true, pageable);
+                    .findAllByAuthorIdAndSystemConfirmedPublishOrderByUpdateDate(authorId, true, pageable);
         }
         SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
         result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
@@ -90,7 +100,7 @@ public class SearchAnthologyExecutor
         logger.debug("Search anthologies by tags {}", tagsStr);
         String[] tags = tagsStr.split(",");
         Page<Anthology> anthologyPage = this.anthologyService
-                .findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDateDesc(tags, true, pageable);
+                .findAllByTagsContainingAndSystemConfirmedPublishOrderByUpdateDate(tags, true, pageable);
         SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
         result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
         return result;
@@ -103,7 +113,7 @@ public class SearchAnthologyExecutor
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Anthology> anthologyPage = this.anthologyService
-                .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(relativeDate, true,
+                .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDate(relativeDate, true,
                         pageable);
         SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
         result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
@@ -117,7 +127,7 @@ public class SearchAnthologyExecutor
         logger.debug("Search recent created by relative date: {}", relativeDateString);
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Anthology> anthologyPage = this.anthologyService
-                .findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDateDesc(relativeDate, true,
+                .findAllByUpdateDateBeforeAndSystemConfirmedPublishOrderByUpdateDate(relativeDate, true,
                         pageable);
         SearchAnthologyResponsePayload result = new SearchAnthologyResponsePayload();
         result.setRecords(this.convertAnthologyPageToSearchAnthologyRecordPage(anthologyPage));
