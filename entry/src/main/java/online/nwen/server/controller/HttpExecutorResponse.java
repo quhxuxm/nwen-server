@@ -6,18 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 class HttpExecutorResponse<PayloadType> implements IExecutorResponse<PayloadType> {
-    private boolean success;
     private Map<IExecutorResponse.ResponseHeader, String> header;
     private PayloadType payload;
 
     HttpExecutorResponse() {
         this.header = new HashMap<>();
-        this.success = true;
-    }
-
-    @Override
-    public boolean isSuccess() {
-        return this.success;
     }
 
     public Map<IExecutorResponse.ResponseHeader, String> getHeader() {
@@ -30,9 +23,5 @@ class HttpExecutorResponse<PayloadType> implements IExecutorResponse<PayloadType
 
     public void setPayload(PayloadType payload) {
         this.payload = payload;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
     }
 }

@@ -5,6 +5,7 @@ import online.nwen.server.executor.api.payload.ExceptionPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,11 +20,14 @@ class ExceptionController extends AbstractEntryController {
     }
 
     @ExceptionHandler(value = ExecutorException.class)
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    HttpExecutorResponse<ExceptionPayload> onExecutorException(ExecutorException e) {
+    ResponseEntity<HttpExecutorResponse<ExceptionPayload>> onExecutorException(ExecutorException e) {
         logger.debug("Exception happen, convert exception to exception response. Exceptions is:\n", e);
-        return this.generateExceptionEntryResponse(e.getCode());
+        if (ExecutorException.Code.AUTH_ERROR == e.getCode()) {
+            return new ResponseEntity<>(
+                    this.generateExceptionEntryResponse(e.getCode()), HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(
+                this.generateExceptionEntryResponse(e.getCode()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = Exception.class)

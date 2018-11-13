@@ -13,13 +13,6 @@ public interface IExecutorResponse<PayloadType> {
     }
 
     /**
-     * Is the response success.
-     *
-     * @return Is the response success
-     */
-    boolean isSuccess();
-
-    /**
      * The response header
      *
      * @return Response header

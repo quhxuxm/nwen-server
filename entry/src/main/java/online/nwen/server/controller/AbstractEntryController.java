@@ -1,10 +1,10 @@
 package online.nwen.server.controller;
 
 import online.nwen.server.executor.api.IExecutor;
-import online.nwen.server.service.api.IExecutorService;
 import online.nwen.server.executor.api.IExecutorRequest;
 import online.nwen.server.executor.api.exception.ExecutorException;
 import online.nwen.server.executor.api.payload.ExceptionPayload;
+import online.nwen.server.service.api.IExecutorService;
 import org.springframework.web.bind.annotation.RequestBody;
 
 abstract class AbstractEntryController {
@@ -19,7 +19,6 @@ abstract class AbstractEntryController {
         ExceptionPayload exceptionPayload = new ExceptionPayload();
         exceptionPayload.setCode(code);
         response.setPayload(exceptionPayload);
-        response.setSuccess(false);
         return response;
     }
 
