@@ -121,13 +121,13 @@ class ArticleService implements IArticleService {
                         systemConfirmedPublish, pageable);
     }
 
-    @CachePut(value = "article", key = "#result.id", unless = "#result == null")
+    @CachePut(value = "article", key = "#result.id", condition = "#result != null")
     @Override
     public Article save(Article article) {
         return this.articleRepository.save(article);
     }
 
-    @CachePut(value = "article", key = "#p0.id", unless = "#result == null")
+    @CachePut(value = "article", key = "#p0.id", condition = "#result != null")
     @Override
     public void systemPublishArticle(Article article) {
         article.setSystemConfirmedPublish(true);

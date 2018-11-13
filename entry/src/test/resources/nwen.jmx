@@ -35,15 +35,6 @@
         <stringProp name="HTTPSampler.response_timeout"></stringProp>
       </ConfigTestElement>
       <hashTree/>
-      <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Api response status checking" enabled="true">
-        <stringProp name="JSON_PATH">$.success</stringProp>
-        <stringProp name="EXPECTED_VALUE">true</stringProp>
-        <boolProp name="JSONVALIDATION">true</boolProp>
-        <boolProp name="EXPECT_NULL">false</boolProp>
-        <boolProp name="INVERT">false</boolProp>
-        <boolProp name="ISREGEX">true</boolProp>
-      </JSONPathAssertion>
-      <hashTree/>
       <DebugPostProcessor guiclass="TestBeanGUI" testclass="DebugPostProcessor" testname="Debug Processor" enabled="true">
         <boolProp name="displayJMeterProperties">false</boolProp>
         <boolProp name="displayJMeterVariables">true</boolProp>

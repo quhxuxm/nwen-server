@@ -37,8 +37,8 @@ class ResourceService implements IResourceService {
     }
 
     @Caching(put = {
-            @CachePut(value = "resource_by_id", key = "#result.id"),
-            @CachePut(value = "resource_by_md5", key = "#result.md5")
+            @CachePut(value = "resource_by_id", key = "#result.id", condition = "#result != null"),
+            @CachePut(value = "resource_by_md5", key = "#result.md5", condition = "#result != null")
     })
     @Override
     public Resource save(Resource resource) {

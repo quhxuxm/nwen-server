@@ -84,13 +84,13 @@ class AnthologyService implements IAnthologyService {
                         systemConfirmedPublish, pageable);
     }
 
-    @CachePut(value = "anthology", key = "#result.id", unless = "#result == null")
+    @CachePut(value = "anthology", key = "#result.id", condition = "#result != null")
     @Override
     public Anthology save(Anthology anthology) {
         return this.anthologyRepository.save(anthology);
     }
 
-    @CachePut(value = "anthology", key = "#p0.id", unless = "#result == null")
+    @CachePut(value = "anthology", key = "#p0.id", condition = "#result != null")
     @Override
     public void systemPublishAnthology(Anthology anthology) {
         anthology.setSystemConfirmedPublish(true);

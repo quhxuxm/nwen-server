@@ -31,7 +31,7 @@ class CommentService implements ICommentService {
         return this.commentRepository.findAllByTypeAndRefDocumentId(type, refDocumentId, pageable);
     }
 
-    @CachePut(value = "comment", key = "#result.id")
+    @CachePut(value = "comment", key = "#result.id", condition = "#result != null")
     @Override
     public Comment save(Comment comment) {
         return this.commentRepository.save(comment);
