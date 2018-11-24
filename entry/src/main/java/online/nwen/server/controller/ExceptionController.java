@@ -5,7 +5,6 @@ import online.nwen.server.executor.api.payload.ExceptionPayload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,18 +19,14 @@ class ExceptionController extends AbstractEntryController {
     }
 
     @ExceptionHandler(value = ExecutorException.class)
-    ResponseEntity<HttpExecutorResponse<ExceptionPayload>> onExecutorException(ExecutorException e) {
+    @ResponseStatus(code = HttpStatus.OK)
+    HttpExecutorResponse<ExceptionPayload> onExecutorException(ExecutorException e) {
         logger.debug("Exception happen, convert exception to exception response. Exceptions is:\n", e);
-        if (ExecutorException.Code.AUTH_ERROR == e.getCode()) {
-            return new ResponseEntity<>(
-                    this.generateExceptionEntryResponse(e.getCode()), HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>(
-                this.generateExceptionEntryResponse(e.getCode()), HttpStatus.INTERNAL_SERVER_ERROR);
+        return this.generateExceptionEntryResponse(e.getCode());
     }
 
     @ExceptionHandler(value = Exception.class)
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     HttpExecutorResponse<ExceptionPayload> onGeneralException(Exception e) {
         ExecutorException executorException = new ExecutorException(ExecutorException.Code.SYS_ERROR);
