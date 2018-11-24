@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 class HttpExecutorResponse<PayloadType> implements IExecutorResponse<PayloadType> {
+    private boolean success;
     private Map<IExecutorResponse.ResponseHeader, String> header;
     private PayloadType payload;
 
     HttpExecutorResponse() {
+        this.success = true;
         this.header = new HashMap<>();
     }
 
@@ -23,5 +25,13 @@ class HttpExecutorResponse<PayloadType> implements IExecutorResponse<PayloadType
 
     public void setPayload(PayloadType payload) {
         this.payload = payload;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 }

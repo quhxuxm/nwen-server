@@ -16,6 +16,7 @@ abstract class AbstractEntryController {
 
     HttpExecutorResponse<ExceptionPayload> generateExceptionEntryResponse(ExecutorException.Code code) {
         HttpExecutorResponse<ExceptionPayload> response = new HttpExecutorResponse<>();
+        response.setSuccess(false);
         ExceptionPayload exceptionPayload = new ExceptionPayload();
         exceptionPayload.setCode(code);
         response.setPayload(exceptionPayload);
