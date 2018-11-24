@@ -31,7 +31,7 @@ class HttpExecutorResponse<PayloadType> implements IExecutorResponse<PayloadType
         return success;
     }
 
-    public void setSuccess(boolean success) {
+    void setSuccess(boolean success) {
         this.success = success;
     }
 }
