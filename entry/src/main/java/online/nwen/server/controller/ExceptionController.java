@@ -20,6 +20,7 @@ class ExceptionController extends AbstractEntryController {
 
     @ExceptionHandler(value = ExecutorException.class)
     @ResponseStatus(code = HttpStatus.OK)
+    @ResponseBody
     HttpExecutorResponse<ExceptionPayload> onExecutorException(ExecutorException e) {
         logger.debug("Exception happen, convert exception to exception response. Exceptions is:\n", e);
         return this.generateExceptionEntryResponse(e.getCode());
