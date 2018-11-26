@@ -38,11 +38,11 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
         AuthenticateRequestPayload requestPayload = request.getPayload();
         if (StringUtils.isEmpty(requestPayload.getUsername())) {
             logger.error("Fail to do authentication because of the username is empty.");
-            throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
+            throw new ExecutorException(ExecutorException.Code.USERNAME_IS_EMPTY);
         }
         if (StringUtils.isEmpty(requestPayload.getPassword())) {
             logger.error("Fail to do authentication because of the password is empty.");
-            throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
+            throw new ExecutorException(ExecutorException.Code.PASSWORD_IS_EMPTY);
         }
         Author author = this.authorService.findByUsername(requestPayload.getUsername());
         if (author == null) {
