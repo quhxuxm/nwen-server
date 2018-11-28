@@ -55,15 +55,22 @@ public class AuthenticateExecutor implements IExecutor<AuthenticateResponsePaylo
         this.authorService.save(author);
         AuthenticateResponsePayload responsePayload = new AuthenticateResponsePayload();
         responsePayload.setAuthorId(author.getId());
+        responsePayload.setAuthorLastLoginDate(author.getLastLoginDate());
+        responsePayload.setAuthorDescription(author.getDescription());
+        responsePayload.setAuthorTags(author.getTags());
+        responsePayload.setAuthorIconImageId(author.getIconImageId());
+        responsePayload.setAuthorDefaultAnthologyId(author.getDefaultAnthologyId());
+        responsePayload.setAuthorNickname(author.getNickname());
+        responsePayload.setAuthorUsername(author.getUsername());
         logger.debug("Begin to generate security context for new authentication.");
         ISecurityContext newSecurityContext =
                 this.securityService.createSecurityContext(responsePayload);
         try {
             String secureToken = this.securityService.generateSecureToken(newSecurityContext);
+            responsePayload.setSecureToken(secureToken);
             logger.debug("New security token [{}] generated for author {}.", secureToken,
                     responsePayload.getAuthorId());
             response.setPayload(responsePayload);
-            response.getHeader().put(IExecutorResponse.ResponseHeader.SECURE_TOKEN, secureToken);
         } catch (SecurityServiceException e) {
             logger.error("Fail to generate security token for author [{}] because of exception.",
                     responsePayload.getAuthorId(), e);
