@@ -86,8 +86,8 @@
                   <stringProp name="Argument.value">{&#xd;
 	&quot;header&quot;:{},&#xd;
 	&quot;payload&quot;:{&#xd;
-		&quot;username&quot;:&quot;USERNAME_${USER_INDEX}&quot;,&#xd;
-		&quot;password&quot;:&quot;password&quot;,&#xd;
+		&quot;username&quot;:&quot;user${USER_INDEX}@163.com&quot;,&#xd;
+		&quot;password&quot;:&quot;password!1&quot;,&#xd;
 		&quot;nickname&quot;:&quot;USERNAME_${USER_INDEX}&quot;&#xd;
 	}&#xd;
 }&#xd;
@@ -160,8 +160,8 @@
 	&quot;header&quot;:{&#xd;
 	},&#xd;
 	&quot;payload&quot;:{&#xd;
-		&quot;username&quot;:&quot;USERNAME_${USER_INDEX}&quot;,&#xd;
-		&quot;password&quot;:&quot;password&quot;&#xd;
+		&quot;username&quot;:&quot;user${USER_INDEX}@163.com&quot;,&#xd;
+		&quot;password&quot;:&quot;password!1&quot;&#xd;
 	}&#xd;
 }&#xd;
 </stringProp>
@@ -186,7 +186,7 @@
           <hashTree>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="securetoken extractor" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">SECURETOKEN</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.header.SECURE_TOKEN</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.payload.secureToken</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
               <stringProp name="Sample.scope">all</stringProp>
               <stringProp name="Scope.variable"></stringProp>
