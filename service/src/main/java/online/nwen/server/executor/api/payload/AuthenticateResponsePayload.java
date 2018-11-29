@@ -1,6 +1,5 @@
 package online.nwen.server.executor.api.payload;
 
-import java.util.Date;
 import java.util.Set;
 
 public class AuthenticateResponsePayload {
@@ -9,9 +8,8 @@ public class AuthenticateResponsePayload {
     private String authorUsername;
     private String authorDescription;
     private Set<String> authorTags;
-    private Date authorLastLoginDate;
+    private long authorLastLoginDate;
     private String authorIconImageId;
-    private String secureToken;
     private String authorDefaultAnthologyId;
 
     public String getAuthorId() {
@@ -54,11 +52,11 @@ public class AuthenticateResponsePayload {
         this.authorTags = authorTags;
     }
 
-    public Date getAuthorLastLoginDate() {
+    public long getAuthorLastLoginDate() {
         return authorLastLoginDate;
     }
 
-    public void setAuthorLastLoginDate(Date authorLastLoginDate) {
+    public void setAuthorLastLoginDate(long authorLastLoginDate) {
         this.authorLastLoginDate = authorLastLoginDate;
     }
 
@@ -68,14 +66,6 @@ public class AuthenticateResponsePayload {
 
     public void setAuthorIconImageId(String authorIconImageId) {
         this.authorIconImageId = authorIconImageId;
-    }
-
-    public String getSecureToken() {
-        return secureToken;
-    }
-
-    public void setSecureToken(String secureToken) {
-        this.secureToken = secureToken;
     }
 
     public String getAuthorDefaultAnthologyId() {
@@ -96,7 +86,6 @@ public class AuthenticateResponsePayload {
                 ", authorTags=" + authorTags +
                 ", authorLastLoginDate=" + authorLastLoginDate +
                 ", authorIconImageId='" + authorIconImageId + '\'' +
-                ", secureToken='" + secureToken + '\'' +
                 ", authorDefaultAnthologyId='" + authorDefaultAnthologyId + '\'' +
                 '}';
     }
