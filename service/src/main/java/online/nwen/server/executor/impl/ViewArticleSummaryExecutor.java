@@ -53,7 +53,7 @@ public class ViewArticleSummaryExecutor implements
         if (currentAuthorIsOwner) {
             targetArticle = this.articleService.findById(requestPayload.getArticleId());
         } else {
-            targetArticle = this.articleService.findByIdAndSystemConfirmedPublish(requestPayload.getArticleId(), true);
+            targetArticle = this.articleService.findByIdAndSystemConfirmedPublish(requestPayload.getArticleId(), false);
         }
         if (targetArticle == null) {
             logger.error("Fail to view article summary because of article not exist, article id = [{}].",

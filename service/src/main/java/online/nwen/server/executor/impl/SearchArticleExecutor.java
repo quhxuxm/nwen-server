@@ -149,7 +149,7 @@ public class SearchArticleExecutor
         Date relativeDate = getRelativeDateFromRequest(relativeDateString);
         Page<Article> articlePage =
                 articleService
-                        .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(relativeDate, true,
+                        .findAllByCreateDateBeforeAndSystemConfirmedPublishOrderByCreateDateDesc(relativeDate, false,
                                 pageable);
         SearchArticleResponsePayload result = new SearchArticleResponsePayload();
         result.setRecords(this.convertArticlePageToSearchArticleRecordPage(articlePage));
