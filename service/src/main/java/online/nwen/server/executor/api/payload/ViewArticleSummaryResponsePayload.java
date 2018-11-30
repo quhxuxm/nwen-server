@@ -22,6 +22,7 @@ public class ViewArticleSummaryResponsePayload {
     private Date createDate;
     private Date publishDate;
     private boolean publish;
+    private String articleCoverImageId;
 
     public String getId() {
         return id;
@@ -165,5 +166,13 @@ public class ViewArticleSummaryResponsePayload {
 
     public boolean isPublish() {
         return publish;
+    }
+
+    public String getArticleCoverImageId() {
+        return articleCoverImageId;
+    }
+
+    public void setArticleCoverImageId(String articleCoverImageId) {
+        this.articleCoverImageId = articleCoverImageId;
     }
 }
