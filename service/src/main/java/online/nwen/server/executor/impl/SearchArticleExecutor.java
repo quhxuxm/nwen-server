@@ -38,6 +38,10 @@ public class SearchArticleExecutor
                      IExecutorResponse<SearchArticleResponsePayload> response,
                      ISecurityContext securityContext) throws ExecutorException {
         SearchArticleRequestPayload requestPayload = request.getPayload();
+        String[] sortPropertyName = requestPayload.getCondition().getSortPropertyNames();
+        if (sortPropertyName == null || sortPropertyName.length == 0) {
+            sortPropertyName = new String[]{"createDate"};
+        }
         if (requestPayload.getCondition() == null) {
             logger.error("Can not search the article because of condition is null.");
             throw new ExecutorException(ExecutorException.Code.INPUT_ERROR);
@@ -45,10 +49,10 @@ public class SearchArticleExecutor
         Pageable pageable = null;
         if (requestPayload.getCondition().isAsc()) {
             pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.ASC,
-                    requestPayload.getCondition().getSortPropertyNames());
+                    sortPropertyName);
         } else {
             pageable = PageRequest.of(requestPayload.getPageIndex(), requestPayload.getPageSize(), Sort.Direction.DESC,
-                    requestPayload.getCondition().getSortPropertyNames());
+                    sortPropertyName);
         }
         if (SearchArticleRequestPayload.Condition.Type.ANTHOLOGY_ID == requestPayload.getCondition().getType()) {
             logger.debug("Search articles by anthology id.");
