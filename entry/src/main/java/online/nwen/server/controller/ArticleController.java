@@ -17,7 +17,7 @@ class ArticleController extends AbstractEntryController {
     private UpdateArticleExecutor updateArticleExecutor;
     private PublishArticleExecutor publishArticleExecutor;
     private ViewArticleDetailExecutor viewArticleDetailExecutor;
-    private ViewArticleSummaryExecutor viewArticleSummaryExecutor;
+    private ViewArticleSummariesExecutor viewArticleSummariesExecutor;
     private SearchArticleExecutor searchArticleExecutor;
 
     public ArticleController(IExecutorService executorInvoker,
@@ -25,14 +25,14 @@ class ArticleController extends AbstractEntryController {
                              UpdateArticleExecutor updateArticleExecutor,
                              PublishArticleExecutor publishArticleExecutor,
                              ViewArticleDetailExecutor viewArticleDetailExecutor,
-                             ViewArticleSummaryExecutor viewArticleSummaryExecutor,
+                             ViewArticleSummariesExecutor viewArticleSummariesExecutor,
                              SearchArticleExecutor searchArticleExecutor) {
         super(executorInvoker);
         this.createArticleExecutor = createArticleExecutor;
         this.updateArticleExecutor = updateArticleExecutor;
         this.publishArticleExecutor = publishArticleExecutor;
         this.viewArticleDetailExecutor = viewArticleDetailExecutor;
-        this.viewArticleSummaryExecutor = viewArticleSummaryExecutor;
+        this.viewArticleSummariesExecutor = viewArticleSummariesExecutor;
         this.searchArticleExecutor = searchArticleExecutor;
     }
 
@@ -68,12 +68,12 @@ class ArticleController extends AbstractEntryController {
         return this.service(request, this.viewArticleDetailExecutor, false);
     }
 
-    @PostMapping(value = "/view/summary", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+    @PostMapping(value = "/view/summaries", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    HttpExecutorResponse<ViewArticleSummaryResponsePayload> viewSummary(
-            @RequestBody HttpExecutorRequest<ViewArticleSummaryRequestPayload> request)
+    HttpExecutorResponse<ViewArticleSummariesResponsePayload> viewSummaries(
+            @RequestBody HttpExecutorRequest<ViewArticleSummariesRequestPayload> request)
             throws ExecutorException {
-        return this.service(request, this.viewArticleSummaryExecutor, false);
+        return this.service(request, this.viewArticleSummariesExecutor, false);
     }
 
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
