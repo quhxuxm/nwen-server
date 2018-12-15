@@ -186,7 +186,7 @@
           <hashTree>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="securetoken extractor" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">SECURETOKEN</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.payload.secureToken</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.header.SECURE_TOKEN</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
               <stringProp name="Sample.scope">all</stringProp>
               <stringProp name="Scope.variable"></stringProp>
