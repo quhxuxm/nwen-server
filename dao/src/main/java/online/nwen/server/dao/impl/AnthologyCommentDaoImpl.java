@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class AnthologyCommentDaoImpl implements IAnthologyCommentDao {
@@ -18,6 +19,7 @@ class AnthologyCommentDaoImpl implements IAnthologyCommentDao {
         this.anthologyCommentRepository = anthologyCommentRepository;
     }
 
+    @Transactional
     @Caching(evict = {
             @CacheEvict(cacheNames = "anthology-comment-by-id", key = "#p0.id", condition = "#p0 != null")
     })

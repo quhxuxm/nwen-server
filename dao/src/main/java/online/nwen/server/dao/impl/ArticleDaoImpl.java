@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class ArticleDaoImpl implements IArticleDao {
@@ -18,6 +19,7 @@ class ArticleDaoImpl implements IArticleDao {
         this.articleRepository = articleRepository;
     }
 
+    @Transactional
     @Caching(evict = {
             @CacheEvict(cacheNames = "article-by-id", key = "#p0.id", condition = "#p0 != null")
     })

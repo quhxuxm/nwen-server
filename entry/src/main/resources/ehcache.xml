@@ -25,6 +25,10 @@
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>
+    <cache alias="user-by-nickname"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
     <cache alias="anthology-by-id"
            uses-template="general-cache">
         <heap>2048000</heap>

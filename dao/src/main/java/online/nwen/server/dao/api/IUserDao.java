@@ -8,4 +8,6 @@ public interface IUserDao {
     User getById(Long id);
 
     User getByUsername(String username);
+
+    User getByNickname(String nickname);
 }

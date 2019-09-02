@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "tbnwen_article", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "anthology_id, order_in_anthology")
+        @UniqueConstraint(columnNames = {"anthology_id", "order_in_anthology"})
 })
 public class Article {
     @Id

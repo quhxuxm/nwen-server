@@ -1,7 +1,6 @@
 package online.nwen.server.domain;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -22,9 +21,12 @@ public class User {
     @Column(name = "registered_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date registeredTime;
-    @Column(name = "last_login_time", nullable = false)
+    @Column(name = "last_login_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLoginTime;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "default_anthology_id", referencedColumnName = "anthology_id")
+    private Anthology defaultAnthology;
 
     public Long getId() {
         return id;
@@ -80,5 +82,13 @@ public class User {
 
     public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public Anthology getDefaultAnthology() {
+        return defaultAnthology;
+    }
+
+    public void setDefaultAnthology(Anthology defaultAnthology) {
+        this.defaultAnthology = defaultAnthology;
     }
 }
