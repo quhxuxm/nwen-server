@@ -1,92 +1,38 @@
 package online.nwen.server.domain;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.*;
+import java.sql.Timestamp;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-@Document(collection = "anthologies")
-@CompoundIndexes({
-        @CompoundIndex(def = "{'_id': 1, 'systemConfirmedPublish': 1}"),
-        @CompoundIndex(def = "{'authorId': 1, 'systemConfirmedPublish': 1}"),
-        @CompoundIndex(def = "{'tags': 1, 'systemConfirmedPublish': 1}")
-})
-public class Anthology implements Serializable {
-    private static final long serialVersionUID = -190322673132950827L;
+@Entity
+@Table(name = "anthology")
+public class Anthology {
     @Id
-    private String id;
-    @Indexed
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "anthology_id")
+    private Long id;
+    @Column(name = "title", length = 200, nullable = false)
     private String title;
+    @Column(name = "create_time", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Timestamp createTime;
+    @Column(name = "update_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Timestamp updateTime;
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "summary", length = 800)
     private String summary;
-    @Indexed
-    private Date createDate;
-    @Indexed
-    private Date updateDate;
-    private Date authorConfirmedPublishDate;
-    private Date systemConfirmedPublishDate;
-    private Date sharedDate;
-    @Indexed
-    private String authorId;
-    private String coverImageId;
-    @Indexed
-    private boolean systemConfirmedPublish;
-    @Indexed
-    private boolean authorConfirmedPublish;
-    private boolean share;
-    private long praiseNumber;
-    private long commentsNumber;
-    private long bookmarksNumber;
-    private long articleNumber;
-    private long viewersNumber;
-    private long praisesNumber;
-    @Indexed
-    private Set<String> tags;
-    private Set<String> participantAuthorIds;
-    private Map<String, Date> bookmarks;
-    private Map<String, Date> praises;
-    private Map<String, Date> viewers;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", referencedColumnName = "user_id", nullable = false)
+    private User author;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "last_article", referencedColumnName = "article_id", unique = true)
+    private Article lastArticle;
 
-    public Anthology() {
-        this.createDate = new Date();
-        this.updateDate = this.createDate;
-        this.authorConfirmedPublish = false;
-        this.systemConfirmedPublish = false;
-        this.share = false;
-        this.praiseNumber = 0L;
-        this.commentsNumber = 0L;
-        this.bookmarksNumber = 0L;
-        this.tags = new HashSet<>();
-        this.participantAuthorIds = new HashSet<>();
-    }
-
-    public boolean isSystemConfirmedPublish() {
-        return systemConfirmedPublish;
-    }
-
-    public void setSystemConfirmedPublish(boolean systemConfirmedPublish) {
-        this.systemConfirmedPublish = systemConfirmedPublish;
-    }
-
-    public Date getSystemConfirmedPublishDate() {
-        return systemConfirmedPublishDate;
-    }
-
-    public void setSystemConfirmedPublishDate(Date systemConfirmedPublishDate) {
-        this.systemConfirmedPublishDate = systemConfirmedPublishDate;
-    }
-
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -98,6 +44,22 @@ public class Anthology implements Serializable {
         this.title = title;
     }
 
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
+
+    public Timestamp getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Timestamp updateTime) {
+        this.updateTime = updateTime;
+    }
+
     public String getSummary() {
         return summary;
     }
@@ -106,184 +68,19 @@ public class Anthology implements Serializable {
         this.summary = summary;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
-    public Date getUpdateDate() {
-        return updateDate;
+    public Article getLastArticle() {
+        return lastArticle;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public Date getAuthorConfirmedPublishDate() {
-        return authorConfirmedPublishDate;
-    }
-
-    public void setAuthorConfirmedPublishDate(Date publishDate) {
-        this.authorConfirmedPublishDate = publishDate;
-    }
-
-    public Date getSharedDate() {
-        return sharedDate;
-    }
-
-    public void setSharedDate(Date sharedDate) {
-        this.sharedDate = sharedDate;
-    }
-
-    public String getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
-    }
-
-    public String getCoverImageId() {
-        return coverImageId;
-    }
-
-    public void setCoverImageId(String coverImageId) {
-        this.coverImageId = coverImageId;
-    }
-
-    public boolean isAuthorConfirmedPublish() {
-        return authorConfirmedPublish;
-    }
-
-    public void setAuthorConfirmedPublish(boolean authorConfirmedPublish) {
-        this.authorConfirmedPublish = authorConfirmedPublish;
-    }
-
-    public void setShare(boolean share) {
-        this.share = share;
-    }
-
-    public boolean isShare() {
-        return share;
-    }
-
-    public long getPraiseNumber() {
-        return praiseNumber;
-    }
-
-    public void setPraiseNumber(long praiseNumber) {
-        this.praiseNumber = praiseNumber;
-    }
-
-    public Set<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<String> tags) {
-        this.tags = tags;
-    }
-
-    public Set<String> getParticipantAuthorIds() {
-        return participantAuthorIds;
-    }
-
-    public void setParticipantAuthorIds(Set<String> participantAuthorIds) {
-        this.participantAuthorIds = participantAuthorIds;
-    }
-
-    public long getArticleNumber() {
-        return articleNumber;
-    }
-
-    public void setArticleNumber(long articleNumber) {
-        this.articleNumber = articleNumber;
-    }
-
-    public Map<String, Date> getBookmarks() {
-        return bookmarks;
-    }
-
-    public void setBookmarks(Map<String, Date> bookmarks) {
-        this.bookmarks = bookmarks;
-    }
-
-    public Map<String, Date> getPraises() {
-        return praises;
-    }
-
-    public void setPraises(Map<String, Date> praises) {
-        this.praises = praises;
-    }
-
-    public Map<String, Date> getViewers() {
-        return viewers;
-    }
-
-    public void setViewers(Map<String, Date> viewers) {
-        this.viewers = viewers;
-    }
-
-    public long getViewersNumber() {
-        return viewersNumber;
-    }
-
-    public void setViewersNumber(long viewersNumber) {
-        this.viewersNumber = viewersNumber;
-    }
-
-    public long getPraisesNumber() {
-        return praisesNumber;
-    }
-
-    public void setPraisesNumber(long praisesNumber) {
-        this.praisesNumber = praisesNumber;
-    }
-
-    public long getBookmarksNumber() {
-        return bookmarksNumber;
-    }
-
-    public void setBookmarksNumber(long bookmarksNumber) {
-        this.bookmarksNumber = bookmarksNumber;
-    }
-
-    public long getCommentsNumber() {
-        return commentsNumber;
-    }
-
-    public void setCommentsNumber(long commentsNumber) {
-        this.commentsNumber = commentsNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "Anthology{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", summary='" + summary + '\'' +
-                ", createDate=" + createDate +
-                ", updateDate=" + updateDate +
-                ", authorConfirmedPublishDate=" + authorConfirmedPublishDate +
-                ", sharedDate=" + sharedDate +
-                ", authorId='" + authorId + '\'' +
-                ", coverImageId='" + coverImageId + '\'' +
-                ", systemConfirmedPublish=" + systemConfirmedPublish +
-                ", authorConfirmedPublish=" + authorConfirmedPublish +
-                ", share=" + share +
-                ", praiseNumber=" + praiseNumber +
-                ", commentsNumber=" + commentsNumber +
-                ", bookmarksNumber=" + bookmarksNumber +
-                ", articleNumber=" + articleNumber +
-                ", viewersNumber=" + viewersNumber +
-                ", praisesNumber=" + praisesNumber +
-                ", tags=" + tags +
-                ", participantAuthorIds=" + participantAuthorIds +
-                ", bookmarks=" + bookmarks +
-                ", praises=" + praises +
-                ", viewers=" + viewers +
-                '}';
+    public void setLastArticle(Article lastArticle) {
+        this.lastArticle = lastArticle;
     }
 }
