@@ -2,6 +2,7 @@ package online.nwen.server.domain;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "tbnwen_user")
@@ -20,10 +21,10 @@ public class User {
     private String nickname;
     @Column(name = "registered_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp registeredTime;
+    private Date registeredTime;
     @Column(name = "last_login_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp lastLoginTime;
+    private Date lastLoginTime;
 
     public Long getId() {
         return id;
@@ -65,19 +66,19 @@ public class User {
         this.nickname = nickname;
     }
 
-    public Timestamp getRegisteredTime() {
+    public Date getRegisteredTime() {
         return registeredTime;
     }
 
-    public void setRegisteredTime(Timestamp registeredTime) {
+    public void setRegisteredTime(Date registeredTime) {
         this.registeredTime = registeredTime;
     }
 
-    public Timestamp getLastLoginTime() {
+    public Date getLastLoginTime() {
         return lastLoginTime;
     }
 
-    public void setLastLoginTime(Timestamp lastLoginTime) {
+    public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
     }
 }

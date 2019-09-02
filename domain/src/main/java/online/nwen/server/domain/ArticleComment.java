@@ -1,7 +1,7 @@
 package online.nwen.server.domain;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "tbnwen_article_comment")
@@ -16,10 +16,19 @@ public class ArticleComment {
     private String content;
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp createTime;
+    private Date createTime;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commenter_id", referencedColumnName = "user_id", nullable = false)
     private User commenter;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id", referencedColumnName = "article_id", nullable = false)
+    private Article article;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to_comment_id", referencedColumnName = "article_comment_id")
+    private ArticleComment replyTo;
+    @Version
+    @Column(name = "version")
+    private Long version;
 
     public Long getId() {
         return id;
@@ -37,11 +46,11 @@ public class ArticleComment {
         this.content = content;
     }
 
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
@@ -51,5 +60,29 @@ public class ArticleComment {
 
     public void setCommenter(User commenter) {
         this.commenter = commenter;
+    }
+
+    public ArticleComment getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(ArticleComment replyTo) {
+        this.replyTo = replyTo;
+    }
+
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article = article;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

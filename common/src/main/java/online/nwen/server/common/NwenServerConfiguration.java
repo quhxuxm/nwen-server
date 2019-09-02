@@ -5,5 +5,5 @@ import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "nwen-server")
 @Component
-public class NwenServerConfiguration {
+class NwenServerConfiguration {
 }

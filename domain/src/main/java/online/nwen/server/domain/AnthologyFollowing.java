@@ -2,6 +2,7 @@ package online.nwen.server.domain;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "tbnwen_anthology_bookmark", uniqueConstraints = {
@@ -20,7 +21,7 @@ public class AnthologyFollowing {
     private Anthology anthology;
     @Column(name = "create_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp createTime;
+    private Date createTime;
 
     public Long getId() {
         return id;
@@ -46,11 +47,11 @@ public class AnthologyFollowing {
         this.anthology = anthology;
     }
 
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 }

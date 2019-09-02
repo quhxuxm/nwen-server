@@ -1,10 +1,12 @@
 package online.nwen.server.domain;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
-@Table(name = "tbnwen_article")
+@Table(name = "tbnwen_article", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "anthology_id, order_in_anthology")
+})
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -14,10 +16,10 @@ public class Article {
     private String title;
     @Column(name = "create_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp createTime;
+    private Date createTime;
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp updateTime;
+    private Date updateTime;
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "content")
     @Lob
@@ -28,6 +30,11 @@ public class Article {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anthology_id", referencedColumnName = "anthology_id", nullable = false)
     private Anthology anthology;
+    @Column(name = "order_in_anthology", nullable = false)
+    private Integer orderInAnthology;
+    @Version
+    @Column(name = "version")
+    private Long version;
 
     public Long getId() {
         return id;
@@ -45,19 +52,19 @@ public class Article {
         this.title = title;
     }
 
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
-    public Timestamp getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -83,5 +90,21 @@ public class Article {
 
     public void setAnthology(Anthology anthology) {
         this.anthology = anthology;
+    }
+
+    public Integer getOrderInAnthology() {
+        return orderInAnthology;
+    }
+
+    public void setOrderInAnthology(Integer orderInAnthology) {
+        this.orderInAnthology = orderInAnthology;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

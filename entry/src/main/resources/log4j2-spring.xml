@@ -27,22 +27,21 @@
         <Root level="error"
               additivity="true">
             <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="NwenLogFileAppender"/>
         </Root>
         <Logger name="org.hibernate.SQL"
                 level="error"
                 additivity="false">
-            <AppenderRef ref="CompetitionLogFileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="org.hibernate.type"
                 level="error"
                 additivity="false">
-            <AppenderRef ref="NwenLogFileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="online.nwen.server"
                 level="error"
                 additivity="false">
-            <AppenderRef ref="NwenLogFileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
     </Loggers>
 </Configuration>

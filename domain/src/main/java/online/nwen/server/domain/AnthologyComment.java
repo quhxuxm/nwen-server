@@ -1,7 +1,7 @@
 package online.nwen.server.domain;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "tbnwen_anthology_comment")
@@ -16,10 +16,19 @@ public class AnthologyComment {
     private String content;
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Timestamp createTime;
+    private Date createTime;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commenter_id", referencedColumnName = "user_id", nullable = false)
     private User commenter;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "anthology_id", referencedColumnName = "anthology_id", nullable = false)
+    private Anthology anthology;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to_comment_id", referencedColumnName = "anthology_comment_id")
+    private AnthologyComment replyTo;
+    @Version
+    @Column(name = "version")
+    private Long version;
 
     public Long getId() {
         return id;
@@ -37,11 +46,11 @@ public class AnthologyComment {
         this.content = content;
     }
 
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
@@ -51,5 +60,29 @@ public class AnthologyComment {
 
     public void setCommenter(User commenter) {
         this.commenter = commenter;
+    }
+
+    public AnthologyComment getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(AnthologyComment replyTo) {
+        this.replyTo = replyTo;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public Anthology getAnthology() {
+        return anthology;
+    }
+
+    public void setAnthology(Anthology anthology) {
+        this.anthology = anthology;
     }
 }

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
@@ -13,7 +12,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableCaching
 @EnableTransactionManagement
-public class DaoConfigure {
+class DaoConfigure {
     @Value("${nwen-server.dataSource.url}")
     private String dataSourceUrl;
     @Value("${nwen-server.dataSource.username}")
@@ -44,7 +43,6 @@ public class DaoConfigure {
     private long dataSourceMinEvictableIdleTimeMillis;
 
     @Bean
-    @Primary
     DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setUrl(this.dataSourceUrl);
