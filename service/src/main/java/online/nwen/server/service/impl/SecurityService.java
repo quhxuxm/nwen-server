@@ -8,7 +8,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import online.nwen.server.bo.AuthenticationRequestBo;
 import online.nwen.server.bo.AuthenticationResponseBo;
 import online.nwen.server.common.ServerConfiguration;
+import online.nwen.server.dao.api.IBlackListSecurityTokenDao;
 import online.nwen.server.dao.api.IUserDao;
+import online.nwen.server.domain.BlackListSecurityToken;
 import online.nwen.server.domain.User;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.exception.ServiceException;
@@ -26,10 +28,12 @@ class SecurityService implements ISecurityService {
     private IUserDao userDao;
     private Algorithm jwtAlgorithm;
     private JWTVerifier verifier;
+    private IBlackListSecurityTokenDao blackListSecurityTokenDao;
 
-    SecurityService(ServerConfiguration serverConfiguration, IUserDao userDao) {
+    SecurityService(ServerConfiguration serverConfiguration, IUserDao userDao, IBlackListSecurityTokenDao blackListSecurityTokenDao) {
         this.serverConfiguration = serverConfiguration;
         this.userDao = userDao;
+        this.blackListSecurityTokenDao = blackListSecurityTokenDao;
         this.jwtAlgorithm = Algorithm.HMAC256(this.serverConfiguration.getJwtSecret());
         this.verifier = JWT.require(this.jwtAlgorithm).withIssuer(serverConfiguration.getJwtIssuer()).build();
     }
@@ -103,5 +107,23 @@ class SecurityService implements ISecurityService {
     @Override
     public void clearSecurityToken() {
         SECURITY_TOKEN_HOLDER.remove();
+    }
+
+    @Override
+    public boolean isSecurityTokenInBlackList(String securityToken) {
+        BlackListSecurityToken securityTokenObj = this.blackListSecurityTokenDao.getByToken(securityToken);
+        return securityTokenObj != null;
+    }
+
+    @Override
+    public BlackListSecurityToken markSecurityTokenInBlackList(String securityToken) {
+        BlackListSecurityToken securityTokenObj = this.blackListSecurityTokenDao.getByToken(securityToken);
+        if (securityTokenObj != null) {
+            return securityTokenObj;
+        }
+        BlackListSecurityToken blackListSecurityToken = new BlackListSecurityToken();
+        blackListSecurityToken.setCreateTime(new Date());
+        blackListSecurityToken.setToken(securityToken);
+        return this.blackListSecurityTokenDao.save(blackListSecurityToken);
     }
 }
