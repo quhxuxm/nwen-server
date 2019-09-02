@@ -1,5 +1,6 @@
 package online.nwen.server.entry.interceptor;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import online.nwen.server.bo.ResponseCode;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.exception.ServiceException;
@@ -29,6 +30,7 @@ public class SecurityHandlerInterceptor implements HandlerInterceptor {
             if (e.getResponseCode() != ResponseCode.SECURITY_TOKEN_EXPIRED) {
                 throw e;
             }
+            DecodedJWT decodedJWT=this.securityService.parseJwtToken(securityToken);
         } catch (Exception e) {
             this.securityService.clearSecurityToken();
         }

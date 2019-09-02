@@ -86,6 +86,11 @@ class SecurityService implements ISecurityService {
     }
 
     @Override
+    public DecodedJWT parseJwtToken(String token) {
+        return JWT.decode(token);
+    }
+
+    @Override
     public String getSecurityToken() {
         return SECURITY_TOKEN_HOLDER.get();
     }
