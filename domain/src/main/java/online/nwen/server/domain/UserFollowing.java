@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "user_following", uniqueConstraints = {
+@Table(name = "tbnwen_user_following", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "target_id"})
 })
 public class UserFollowing {

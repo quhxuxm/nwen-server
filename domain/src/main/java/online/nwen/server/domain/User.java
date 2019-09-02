@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "user")
+@Table(name = "tbnwen_user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

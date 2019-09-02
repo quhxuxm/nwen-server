@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN"
+               monitorInterval="30">
+    <Appenders>
+        <Console name="ConsoleAppender"
+                 target="SYSTEM_OUT"
+                 follow="true">
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable"/>
+        </Console>
+        <RollingFile name="NwenLogFileAppender"
+                     fileName="../../logs/nwen.log"
+                     filePattern="../../logs/$${date:yyyy-MM}/nwen-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- rollover on startup, daily and when the file reaches
+                    10 MegaBytes -->
+                <OnStartupTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="error"
+              additivity="true">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="NwenLogFileAppender"/>
+        </Root>
+        <Logger name="org.hibernate.SQL"
+                level="error"
+                additivity="false">
+            <AppenderRef ref="CompetitionLogFileAppender"/>
+        </Logger>
+        <Logger name="org.hibernate.type"
+                level="error"
+                additivity="false">
+            <AppenderRef ref="NwenLogFileAppender"/>
+        </Logger>
+        <Logger name="online.nwen.server"
+                level="error"
+                additivity="false">
+            <AppenderRef ref="NwenLogFileAppender"/>
+        </Logger>
+    </Loggers>
+</Configuration>

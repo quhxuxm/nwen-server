@@ -10,6 +10,7 @@
         <module>dao</module>
         <module>service</module>
         <module>entry</module>
+        <module>common</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
