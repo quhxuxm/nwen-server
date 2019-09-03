@@ -53,6 +53,9 @@ class ArticleServiceImpl implements IArticleService {
             throw new ServiceException(ResponseCode.ARTICLE_SUMMARY_IS_TOO_LONG);
         }
         User author = this.userDao.getByUsername(securityContextBo.getUsername());
+        if (author == null) {
+            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
+        }
         Anthology anthology = null;
         if (createArticleRequestBo.getAnthologyId() != null) {
             anthology = this.anthologyDao.getById(createArticleRequestBo.getAnthologyId());
@@ -81,11 +84,28 @@ class ArticleServiceImpl implements IArticleService {
         article.setSummary(createArticleRequestBo.getSummary());
         article.setCreateTime(new Date());
         article.setAnthology(anthology);
-        int articleIndex = this.articleDao.countArticleNumberInAnthology(anthology);
-        article.setIndexInAnthology(articleIndex);
         article = this.articleDao.save(article);
         CreateArticleResponseBo result = new CreateArticleResponseBo();
         result.setArticleId(article.getId());
+        return result;
+    }
+
+    @Override
+    public DeleteArticlesResponseBo deleteAll(SecurityContextBo securityContextBo, DeleteArticlesRequestBo deleteArticlesRequestBo) {
+        User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());
+        if (currentUser == null) {
+            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
+        }
+        DeleteArticlesResponseBo result = new DeleteArticlesResponseBo();
+        deleteArticlesRequestBo.getArticleIds().forEach(id -> {
+            Article article = this.articleDao.getById(id);
+            Anthology anthology = this.anthologyDao.getById(article.getAnthology().getId());
+            if (anthology.getAuthor().getId().compareTo(currentUser.getId()) != 0) {
+                return;
+            }
+            this.articleDao.delete(article);
+            result.getArticleIds().add(article.getId());
+        });
         return result;
     }
 }

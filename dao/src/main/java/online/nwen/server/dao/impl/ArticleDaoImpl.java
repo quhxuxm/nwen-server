@@ -48,4 +48,13 @@ class ArticleDaoImpl implements IArticleDao {
     public int countArticleNumberInAnthology(Anthology anthology) {
         return this.articleRepository.countByAnthology(anthology);
     }
+
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "article-by-id", key = "#p0.id", condition = "#p0 != null")
+    })
+    @Override
+    public void delete(Article article) {
+        this.articleRepository.delete(article);
+    }
 }

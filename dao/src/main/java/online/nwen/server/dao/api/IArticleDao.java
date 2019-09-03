@@ -15,4 +15,6 @@ public interface IArticleDao {
     Page<Long> getIdsByAnthology(Anthology anthology, Pageable pageable);
 
     int countArticleNumberInAnthology(Anthology anthology);
+
+    void delete(Article article);
 }

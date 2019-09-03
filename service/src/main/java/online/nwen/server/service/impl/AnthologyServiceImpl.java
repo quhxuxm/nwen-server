@@ -1,16 +1,15 @@
 package online.nwen.server.service.impl;
 
-import online.nwen.server.bo.CreateAnthologyRequestBo;
-import online.nwen.server.bo.CreateAnthologyResponseBo;
-import online.nwen.server.bo.ResponseCode;
-import online.nwen.server.bo.SecurityContextBo;
+import online.nwen.server.bo.*;
 import online.nwen.server.common.ServerConfiguration;
 import online.nwen.server.dao.api.IAnthologyDao;
+import online.nwen.server.dao.api.IArticleDao;
 import online.nwen.server.dao.api.IUserDao;
 import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.User;
 import online.nwen.server.service.api.IAnthologyService;
 import online.nwen.server.service.exception.ServiceException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -19,11 +18,13 @@ import java.util.Date;
 @Service
 class AnthologyServiceImpl implements IAnthologyService {
     private IAnthologyDao anthologyDao;
+    private IArticleDao articleDao;
     private IUserDao userDao;
     private ServerConfiguration serverConfiguration;
 
-    AnthologyServiceImpl(IAnthologyDao anthologyDao, IUserDao userDao, ServerConfiguration serverConfiguration) {
+    AnthologyServiceImpl(IAnthologyDao anthologyDao, IArticleDao articleDao, IUserDao userDao, ServerConfiguration serverConfiguration) {
         this.anthologyDao = anthologyDao;
+        this.articleDao = articleDao;
         this.userDao = userDao;
         this.serverConfiguration = serverConfiguration;
     }
@@ -56,6 +57,27 @@ class AnthologyServiceImpl implements IAnthologyService {
         }
         CreateAnthologyResponseBo result = new CreateAnthologyResponseBo();
         result.setAnthologyId(anthology.getId());
+        return result;
+    }
+
+    @Override
+    public DeleteAnthologiesResponseBo deleteAll(SecurityContextBo securityContextBo, DeleteAnthologiesRequestBo deleteAnthologiesRequestBo) {
+        DeleteAnthologiesResponseBo result = new DeleteAnthologiesResponseBo();
+        User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());
+        if (currentUser == null) {
+            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
+        }
+        deleteAnthologiesRequestBo.getAnthologyIds().forEach(id -> {
+            Anthology anthology = this.anthologyDao.getById(id);
+            if (anthology.getAuthor().getId().compareTo(currentUser.getId()) != 0) {
+                return;
+            }
+            this.articleDao.getByAnthology(anthology, Pageable.unpaged()).forEach(article -> {
+                this.articleDao.delete(article);
+            });
+            this.anthologyDao.delete(anthology);
+            result.getAnthologyIds().add(anthology.getId());
+        });
         return result;
     }
 }

@@ -43,4 +43,13 @@ class AnthologyDaoImpl implements IAnthologyDao {
     public Page<Long> getIdsByAuthor(User author, Pageable pageable) {
         return this.anthologyRepository.findIdsByAuthor(author, pageable);
     }
+
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "anthology-by-id", key = "#p0.id", condition = "#p0 != null")
+    })
+    @Override
+    public void delete(Anthology anthology) {
+        this.anthologyRepository.delete(anthology);
+    }
 }

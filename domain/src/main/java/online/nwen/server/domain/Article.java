@@ -33,8 +33,6 @@ public class Article {
     @Version
     @Column(name = "version")
     private Long version;
-    @Column(name = "index_in_anthology", nullable = false)
-    private Integer indexInAnthology;
 
     public Long getId() {
         return id;
@@ -98,13 +96,5 @@ public class Article {
 
     public void setVersion(Long version) {
         this.version = version;
-    }
-
-    public void setIndexInAnthology(Integer indexInAnthology) {
-        this.indexInAnthology = indexInAnthology;
-    }
-
-    public Integer getIndexInAnthology() {
-        return indexInAnthology;
     }
 }
