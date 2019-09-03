@@ -6,7 +6,6 @@ import online.nwen.server.bo.CreateAnthologyResponseBo;
 import online.nwen.server.service.api.IAnthologyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,8 +22,8 @@ class AnthologyController {
         return this.anthologyService.create(createAnthologyRequestBo);
     }
 
-    @GetMapping("/anthology/summaries/currentAuthor")
-    Page<AnthologySummaryBo> getAnthologySummariesOfCurrentAuthor(@Param("authorId") Long authorId, Pageable pageable) {
+    @GetMapping("/anthology/summaries/author/{authorId}")
+    Page<AnthologySummaryBo> getAnthologySummariesOfAuthor(@PathVariable("authorId") Long authorId, Pageable pageable) {
         return this.anthologyService.getAnthologySummariesOfAuthor(authorId, pageable);
     }
 }
