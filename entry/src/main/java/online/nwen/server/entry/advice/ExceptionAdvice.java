@@ -18,7 +18,6 @@ class ExceptionAdvice {
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ResponseCode> onServiceException(Exception e) {
-        logger.error("Exception happen, convert exception to exception response. Exceptions is:\n", e);
         if (ServiceException.class.isAssignableFrom(e.getClass())) {
             ServiceException serviceException = (ServiceException) e;
             switch (serviceException.getResponseCode()) {

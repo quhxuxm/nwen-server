@@ -5,15 +5,20 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import online.nwen.server.bo.AuthenticationRequestBo;
 import online.nwen.server.bo.AuthenticationResponseBo;
+import online.nwen.server.bo.SecurityContextBo;
 import online.nwen.server.common.ServerConfiguration;
-import online.nwen.server.dao.api.IBlackListSecurityTokenDao;
+import online.nwen.server.dao.api.ISecurityTokenDao;
 import online.nwen.server.dao.api.IUserDao;
-import online.nwen.server.domain.BlackListSecurityToken;
+import online.nwen.server.domain.SecurityToken;
 import online.nwen.server.domain.User;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.exception.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -23,17 +28,21 @@ import static online.nwen.server.bo.ResponseCode.*;
 
 @Service
 class SecurityService implements ISecurityService {
+    private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
     private static final ThreadLocal<String> SECURITY_TOKEN_HOLDER = new ThreadLocal<>();
     private ServerConfiguration serverConfiguration;
     private IUserDao userDao;
     private Algorithm jwtAlgorithm;
     private JWTVerifier verifier;
-    private IBlackListSecurityTokenDao blackListSecurityTokenDao;
+    private ISecurityTokenDao securityTokenDao;
+    private ObjectMapper objectMapper;
 
-    SecurityService(ServerConfiguration serverConfiguration, IUserDao userDao, IBlackListSecurityTokenDao blackListSecurityTokenDao) {
+    SecurityService(ServerConfiguration serverConfiguration, IUserDao userDao, ISecurityTokenDao securityTokenDao,
+                    ObjectMapper objectMapper) {
         this.serverConfiguration = serverConfiguration;
         this.userDao = userDao;
-        this.blackListSecurityTokenDao = blackListSecurityTokenDao;
+        this.securityTokenDao = securityTokenDao;
+        this.objectMapper = objectMapper;
         this.jwtAlgorithm = Algorithm.HMAC256(this.serverConfiguration.getJwtSecret());
         this.verifier = JWT.require(this.jwtAlgorithm).withIssuer(serverConfiguration.getJwtIssuer()).build();
     }
@@ -64,8 +73,28 @@ class SecurityService implements ISecurityService {
     }
 
     private String generateJwtToken(User user) {
-        Date expireAt = new Date(System.currentTimeMillis() + this.serverConfiguration.getJwtExpireInterval());
-        return JWT.create().withSubject(user.getUsername()).withExpiresAt(expireAt).sign(this.jwtAlgorithm);
+        SecurityContextBo securityContextBo = new SecurityContextBo();
+        long current = System.currentTimeMillis();
+        Date expireAt = new Date(current + this.serverConfiguration.getJwtExpireInterval());
+        securityContextBo.setUsername(user.getUsername());
+        Date refreshableTill = new Date(current + this.serverConfiguration.getJwtRefreshableInterval());
+        securityContextBo.setRefreshAbleTill(refreshableTill);
+        String result = null;
+        try {
+            String securityContextString = this.objectMapper.writeValueAsString(securityContextBo);
+            result = JWT.create().withSubject(securityContextString).withExpiresAt(expireAt).withIssuer(this.serverConfiguration.getJwtIssuer()).sign(this.jwtAlgorithm);
+        } catch (JsonProcessingException e) {
+            logger.error("Fail to generate security token because of exception.", e);
+            throw new ServiceException(SECURITY_TOKEN_GENERATE_FAIL);
+        }
+        SecurityToken securityToken = new SecurityToken();
+        securityToken.setToken(result);
+        securityToken.setExpireAt(expireAt);
+        securityToken.setRefreshableTill(refreshableTill);
+        securityToken.setCreateTime(new Date());
+        securityToken.setDisabled(false);
+        this.securityTokenDao.save(securityToken);
+        return result;
     }
 
     @Override
@@ -73,57 +102,72 @@ class SecurityService implements ISecurityService {
         try {
             this.verifier.verify(token);
         } catch (TokenExpiredException e) {
+            logger.warn("Security token expired.");
             throw new ServiceException(SECURITY_TOKEN_EXPIRED);
         } catch (Exception e) {
+            logger.error("Fail to verify security token because of exception.", e);
             throw new ServiceException(SECURITY_CHECK_FAIL);
         }
     }
 
     @Override
-    public String parseUsernameFromJwtToken(String token) {
+    public SecurityContextBo parseJwtToken(String token) {
         DecodedJWT decodedJWT = JWT.decode(token);
         try {
-            return decodedJWT.getSubject();
+            String securityContextBoString = decodedJWT.getSubject();
+            return this.objectMapper.readValue(securityContextBoString, SecurityContextBo.class);
         } catch (Exception e) {
+            logger.error("Fail to parse security token because of exception.", e);
             throw new ServiceException(SECURITY_TOKEN_PARSE_FAIL);
         }
     }
 
     @Override
-    public DecodedJWT parseJwtToken(String token) {
-        return JWT.decode(token);
+    public String refreshJwtToken(SecurityContextBo old) {
+        User user = this.userDao.getByUsername(old.getUsername());
+        if (user == null) {
+            throw new ServiceException(USER_NOT_EXIST);
+        }
+        return this.generateJwtToken(user);
     }
 
     @Override
-    public String getSecurityToken() {
+    public String getSecurityTokenFromCurrentThread() {
         return SECURITY_TOKEN_HOLDER.get();
     }
 
     @Override
-    public void setSecurityToken(String securityToken) {
+    public void setSecurityTokenToCurrentThread(String securityToken) {
         SECURITY_TOKEN_HOLDER.set(securityToken);
     }
 
     @Override
-    public void clearSecurityToken() {
+    public void clearSecurityTokenFromCurrentThread() {
         SECURITY_TOKEN_HOLDER.remove();
     }
 
     @Override
-    public boolean isSecurityTokenInBlackList(String securityToken) {
-        BlackListSecurityToken securityTokenObj = this.blackListSecurityTokenDao.getByToken(securityToken);
-        return securityTokenObj != null;
+    public boolean isSecurityTokenDisabled(String securityToken) {
+        SecurityToken securityTokenObj = this.securityTokenDao.getByToken(securityToken);
+        if (securityTokenObj == null) {
+            return false;
+        }
+        return securityTokenObj.isDisabled();
     }
 
     @Override
-    public BlackListSecurityToken markSecurityTokenInBlackList(String securityToken) {
-        BlackListSecurityToken securityTokenObj = this.blackListSecurityTokenDao.getByToken(securityToken);
-        if (securityTokenObj != null) {
-            return securityTokenObj;
+    public SecurityToken markSecurityTokenDisabled(String securityToken) {
+        SecurityToken securityTokenObj = this.securityTokenDao.getByToken(securityToken);
+        if (securityTokenObj == null) {
+            securityTokenObj = new SecurityToken();
+            securityTokenObj.setToken(securityToken);
+            securityTokenObj.setExpireAt(new Date());
+            securityTokenObj.setRefreshableTill(new Date());
+            securityTokenObj.setCreateTime(new Date());
+            securityTokenObj.setDisabled(true);
+            return this.securityTokenDao.save(securityTokenObj);
         }
-        BlackListSecurityToken blackListSecurityToken = new BlackListSecurityToken();
-        blackListSecurityToken.setCreateTime(new Date());
-        blackListSecurityToken.setToken(securityToken);
-        return this.blackListSecurityTokenDao.save(blackListSecurityToken);
+        securityTokenObj.setDisabled(true);
+        return this.securityTokenDao.save(securityTokenObj);
     }
 }

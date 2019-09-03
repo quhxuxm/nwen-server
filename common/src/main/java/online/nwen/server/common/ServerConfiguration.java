@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class ServerConfiguration {
     private String jwtSecret;
     private String jwtIssuer;
-    private Long jwtRefreshInterval;
+    private Long jwtRefreshableInterval;
     private Long jwtExpireInterval;
     private String usernameFormat;
     private String passwordFormat;
@@ -34,12 +34,12 @@ public class ServerConfiguration {
         this.jwtIssuer = jwtIssuer;
     }
 
-    public Long getJwtRefreshInterval() {
-        return jwtRefreshInterval;
+    public Long getJwtRefreshableInterval() {
+        return jwtRefreshableInterval;
     }
 
-    public void setJwtRefreshInterval(Long jwtRefreshInterval) {
-        this.jwtRefreshInterval = jwtRefreshInterval;
+    public void setJwtRefreshableInterval(Long jwtRefreshableInterval) {
+        this.jwtRefreshableInterval = jwtRefreshableInterval;
     }
 
     public Long getJwtExpireInterval() {

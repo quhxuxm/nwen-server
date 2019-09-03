@@ -3,6 +3,7 @@ package online.nwen.server.service.impl;
 import online.nwen.server.bo.CreateAnthologyRequestBo;
 import online.nwen.server.bo.CreateAnthologyResponseBo;
 import online.nwen.server.bo.ResponseCode;
+import online.nwen.server.bo.SecurityContextBo;
 import online.nwen.server.common.ServerConfiguration;
 import online.nwen.server.dao.api.IAnthologyDao;
 import online.nwen.server.dao.api.IUserDao;
@@ -48,7 +49,8 @@ class AnthologyServiceImpl implements IAnthologyService {
         anthology.setCreateTime(new Date());
         anthology.setSummary(createAnthologyRequestBo.getSummary());
         anthology.setTitle(createAnthologyRequestBo.getTitle());
-        String authorUsername = this.securityService.parseUsernameFromJwtToken(secureToken);
+        SecurityContextBo securityContextBo = this.securityService.parseJwtToken(secureToken);
+        String authorUsername = securityContextBo.getUsername();
         User author = this.userDao.getByUsername(authorUsername);
         if (author == null) {
             throw new ServiceException(ResponseCode.USER_NOT_EXIST);

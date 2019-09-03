@@ -1,26 +1,26 @@
 package online.nwen.server.service.api;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import online.nwen.server.bo.AuthenticationRequestBo;
 import online.nwen.server.bo.AuthenticationResponseBo;
-import online.nwen.server.domain.BlackListSecurityToken;
+import online.nwen.server.bo.SecurityContextBo;
+import online.nwen.server.domain.SecurityToken;
 
 public interface ISecurityService {
     AuthenticationResponseBo authenticate(AuthenticationRequestBo authenticationRequestBo);
 
     void verifyJwtToken(String token);
 
-    String parseUsernameFromJwtToken(String token);
+    String refreshJwtToken(SecurityContextBo old);
 
-    DecodedJWT parseJwtToken(String token);
+    SecurityContextBo parseJwtToken(String token);
 
-    String getSecurityToken();
+    String getSecurityTokenFromCurrentThread();
 
-    void setSecurityToken(String securityToken);
+    void setSecurityTokenToCurrentThread(String securityToken);
 
-    void clearSecurityToken();
+    void clearSecurityTokenFromCurrentThread();
 
-    boolean isSecurityTokenInBlackList(String securityToken);
+    boolean isSecurityTokenDisabled(String securityToken);
 
-    BlackListSecurityToken markSecurityTokenInBlackList(String securityToken);
+    SecurityToken markSecurityTokenDisabled(String securityToken);
 }
