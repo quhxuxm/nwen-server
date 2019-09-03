@@ -14,11 +14,11 @@ public interface ISecurityService {
 
     SecurityContextBo parseJwtToken(String token);
 
-    String getSecurityTokenFromCurrentThread();
+    SecurityContextBo getSecurityContextFromCurrentThread();
 
-    void setSecurityTokenToCurrentThread(String securityToken);
+    void setSecurityContextToCurrentThread(SecurityContextBo securityToken);
 
-    void clearSecurityTokenFromCurrentThread();
+    void clearSecurityContextFromCurrentThread();
 
     boolean isSecurityTokenDisabled(String securityToken);
 

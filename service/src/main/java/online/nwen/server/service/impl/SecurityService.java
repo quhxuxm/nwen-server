@@ -29,7 +29,7 @@ import static online.nwen.server.bo.ResponseCode.*;
 @Service
 class SecurityService implements ISecurityService {
     private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
-    private static final ThreadLocal<String> SECURITY_TOKEN_HOLDER = new ThreadLocal<>();
+    private static final ThreadLocal<SecurityContextBo> SECURITY_CONTEXT_HOLDER = new ThreadLocal<>();
     private ServerConfiguration serverConfiguration;
     private IUserDao userDao;
     private Algorithm jwtAlgorithm;
@@ -132,18 +132,18 @@ class SecurityService implements ISecurityService {
     }
 
     @Override
-    public String getSecurityTokenFromCurrentThread() {
-        return SECURITY_TOKEN_HOLDER.get();
+    public SecurityContextBo getSecurityContextFromCurrentThread() {
+        return SECURITY_CONTEXT_HOLDER.get();
     }
 
     @Override
-    public void setSecurityTokenToCurrentThread(String securityToken) {
-        SECURITY_TOKEN_HOLDER.set(securityToken);
+    public void setSecurityContextToCurrentThread(SecurityContextBo context) {
+        SECURITY_CONTEXT_HOLDER.set(context);
     }
 
     @Override
-    public void clearSecurityTokenFromCurrentThread() {
-        SECURITY_TOKEN_HOLDER.remove();
+    public void clearSecurityContextFromCurrentThread() {
+        SECURITY_CONTEXT_HOLDER.remove();
     }
 
     @Override

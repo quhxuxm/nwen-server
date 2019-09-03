@@ -13,4 +13,6 @@ public interface IArticleDao {
     Page<Article> getByAnthology(Anthology anthology, Pageable pageable);
 
     Page<Long> getIdsByAnthology(Anthology anthology, Pageable pageable);
+
+    int countArticleNumberInAnthology(Anthology anthology);
 }

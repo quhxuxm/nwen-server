@@ -22,6 +22,6 @@ class AnthologyController {
 
     @PostMapping("/security/anthology/create")
     CreateAnthologyResponseBo create(@RequestBody CreateAnthologyRequestBo createAnthologyRequestBo) {
-        return this.anthologyService.create(this.securityService.getSecurityTokenFromCurrentThread(), createAnthologyRequestBo);
+        return this.anthologyService.create(this.securityService.getSecurityContextFromCurrentThread(), createAnthologyRequestBo);
     }
 }

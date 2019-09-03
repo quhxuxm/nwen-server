@@ -1,7 +1,6 @@
 package online.nwen.server.domain;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -13,12 +12,12 @@ public class AnthologyBookmark {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "anthology_bookmark_id")
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "anthology_id", referencedColumnName = "anthology_id", nullable = false)
-    private Article article;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "anthology_id", referencedColumnName = "anthology_id")
+    private Anthology anthology;
     @Column(name = "create_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
@@ -42,12 +41,12 @@ public class AnthologyBookmark {
         this.user = user;
     }
 
-    public Article getArticle() {
-        return article;
+    public Anthology getAnthology() {
+        return anthology;
     }
 
-    public void setArticle(Article article) {
-        this.article = article;
+    public void setAnthology(Anthology anthology) {
+        this.anthology = anthology;
     }
 
     public Date getCreateTime() {

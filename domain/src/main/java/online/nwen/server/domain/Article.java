@@ -5,7 +5,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "tbnwen_article", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"anthology_id", "order_in_anthology"})
+        @UniqueConstraint(columnNames = {"anthology_id", "index_in_anthology"})
 })
 public class Article {
     @Id
@@ -30,11 +30,11 @@ public class Article {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anthology_id", referencedColumnName = "anthology_id", nullable = false)
     private Anthology anthology;
-    @Column(name = "order_in_anthology", nullable = false)
-    private Integer orderInAnthology;
     @Version
     @Column(name = "version")
     private Long version;
+    @Column(name = "index_in_anthology", nullable = false)
+    private Integer indexInAnthology;
 
     public Long getId() {
         return id;
@@ -92,19 +92,19 @@ public class Article {
         this.anthology = anthology;
     }
 
-    public Integer getOrderInAnthology() {
-        return orderInAnthology;
-    }
-
-    public void setOrderInAnthology(Integer orderInAnthology) {
-        this.orderInAnthology = orderInAnthology;
-    }
-
     public Long getVersion() {
         return version;
     }
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public void setIndexInAnthology(Integer indexInAnthology) {
+        this.indexInAnthology = indexInAnthology;
+    }
+
+    public Integer getIndexInAnthology() {
+        return indexInAnthology;
     }
 }

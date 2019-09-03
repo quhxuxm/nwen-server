@@ -15,4 +15,6 @@ interface IAnthologyRepository extends JpaRepository<Anthology, Long> {
 
     @Query("select anthology.id from Anthology anthology where anthology.author=:author")
     Page<Long> findIdsByAuthor(@Param("author") User author, Pageable pageable);
+
+    boolean existsByAuthorAndId(User author, Long id);
 }

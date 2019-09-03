@@ -10,7 +10,6 @@ import online.nwen.server.dao.api.IUserDao;
 import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.User;
 import online.nwen.server.service.api.IAnthologyService;
-import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,21 +20,16 @@ import java.util.Date;
 class AnthologyServiceImpl implements IAnthologyService {
     private IAnthologyDao anthologyDao;
     private IUserDao userDao;
-    private ISecurityService securityService;
     private ServerConfiguration serverConfiguration;
 
-    AnthologyServiceImpl(IAnthologyDao anthologyDao, IUserDao userDao, ISecurityService securityService, ServerConfiguration serverConfiguration) {
+    AnthologyServiceImpl(IAnthologyDao anthologyDao, IUserDao userDao, ServerConfiguration serverConfiguration) {
         this.anthologyDao = anthologyDao;
         this.userDao = userDao;
-        this.securityService = securityService;
         this.serverConfiguration = serverConfiguration;
     }
 
     @Override
-    public CreateAnthologyResponseBo create(String secureToken, CreateAnthologyRequestBo createAnthologyRequestBo) {
-        if (StringUtils.isEmpty(secureToken)) {
-            throw new ServiceException(ResponseCode.SECURITY_TOKEN_IS_EMPTY);
-        }
+    public CreateAnthologyResponseBo create(SecurityContextBo securityContextBo, CreateAnthologyRequestBo createAnthologyRequestBo) {
         if (StringUtils.isEmpty(createAnthologyRequestBo.getTitle())) {
             throw new ServiceException(ResponseCode.ANTHOLOGY_TITLE_IS_EMPTY);
         }
@@ -49,7 +43,6 @@ class AnthologyServiceImpl implements IAnthologyService {
         anthology.setCreateTime(new Date());
         anthology.setSummary(createAnthologyRequestBo.getSummary());
         anthology.setTitle(createAnthologyRequestBo.getTitle());
-        SecurityContextBo securityContextBo = this.securityService.parseJwtToken(secureToken);
         String authorUsername = securityContextBo.getUsername();
         User author = this.userDao.getByUsername(authorUsername);
         if (author == null) {

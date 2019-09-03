@@ -15,4 +15,6 @@ interface IArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("select article.id from Article article where article.anthology=:anthology")
     Page<Long> findIdsByAnthology(@Param("anthology") Anthology anthology, Pageable pageable);
+
+    int countByAnthology(Anthology anthology);
 }

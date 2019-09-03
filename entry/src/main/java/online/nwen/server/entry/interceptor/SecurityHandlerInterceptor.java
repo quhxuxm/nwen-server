@@ -22,35 +22,36 @@ public class SecurityHandlerInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String securityToken = request.getHeader(SECURITY_TOKEN_HEADER);
         if (securityToken == null) {
-            this.securityService.clearSecurityTokenFromCurrentThread();
+            this.securityService.clearSecurityContextFromCurrentThread();
             throw new ServiceException(ResponseCode.SECURITY_TOKEN_IS_EMPTY);
         }
         try {
             this.securityService.verifyJwtToken(securityToken);
         } catch (ServiceException e) {
             if (e.getResponseCode() != ResponseCode.SECURITY_TOKEN_EXPIRED) {
-                this.securityService.clearSecurityTokenFromCurrentThread();
+                this.securityService.clearSecurityContextFromCurrentThread();
                 throw e;
             }
             SecurityContextBo securityContextBo = this.securityService.parseJwtToken(securityToken);
             Date securityTokenRefreshTill = securityContextBo.getRefreshAbleTill();
             if (System.currentTimeMillis() > securityTokenRefreshTill.getTime()) {
                 this.securityService.markSecurityTokenDisabled(securityToken);
-                this.securityService.clearSecurityTokenFromCurrentThread();
+                this.securityService.clearSecurityContextFromCurrentThread();
                 throw new ServiceException(ResponseCode.SECURITY_TOKEN_EXPIRED);
             }
             if (this.securityService.isSecurityTokenDisabled(securityToken)) {
-                this.securityService.clearSecurityTokenFromCurrentThread();
+                this.securityService.clearSecurityContextFromCurrentThread();
                 throw new ServiceException(ResponseCode.SECURITY_TOKEN_EXPIRED);
             }
             this.securityService.markSecurityTokenDisabled(securityToken);
             String refreshSecurityToken = this.securityService.refreshJwtToken(securityContextBo);
             response.setHeader(SECURITY_TOKEN_HEADER, refreshSecurityToken);
+            securityToken = refreshSecurityToken;
         } catch (Exception e) {
-            this.securityService.clearSecurityTokenFromCurrentThread();
+            this.securityService.clearSecurityContextFromCurrentThread();
             throw new ServiceException(ResponseCode.SYSTEM_ERROR);
         }
-        this.securityService.setSecurityTokenToCurrentThread(securityToken);
+        this.securityService.setSecurityContextToCurrentThread(this.securityService.parseJwtToken(securityToken));
         return true;
     }
 }

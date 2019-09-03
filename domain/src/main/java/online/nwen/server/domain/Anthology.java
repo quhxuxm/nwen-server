@@ -24,12 +24,12 @@ public class Anthology {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "user_id", nullable = false)
     private User author;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "last_article", referencedColumnName = "article_id", unique = true)
-    private Article lastArticle;
     @Version
     @Column(name = "version")
     private Long version;
+
+    public Anthology() {
+    }
 
     public Long getId() {
         return id;
@@ -77,14 +77,6 @@ public class Anthology {
 
     public void setAuthor(User author) {
         this.author = author;
-    }
-
-    public Article getLastArticle() {
-        return lastArticle;
-    }
-
-    public void setLastArticle(Article lastArticle) {
-        this.lastArticle = lastArticle;
     }
 
     public Long getVersion() {

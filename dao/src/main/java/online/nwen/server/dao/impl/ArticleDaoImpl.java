@@ -43,4 +43,9 @@ class ArticleDaoImpl implements IArticleDao {
     public Page<Long> getIdsByAnthology(Anthology anthology, Pageable pageable) {
         return this.articleRepository.findIdsByAnthology(anthology, pageable);
     }
+
+    @Override
+    public int countArticleNumberInAnthology(Anthology anthology) {
+        return this.articleRepository.countByAnthology(anthology);
+    }
 }
