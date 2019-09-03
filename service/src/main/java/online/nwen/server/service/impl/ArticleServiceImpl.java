@@ -12,6 +12,7 @@ import online.nwen.server.domain.User;
 import online.nwen.server.service.api.IAnthologyService;
 import online.nwen.server.service.api.IArticleService;
 import online.nwen.server.service.api.ILocaleService;
+import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -28,10 +29,11 @@ class ArticleServiceImpl implements IArticleService {
     private IAnthologyService anthologyService;
     private MessageSource messageSource;
     private ILocaleService localeService;
+    private ISecurityService securityService;
 
     ArticleServiceImpl(IArticleDao articleDao, IAnthologyDao anthologyDao, IUserDao userDao,
                        ServerConfiguration serverConfiguration, IAnthologyService anthologyService, MessageSource messageSource,
-                       ILocaleService localeService) {
+                       ILocaleService localeService, ISecurityService securityService) {
         this.articleDao = articleDao;
         this.anthologyDao = anthologyDao;
         this.userDao = userDao;
@@ -39,10 +41,13 @@ class ArticleServiceImpl implements IArticleService {
         this.anthologyService = anthologyService;
         this.messageSource = messageSource;
         this.localeService = localeService;
+        this.securityService = securityService;
     }
 
     @Override
-    public CreateArticleResponseBo create(SecurityContextBo securityContextBo, CreateArticleRequestBo createArticleRequestBo) {
+    public CreateArticleResponseBo create(CreateArticleRequestBo createArticleRequestBo) {
+        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
+
         if (StringUtils.isEmpty(createArticleRequestBo.getTitle())) {
             throw new ServiceException(ResponseCode.ARTICLE_TITLE_IS_EMPTY);
         }
@@ -74,7 +79,7 @@ class ArticleServiceImpl implements IArticleService {
                         .setTitle(this.messageSource.getMessage(IConstant.MessageKey.ANTHOLOGY_DEFAULT_TITLE_MESSAGE_KEY, null, this.localeService.getLocaleFromCurrentThread()));
                 createAnthologyRequestBo.setSummary(
                         this.messageSource.getMessage(IConstant.MessageKey.ANTHOLOGY_DEFAULT_SUMMARY_MESSAGE_KEY, null, this.localeService.getLocaleFromCurrentThread()));
-                CreateAnthologyResponseBo createAnthologyResponseBo = this.anthologyService.create(securityContextBo, createAnthologyRequestBo);
+                CreateAnthologyResponseBo createAnthologyResponseBo = this.anthologyService.create(createAnthologyRequestBo);
                 anthology = this.anthologyDao.getById(createAnthologyResponseBo.getAnthologyId());
             }
         }
@@ -91,7 +96,9 @@ class ArticleServiceImpl implements IArticleService {
     }
 
     @Override
-    public DeleteArticlesResponseBo deleteAll(SecurityContextBo securityContextBo, DeleteArticlesRequestBo deleteArticlesRequestBo) {
+    public DeleteArticlesResponseBo deleteAll(DeleteArticlesRequestBo deleteArticlesRequestBo) {
+        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
+
         User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());
         if (currentUser == null) {
             throw new ServiceException(ResponseCode.USER_NOT_EXIST);

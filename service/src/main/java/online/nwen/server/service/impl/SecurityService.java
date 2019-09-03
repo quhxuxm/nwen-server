@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import online.nwen.server.bo.AuthenticationRequestBo;
 import online.nwen.server.bo.AuthenticationResponseBo;
+import online.nwen.server.bo.ResponseCode;
 import online.nwen.server.bo.SecurityContextBo;
 import online.nwen.server.common.ServerConfiguration;
 import online.nwen.server.dao.api.ISecurityTokenDao;
@@ -132,8 +133,12 @@ class SecurityService implements ISecurityService {
     }
 
     @Override
-    public SecurityContextBo getSecurityContextFromCurrentThread() {
-        return SECURITY_CONTEXT_HOLDER.get();
+    public SecurityContextBo checkAndGetSecurityContextFromCurrentThread() {
+        SecurityContextBo result = SECURITY_CONTEXT_HOLDER.get();
+        if (result == null) {
+            throw new ServiceException(ResponseCode.SECURITY_CHECK_FAIL);
+        }
+        return result;
     }
 
     @Override

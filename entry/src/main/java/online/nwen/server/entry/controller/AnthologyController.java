@@ -1,27 +1,30 @@
 package online.nwen.server.entry.controller;
 
+import online.nwen.server.bo.AnthologySummaryBo;
 import online.nwen.server.bo.CreateAnthologyRequestBo;
 import online.nwen.server.bo.CreateAnthologyResponseBo;
 import online.nwen.server.service.api.IAnthologyService;
-import online.nwen.server.service.api.ISecurityService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 class AnthologyController {
     private IAnthologyService anthologyService;
-    private ISecurityService securityService;
 
-    AnthologyController(IAnthologyService anthologyService, ISecurityService securityService) {
+    AnthologyController(IAnthologyService anthologyService) {
         this.anthologyService = anthologyService;
-        this.securityService = securityService;
     }
 
     @PostMapping("/security/anthology/create")
     CreateAnthologyResponseBo create(@RequestBody CreateAnthologyRequestBo createAnthologyRequestBo) {
-        return this.anthologyService.create(this.securityService.getSecurityContextFromCurrentThread(), createAnthologyRequestBo);
+        return this.anthologyService.create(createAnthologyRequestBo);
+    }
+
+    @GetMapping("/anthology/summaries/currentAuthor")
+    Page<AnthologySummaryBo> getAnthologySummariesOfCurrentAuthor(@Param("authorId") Long authorId, Pageable pageable) {
+        return this.anthologyService.getAnthologySummariesOfAuthor(authorId, pageable);
     }
 }

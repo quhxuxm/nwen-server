@@ -1,7 +1,8 @@
 package online.nwen.server.entry;
 
-import online.nwen.server.entry.interceptor.LocaleHandlerInterceptor;
-import online.nwen.server.entry.interceptor.SecurityHandlerInterceptor;
+import online.nwen.server.entry.interceptor.LoadSecurityContextInterceptor;
+import online.nwen.server.entry.interceptor.PrepareLocaleInterceptor;
+import online.nwen.server.entry.interceptor.SecurityCheckInterceptor;
 import online.nwen.server.service.api.ILocaleService;
 import online.nwen.server.service.api.ISecurityService;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,8 @@ class EntryConfigure implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LocaleHandlerInterceptor(this.localeService)).addPathPatterns("/**");
-        registry.addInterceptor(new SecurityHandlerInterceptor(this.securityService)).addPathPatterns("/api/security/**");
+        registry.addInterceptor(new SecurityCheckInterceptor(this.securityService)).order(100).addPathPatterns("/api/security/**");
+        registry.addInterceptor(new PrepareLocaleInterceptor(this.localeService)).order(101).addPathPatterns("/api/**");
+        registry.addInterceptor(new LoadSecurityContextInterceptor(this.securityService)).order(102).addPathPatterns("/api/**");
     }
 }

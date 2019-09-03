@@ -14,7 +14,7 @@ public interface ISecurityService {
 
     SecurityContextBo parseJwtToken(String token);
 
-    SecurityContextBo getSecurityContextFromCurrentThread();
+    SecurityContextBo checkAndGetSecurityContextFromCurrentThread();
 
     void setSecurityContextToCurrentThread(SecurityContextBo securityToken);
 
@@ -23,4 +23,6 @@ public interface ISecurityService {
     boolean isSecurityTokenDisabled(String securityToken);
 
     SecurityToken markSecurityTokenDisabled(String securityToken);
+
+
 }

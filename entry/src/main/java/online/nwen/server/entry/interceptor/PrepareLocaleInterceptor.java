@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
-public class LocaleHandlerInterceptor implements HandlerInterceptor {
+public class PrepareLocaleInterceptor implements HandlerInterceptor {
     private static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
     private ILocaleService localeService;
 
-    public LocaleHandlerInterceptor(ILocaleService localeService) {
+    public PrepareLocaleInterceptor(ILocaleService localeService) {
         this.localeService = localeService;
     }
 
@@ -29,6 +29,11 @@ public class LocaleHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        this.localeService.clearLocaleFromCurrentThread();
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         this.localeService.clearLocaleFromCurrentThread();
     }
 }

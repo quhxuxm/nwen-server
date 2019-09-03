@@ -1,7 +1,6 @@
 package online.nwen.server.dao.api;
 
 import online.nwen.server.domain.Anthology;
-import online.nwen.server.domain.Article;
 import online.nwen.server.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,4 +15,5 @@ public interface IAnthologyDao {
     Page<Long> getIdsByAuthor(User author, Pageable pageable);
 
     void delete(Anthology anthology);
+
 }
