@@ -80,6 +80,48 @@ class AnthologyServiceImpl implements IAnthologyService {
     }
 
     @Override
+    public UpdateAnthologyResponseBo update(UpdateAnthologyRequestBo updateAnthologyRequestBo) {
+        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
+        if (updateAnthologyRequestBo.getAnthologyId() == null) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_ID_IS_EMPTY);
+        }
+        if (StringUtils.isEmpty(updateAnthologyRequestBo.getTitle())) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_TITLE_IS_EMPTY);
+        }
+        if (updateAnthologyRequestBo.getTitle().length() > this.serverConfiguration.getAnthologyTitleMaxLength()) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_TITLE_IS_TOO_LONG);
+        }
+        if (updateAnthologyRequestBo.getDescription().length() > this.serverConfiguration.getAnthologyDescriptionMaxLength()) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_SUMMARY_IS_TOO_LONG);
+        }
+        User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());
+        if (currentUser == null) {
+            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
+        }
+        final Anthology anthology = this.anthologyDao.getById(updateAnthologyRequestBo.getAnthologyId());
+        if (!anthology.getAuthor().getId().equals(currentUser.getId())) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_BELONG_TO_AUTHOR);
+        }
+        anthology.setUpdateTime(new Date());
+        anthology.setDescription(updateAnthologyRequestBo.getDescription());
+        anthology.setTitle(updateAnthologyRequestBo.getTitle());
+        updateAnthologyRequestBo.getLabels().forEach(text -> {
+            Label label = this.labelService.getAndCreateIfAbsent(text);
+            if (label != null) {
+                anthology.getLabels().add(label);
+            }
+        });
+        this.anthologyDao.save(anthology);
+        if (updateAnthologyRequestBo.isAsDefault()) {
+            currentUser.setDefaultAnthology(anthology);
+            this.userDao.save(currentUser);
+        }
+        UpdateAnthologyResponseBo result = new UpdateAnthologyResponseBo();
+        result.setAnthologyId(anthology.getId());
+        return result;
+    }
+
+    @Override
     public DeleteAnthologiesResponseBo deleteAll(DeleteAnthologiesRequestBo deleteAnthologiesRequestBo) {
         SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
         User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());

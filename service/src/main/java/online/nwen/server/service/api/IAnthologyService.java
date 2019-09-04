@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 public interface IAnthologyService {
     CreateAnthologyResponseBo create(CreateAnthologyRequestBo createAnthologyRequestBo);
 
+    UpdateAnthologyResponseBo update(UpdateAnthologyRequestBo updateAnthologyRequestBo);
+
     DeleteAnthologiesResponseBo deleteAll(DeleteAnthologiesRequestBo deleteAnthologiesRequestBo);
 
     Page<AnthologySummaryBo> getAnthologySummariesOfAuthor(Long authorId, Pageable pageable);
