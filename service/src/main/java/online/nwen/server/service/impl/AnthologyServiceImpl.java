@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 class AnthologyServiceImpl implements IAnthologyService {
@@ -105,12 +107,16 @@ class AnthologyServiceImpl implements IAnthologyService {
         anthology.setUpdateTime(new Date());
         anthology.setDescription(updateAnthologyRequestBo.getDescription());
         anthology.setTitle(updateAnthologyRequestBo.getTitle());
-        updateAnthologyRequestBo.getLabels().forEach(text -> {
-            Label label = this.labelService.getAndCreateIfAbsent(text);
-            if (label != null) {
-                anthology.getLabels().add(label);
-            }
-        });
+        if (updateAnthologyRequestBo.getLabels() != null) {
+            Set<Label> updateLabels = new HashSet<>();
+            updateAnthologyRequestBo.getLabels().forEach(text -> {
+                Label label = this.labelService.getAndCreateIfAbsent(text);
+                if (label != null) {
+                    updateLabels.add(label);
+                }
+            });
+            anthology.setLabels(updateLabels);
+        }
         this.anthologyDao.save(anthology);
         if (updateAnthologyRequestBo.isAsDefault()) {
             currentUser.setDefaultAnthology(anthology);

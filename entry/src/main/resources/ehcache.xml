@@ -37,7 +37,7 @@
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>
-    <cache alias="article-content-by-id"
+    <cache alias="article-content-by-article_id-and-version"
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>

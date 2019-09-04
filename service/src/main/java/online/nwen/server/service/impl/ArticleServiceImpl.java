@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -88,10 +89,6 @@ class ArticleServiceImpl implements IArticleService {
         }
         final Article article = new Article();
         article.setTitle(createArticleRequestBo.getTitle());
-        ArticleContent articleContent = new ArticleContent();
-        articleContent.setContent(createArticleRequestBo.getContent());
-        articleContent = this.articleContentDao.save(articleContent);
-        article.setContent(articleContent);
         article.setDescription(createArticleRequestBo.getDescription());
         article.setCreateTime(new Date());
         article.setAnthology(anthology);
@@ -102,6 +99,14 @@ class ArticleServiceImpl implements IArticleService {
             }
         });
         this.articleDao.save(article);
+        ArticleContent articleContent = new ArticleContent();
+        ArticleContentId articleContentId = new ArticleContentId();
+        articleContentId.setArticle(article);
+        long version = System.currentTimeMillis() / this.serverConfiguration.getArticleContentSaveInterval();
+        articleContentId.setVersion(version);
+        articleContent.setId(articleContentId);
+        articleContent.setContent(createArticleRequestBo.getContent());
+        this.articleContentDao.save(articleContent);
         anthology.setUpdateTime(new Date());
         this.anthologyDao.save(anthology);
         CreateArticleResponseBo result = new CreateArticleResponseBo();
@@ -179,12 +184,79 @@ class ArticleServiceImpl implements IArticleService {
         ArticleSummaryBo articleSummaryBo = this.convertToSummary(article);
         ArticleDetailBo articleDetailBo = new ArticleDetailBo();
         articleDetailBo.setSummary(articleSummaryBo);
-        ArticleContent articleContent = this.articleContentDao.getById(article.getContent().getId());
+        ArticleContentId articleContentId = new ArticleContentId();
+        articleContentId.setArticle(article);
+        Long articleLastVersion = this.articleContentDao.getArticleContentLastVersion(article);
+        articleContentId.setVersion(articleLastVersion);
+        ArticleContent articleContent = this.articleContentDao.getById(articleContentId);
         if (articleContent == null) {
             return articleDetailBo;
         }
         articleDetailBo.setContent(articleContent.getContent());
-        articleDetailBo.setContentId(articleContent.getId());
+        articleDetailBo.setContentVersion(articleLastVersion);
         return articleDetailBo;
+    }
+
+    @Override
+    public UpdateArticleResponseBo update(UpdateArticleRequestBo updateArticleRequestBo) {
+        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
+        if (updateArticleRequestBo.getArticleId() == null) {
+            throw new ServiceException(ResponseCode.ARTICLE_ID_IS_EMPTY);
+        }
+        if (StringUtils.isEmpty(updateArticleRequestBo.getTitle())) {
+            throw new ServiceException(ResponseCode.ARTICLE_TITLE_IS_EMPTY);
+        }
+        if (updateArticleRequestBo.getTitle().length() > this.serverConfiguration.getArticleTitleMaxLength()) {
+            throw new ServiceException(ResponseCode.ARTICLE_TITLE_IS_TOO_LONG);
+        }
+        if (updateArticleRequestBo.getDescription().length() > this.serverConfiguration.getArticleDescriptionMaxLength()) {
+            throw new ServiceException(ResponseCode.ARTICLE_SUMMARY_IS_TOO_LONG);
+        }
+        User author = this.userDao.getByUsername(securityContextBo.getUsername());
+        if (author == null) {
+            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
+        }
+        Article article = this.articleDao.getById(updateArticleRequestBo.getArticleId());
+        if (article == null) {
+            throw new ServiceException(ResponseCode.ARTICLE_NOT_EXIST);
+        }
+        Anthology anthology = this.anthologyDao.getById(article.getAnthology().getId());
+        if (anthology == null) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_EXIST);
+        }
+        if (!anthology.getAuthor().getId().equals(author.getId())) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_BELONG_TO_AUTHOR);
+        }
+        article.setTitle(updateArticleRequestBo.getTitle());
+        article.setDescription(updateArticleRequestBo.getDescription());
+        article.setUpdateTime(new Date());
+        if (updateArticleRequestBo.getLabels() != null) {
+            Set<Label> updateLabels = new HashSet<>();
+            updateArticleRequestBo.getLabels().forEach(text -> {
+                Label label = this.labelService.getAndCreateIfAbsent(text);
+                if (label != null) {
+                    updateLabels.add(label);
+                }
+            });
+            article.setLabels(updateLabels);
+        }
+        this.articleDao.save(article);
+        Long version = updateArticleRequestBo.getVersion();
+        if (version == null) {
+            version = System.currentTimeMillis() / this.serverConfiguration.getArticleContentSaveInterval();
+        }
+        ArticleContentId articleContentId = new ArticleContentId();
+        articleContentId.setArticle(article);
+        articleContentId.setVersion(version);
+        ArticleContent articleContent = new ArticleContent();
+        articleContent.setId(articleContentId);
+        articleContent.setContent(updateArticleRequestBo.getContent());
+        this.articleContentDao.save(articleContent);
+        anthology.setUpdateTime(new Date());
+        this.anthologyDao.save(anthology);
+        UpdateArticleResponseBo result = new UpdateArticleResponseBo();
+        result.setArticleId(article.getId());
+        result.setVersion(version);
+        return result;
     }
 }

@@ -1,8 +1,6 @@
 package online.nwen.server.entry.controller;
 
-import online.nwen.server.bo.AnthologySummaryBo;
-import online.nwen.server.bo.CreateAnthologyRequestBo;
-import online.nwen.server.bo.CreateAnthologyResponseBo;
+import online.nwen.server.bo.*;
 import online.nwen.server.service.api.IAnthologyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +18,12 @@ class AnthologyController {
     @PostMapping("/security/anthology/create")
     CreateAnthologyResponseBo create(@RequestBody CreateAnthologyRequestBo createAnthologyRequestBo) {
         return this.anthologyService.create(createAnthologyRequestBo);
+    }
+
+    @PostMapping("/security/anthology/update/{anthologyId}")
+    UpdateAnthologyResponseBo update(@PathVariable("anthologyId") Long anthologyId, @RequestBody UpdateAnthologyRequestBo updateAnthologyRequestBo) {
+        updateAnthologyRequestBo.setAnthologyId(anthologyId);
+        return this.anthologyService.update(updateAnthologyRequestBo);
     }
 
     @GetMapping("/anthology/summaries/author/{authorId}")

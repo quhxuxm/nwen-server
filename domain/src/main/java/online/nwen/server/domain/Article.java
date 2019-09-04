@@ -20,9 +20,6 @@ public class Article {
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "content_id", referencedColumnName = "article_content_id", unique = true)
-    private ArticleContent content;
     @Column(name = "description", length = 800)
     private String description;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -73,14 +70,6 @@ public class Article {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public ArticleContent getContent() {
-        return content;
-    }
-
-    public void setContent(ArticleContent content) {
-        this.content = content;
     }
 
     public String getDescription() {

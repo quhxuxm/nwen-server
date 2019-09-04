@@ -19,4 +19,6 @@ public interface IArticleService {
     ArticleSummaryBo convertToSummary(Article article);
 
     ArticleDetailBo getArticleDetail(Long articleId);
+
+    UpdateArticleResponseBo update(UpdateArticleRequestBo updateArticleRequestBo);
 }

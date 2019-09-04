@@ -17,6 +17,7 @@ public class ServerConfiguration {
     private Integer anthologyDescriptionMaxLength;
     private Integer articleTitleMaxLength;
     private Integer articleDescriptionMaxLength;
+    private Integer articleContentSaveInterval;
 
     public String getJwtSecret() {
         return jwtSecret;
@@ -104,5 +105,13 @@ public class ServerConfiguration {
 
     public void setArticleDescriptionMaxLength(Integer articleDescriptionMaxLength) {
         this.articleDescriptionMaxLength = articleDescriptionMaxLength;
+    }
+
+    public void setArticleContentSaveInterval(Integer articleContentSaveInterval) {
+        this.articleContentSaveInterval = articleContentSaveInterval;
+    }
+
+    public Integer getArticleContentSaveInterval() {
+        return articleContentSaveInterval;
     }
 }

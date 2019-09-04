@@ -2,7 +2,7 @@ package online.nwen.server.bo;
 
 public class ArticleDetailBo {
     private ArticleSummaryBo summary;
-    private Long contentId;
+    private Long contentVersion;
     private String content;
 
     public ArticleSummaryBo getSummary() {
@@ -13,12 +13,12 @@ public class ArticleDetailBo {
         this.summary = summary;
     }
 
-    public Long getContentId() {
-        return contentId;
+    public Long getContentVersion() {
+        return contentVersion;
     }
 
-    public void setContentId(Long contentId) {
-        this.contentId = contentId;
+    public void setContentVersion(Long contentVersion) {
+        this.contentVersion = contentVersion;
     }
 
     public String getContent() {
