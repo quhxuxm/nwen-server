@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.Set;
 
 @Service
 class ArticleServiceImpl implements IArticleService {
@@ -137,6 +138,13 @@ class ArticleServiceImpl implements IArticleService {
             throw new ServiceException(ResponseCode.USER_NOT_EXIST);
         }
         Page<Article> articles = this.articleDao.getByAnthology(anthology, pageable);
+        return articles.map(this::convertToSummary);
+    }
+
+    @Override
+    public Page<ArticleSummaryBo> getArticleSummariesWithLabels(Set<String> labels, Pageable pageable) {
+        Set<Label> labelEntities = this.labelService.getWithTexts(labels);
+        Page<Article> articles = this.articleDao.getByLabels(labelEntities, pageable);
         return articles.map(this::convertToSummary);
     }
 

@@ -8,6 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 class LabelServiceImpl implements ILabelService {
     private static final Logger logger = LoggerFactory.getLogger(LabelServiceImpl.class);
@@ -38,6 +43,21 @@ class LabelServiceImpl implements ILabelService {
         LabelBo labelBo = new LabelBo();
         labelBo.setId(label.getId());
         labelBo.setText(label.getText());
+        labelBo.setPopularFactor(label.getPopularFactor());
         return labelBo;
+    }
+
+    @Override
+    public Set<Label> getWithTexts(Set<String> labelTexts) {
+        Set<Label> labels = new HashSet<>();
+        labelTexts.forEach(text -> {
+            labels.add(this.labelDao.getByText(text));
+        });
+        return labels;
+    }
+
+    @Override
+    public List<LabelBo> getTopNLabels(Integer number) {
+        return this.labelDao.getTopNLabels(number).stream().map(this::convert).collect(Collectors.toList());
     }
 }

@@ -2,8 +2,11 @@ package online.nwen.server.dao.api;
 
 import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.Article;
+import online.nwen.server.domain.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Set;
 
 public interface IArticleDao {
     Article save(Article article);
@@ -17,4 +20,6 @@ public interface IArticleDao {
     int countArticleNumberInAnthology(Anthology anthology);
 
     void delete(Article article);
+
+    Page<Article> getByLabels(Set<Label> labels, Pageable pageable);
 }
