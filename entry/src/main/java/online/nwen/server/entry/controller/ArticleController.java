@@ -1,10 +1,9 @@
 package online.nwen.server.entry.controller;
 
-import online.nwen.server.bo.CreateArticleRequestBo;
-import online.nwen.server.bo.CreateArticleResponseBo;
-import online.nwen.server.bo.DeleteArticlesRequestBo;
-import online.nwen.server.bo.DeleteArticlesResponseBo;
+import online.nwen.server.bo.*;
 import online.nwen.server.service.api.IArticleService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,5 +23,15 @@ public class ArticleController {
     @DeleteMapping("/security/article/deleteAll")
     DeleteArticlesResponseBo deleteAll(@RequestBody DeleteArticlesRequestBo deleteArticlesRequestBo) {
         return this.articleService.deleteAll(deleteArticlesRequestBo);
+    }
+
+    @GetMapping("/article/summaries/anthology/{anthologyId}")
+    Page<ArticleSummaryBo> getArticleSummariesOfAnthology(@PathVariable("anthologyId") Long anthologyId, Pageable pageable) {
+        return this.articleService.getArticleSummariesOfAnthology(anthologyId, pageable);
+    }
+
+    @GetMapping("/article/detail/{articleId}")
+    ArticleDetailBo getArticleDetail(@PathVariable("articleId") Long articleId) {
+        return this.articleService.getArticleDetail(articleId);
     }
 }

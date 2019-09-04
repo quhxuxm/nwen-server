@@ -14,9 +14,9 @@ public class ServerConfiguration {
     private String passwordFormat;
     private String nicknameFormat;
     private Integer anthologyTitleMaxLength;
-    private Integer anthologySummaryMaxLength;
+    private Integer anthologyDescriptionMaxLength;
     private Integer articleTitleMaxLength;
-    private Integer articleSummaryMaxLength;
+    private Integer articleDescriptionMaxLength;
 
     public String getJwtSecret() {
         return jwtSecret;
@@ -82,12 +82,12 @@ public class ServerConfiguration {
         this.anthologyTitleMaxLength = anthologyTitleMaxLength;
     }
 
-    public Integer getAnthologySummaryMaxLength() {
-        return anthologySummaryMaxLength;
+    public Integer getAnthologyDescriptionMaxLength() {
+        return anthologyDescriptionMaxLength;
     }
 
-    public void setAnthologySummaryMaxLength(Integer anthologySummaryMaxLength) {
-        this.anthologySummaryMaxLength = anthologySummaryMaxLength;
+    public void setAnthologyDescriptionMaxLength(Integer anthologyDescriptionMaxLength) {
+        this.anthologyDescriptionMaxLength = anthologyDescriptionMaxLength;
     }
 
     public Integer getArticleTitleMaxLength() {
@@ -98,11 +98,11 @@ public class ServerConfiguration {
         this.articleTitleMaxLength = articleTitleMaxLength;
     }
 
-    public Integer getArticleSummaryMaxLength() {
-        return articleSummaryMaxLength;
+    public Integer getArticleDescriptionMaxLength() {
+        return articleDescriptionMaxLength;
     }
 
-    public void setArticleSummaryMaxLength(Integer articleSummaryMaxLength) {
-        this.articleSummaryMaxLength = articleSummaryMaxLength;
+    public void setArticleDescriptionMaxLength(Integer articleDescriptionMaxLength) {
+        this.articleDescriptionMaxLength = articleDescriptionMaxLength;
     }
 }

@@ -45,12 +45,12 @@ class AnthologyServiceImpl implements IAnthologyService {
         if (createAnthologyRequestBo.getTitle().length() > this.serverConfiguration.getAnthologyTitleMaxLength()) {
             throw new ServiceException(ResponseCode.ANTHOLOGY_TITLE_IS_TOO_LONG);
         }
-        if (createAnthologyRequestBo.getSummary().length() > this.serverConfiguration.getAnthologySummaryMaxLength()) {
+        if (createAnthologyRequestBo.getDescription().length() > this.serverConfiguration.getAnthologyDescriptionMaxLength()) {
             throw new ServiceException(ResponseCode.ANTHOLOGY_SUMMARY_IS_TOO_LONG);
         }
         Anthology anthology = new Anthology();
         anthology.setCreateTime(new Date());
-        anthology.setSummary(createAnthologyRequestBo.getSummary());
+        anthology.setDescription(createAnthologyRequestBo.getDescription());
         anthology.setTitle(createAnthologyRequestBo.getTitle());
         String authorUsername = securityContextBo.getUsername();
         User author = this.userDao.getByUsername(authorUsername);
@@ -96,7 +96,7 @@ class AnthologyServiceImpl implements IAnthologyService {
         anthologySummaryBo.setAnthologyId(anthology.getId());
         anthologySummaryBo.setCreateTime(anthology.getCreateTime());
         anthologySummaryBo.setUpdateTime(anthology.getUpdateTime());
-        anthologySummaryBo.setSummary(anthology.getSummary());
+        anthologySummaryBo.setDescription(anthology.getDescription());
         anthologySummaryBo.setTitle(anthology.getTitle());
         User author = this.userDao.getById(anthology.getAuthor().getId());
         anthologySummaryBo.setAuthor(this.userService.convertToSummary(author));

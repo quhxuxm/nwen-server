@@ -2,13 +2,21 @@ package online.nwen.server.bo;
 
 import java.util.Date;
 
-public class AnthologySummaryBo {
-    private Long anthologyId;
+public class ArticleSummaryBo {
+    private Long articleId;
     private String title;
     private String description;
     private Date createTime;
     private Date updateTime;
-    private UserSummaryBo author;
+    private AnthologySummaryBo anthologySummary;
+
+    public Long getArticleId() {
+        return articleId;
+    }
+
+    public void setArticleId(Long articleId) {
+        this.articleId = articleId;
+    }
 
     public String getTitle() {
         return title;
@@ -42,19 +50,11 @@ public class AnthologySummaryBo {
         this.updateTime = updateTime;
     }
 
-    public UserSummaryBo getAuthor() {
-        return author;
+    public AnthologySummaryBo getAnthologySummary() {
+        return anthologySummary;
     }
 
-    public void setAuthor(UserSummaryBo author) {
-        this.author = author;
-    }
-
-    public Long getAnthologyId() {
-        return anthologyId;
-    }
-
-    public void setAnthologyId(Long anthologyId) {
-        this.anthologyId = anthologyId;
+    public void setAnthologySummary(AnthologySummaryBo anthologySummary) {
+        this.anthologySummary = anthologySummary;
     }
 }

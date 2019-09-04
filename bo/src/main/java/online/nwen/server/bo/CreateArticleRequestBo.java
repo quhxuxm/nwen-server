@@ -3,7 +3,7 @@ package online.nwen.server.bo;
 public class CreateArticleRequestBo {
     private String title;
     private String content;
-    private String summary;
+    private String description;
     private Long anthologyId;
 
     public String getTitle() {
@@ -22,12 +22,12 @@ public class CreateArticleRequestBo {
         this.content = content;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getAnthologyId() {

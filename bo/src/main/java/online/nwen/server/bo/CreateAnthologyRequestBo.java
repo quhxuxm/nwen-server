@@ -2,7 +2,7 @@ package online.nwen.server.bo;
 
 public class CreateAnthologyRequestBo {
     private String title;
-    private String summary;
+    private String description;
     private boolean asDefault;
 
     public String getTitle() {
@@ -13,12 +13,12 @@ public class CreateAnthologyRequestBo {
         this.title = title;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isAsDefault() {

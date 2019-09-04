@@ -37,6 +37,10 @@
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>
+    <cache alias="article-content-by-id"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
     <cache alias="article-comment-by-id"
            uses-template="general-cache">
         <heap>2048000</heap>

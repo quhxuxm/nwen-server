@@ -18,9 +18,8 @@ public class Anthology {
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "summary", length = 800)
-    private String summary;
+    @Column(name = "description", length = 800)
+    private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "user_id", nullable = false)
     private User author;
@@ -63,12 +62,12 @@ public class Anthology {
         this.updateTime = updateTime;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public User getAuthor() {

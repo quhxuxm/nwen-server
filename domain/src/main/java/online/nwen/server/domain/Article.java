@@ -4,9 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "tbnwen_article", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"anthology_id", "index_in_anthology"})
-})
+@Table(name = "tbnwen_article")
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,13 +18,11 @@ public class Article {
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "content")
-    @Lob
-    private String content;
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "summary", length = 800)
-    private String summary;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "content_id", referencedColumnName = "article_content_id", unique = true)
+    private ArticleContent content;
+    @Column(name = "description", length = 800)
+    private String description;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "anthology_id", referencedColumnName = "anthology_id", nullable = false)
     private Anthology anthology;
@@ -66,20 +62,20 @@ public class Article {
         this.updateTime = updateTime;
     }
 
-    public String getContent() {
+    public ArticleContent getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(ArticleContent content) {
         this.content = content;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Anthology getAnthology() {
