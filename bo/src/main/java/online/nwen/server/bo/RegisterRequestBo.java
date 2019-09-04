@@ -1,10 +1,18 @@
 package online.nwen.server.bo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class RegisterRequestBo {
     private String username;
     private String password;
     private String nickname;
     private String description;
+    private Set<String> labels;
+
+    public RegisterRequestBo() {
+        this.labels = new HashSet<>();
+    }
 
     public String getUsername() {
         return username;
@@ -36,5 +44,13 @@ public class RegisterRequestBo {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public Set<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<String> labels) {
+        this.labels = labels;
     }
 }

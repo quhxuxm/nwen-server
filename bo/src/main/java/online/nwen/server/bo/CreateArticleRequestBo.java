@@ -1,10 +1,18 @@
 package online.nwen.server.bo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class CreateArticleRequestBo {
     private String title;
     private String content;
     private String description;
     private Long anthologyId;
+    private Set<String> labels;
+
+    public CreateArticleRequestBo() {
+        this.labels = new HashSet<>();
+    }
 
     public String getTitle() {
         return title;
@@ -36,5 +44,13 @@ public class CreateArticleRequestBo {
 
     public void setAnthologyId(Long anthologyId) {
         this.anthologyId = anthologyId;
+    }
+
+    public Set<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<String> labels) {
+        this.labels = labels;
     }
 }

@@ -49,4 +49,12 @@
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>
+    <cache alias="label-by-id"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
+    <cache alias="label-by-text"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
 </config>

@@ -6,8 +6,10 @@ import online.nwen.server.dao.api.IAnthologyDao;
 import online.nwen.server.dao.api.IArticleDao;
 import online.nwen.server.dao.api.IUserDao;
 import online.nwen.server.domain.Anthology;
+import online.nwen.server.domain.Label;
 import online.nwen.server.domain.User;
 import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.ILabelService;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.api.IUserService;
 import online.nwen.server.service.exception.ServiceException;
@@ -26,14 +28,17 @@ class AnthologyServiceImpl implements IAnthologyService {
     private ServerConfiguration serverConfiguration;
     private IUserService userService;
     private ISecurityService securityService;
+    private ILabelService labelService;
 
-    AnthologyServiceImpl(IAnthologyDao anthologyDao, IArticleDao articleDao, IUserDao userDao, ServerConfiguration serverConfiguration, IUserService userService, ISecurityService securityService) {
+    AnthologyServiceImpl(IAnthologyDao anthologyDao, IArticleDao articleDao, IUserDao userDao, ServerConfiguration serverConfiguration, IUserService userService,
+                         ISecurityService securityService, ILabelService labelService) {
         this.anthologyDao = anthologyDao;
         this.articleDao = articleDao;
         this.userDao = userDao;
         this.serverConfiguration = serverConfiguration;
         this.userService = userService;
         this.securityService = securityService;
+        this.labelService = labelService;
     }
 
     @Override
@@ -48,7 +53,7 @@ class AnthologyServiceImpl implements IAnthologyService {
         if (createAnthologyRequestBo.getDescription().length() > this.serverConfiguration.getAnthologyDescriptionMaxLength()) {
             throw new ServiceException(ResponseCode.ANTHOLOGY_SUMMARY_IS_TOO_LONG);
         }
-        Anthology anthology = new Anthology();
+        final Anthology anthology = new Anthology();
         anthology.setCreateTime(new Date());
         anthology.setDescription(createAnthologyRequestBo.getDescription());
         anthology.setTitle(createAnthologyRequestBo.getTitle());
@@ -58,7 +63,13 @@ class AnthologyServiceImpl implements IAnthologyService {
             throw new ServiceException(ResponseCode.USER_NOT_EXIST);
         }
         anthology.setAuthor(author);
-        anthology = this.anthologyDao.save(anthology);
+        createAnthologyRequestBo.getLabels().forEach(text -> {
+            Label label = this.labelService.getAndCreateIfAbsent(text);
+            if (label != null) {
+                anthology.getLabels().add(label);
+            }
+        });
+        this.anthologyDao.save(anthology);
         if (createAnthologyRequestBo.isAsDefault()) {
             author.setDefaultAnthology(anthology);
             this.userDao.save(author);
@@ -100,6 +111,9 @@ class AnthologyServiceImpl implements IAnthologyService {
         anthologySummaryBo.setTitle(anthology.getTitle());
         User author = this.userDao.getById(anthology.getAuthor().getId());
         anthologySummaryBo.setAuthor(this.userService.convertToSummary(author));
+        anthology.getLabels().forEach(label -> {
+            anthologySummaryBo.getLabels().add(this.labelService.convert(label));
+        });
         return anthologySummaryBo;
     }
 

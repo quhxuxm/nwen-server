@@ -7,14 +7,8 @@ import online.nwen.server.dao.api.IAnthologyDao;
 import online.nwen.server.dao.api.IArticleContentDao;
 import online.nwen.server.dao.api.IArticleDao;
 import online.nwen.server.dao.api.IUserDao;
-import online.nwen.server.domain.Anthology;
-import online.nwen.server.domain.Article;
-import online.nwen.server.domain.ArticleContent;
-import online.nwen.server.domain.User;
-import online.nwen.server.service.api.IAnthologyService;
-import online.nwen.server.service.api.IArticleService;
-import online.nwen.server.service.api.ILocaleService;
-import online.nwen.server.service.api.ISecurityService;
+import online.nwen.server.domain.*;
+import online.nwen.server.service.api.*;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -35,10 +29,12 @@ class ArticleServiceImpl implements IArticleService {
     private ILocaleService localeService;
     private ISecurityService securityService;
     private IArticleContentDao articleContentDao;
+    private ILabelService labelService;
 
     ArticleServiceImpl(IArticleDao articleDao, IAnthologyDao anthologyDao, IUserDao userDao,
                        ServerConfiguration serverConfiguration, IAnthologyService anthologyService, MessageSource messageSource,
-                       ILocaleService localeService, ISecurityService securityService, IArticleContentDao articleContentDao) {
+                       ILocaleService localeService, ISecurityService securityService, IArticleContentDao articleContentDao,
+                       ILabelService labelService) {
         this.articleDao = articleDao;
         this.anthologyDao = anthologyDao;
         this.userDao = userDao;
@@ -48,6 +44,7 @@ class ArticleServiceImpl implements IArticleService {
         this.localeService = localeService;
         this.securityService = securityService;
         this.articleContentDao = articleContentDao;
+        this.labelService = labelService;
     }
 
     @Override
@@ -88,7 +85,7 @@ class ArticleServiceImpl implements IArticleService {
                 anthology = this.anthologyDao.getById(createAnthologyResponseBo.getAnthologyId());
             }
         }
-        Article article = new Article();
+        final Article article = new Article();
         article.setTitle(createArticleRequestBo.getTitle());
         ArticleContent articleContent = new ArticleContent();
         articleContent.setContent(createArticleRequestBo.getContent());
@@ -97,7 +94,13 @@ class ArticleServiceImpl implements IArticleService {
         article.setDescription(createArticleRequestBo.getDescription());
         article.setCreateTime(new Date());
         article.setAnthology(anthology);
-        article = this.articleDao.save(article);
+        createArticleRequestBo.getLabels().forEach(text -> {
+            Label label = this.labelService.getAndCreateIfAbsent(text);
+            if (label != null) {
+                article.getLabels().add(label);
+            }
+        });
+        this.articleDao.save(article);
         CreateArticleResponseBo result = new CreateArticleResponseBo();
         result.setArticleId(article.getId());
         return result;
@@ -151,6 +154,9 @@ class ArticleServiceImpl implements IArticleService {
         articleSummaryBo.setUpdateTime(article.getUpdateTime());
         articleSummaryBo.setTitle(article.getTitle());
         articleSummaryBo.setAnthologySummary(anthologySummaryBo);
+        article.getLabels().forEach(label -> {
+            articleSummaryBo.getLabels().add(this.labelService.convert(label));
+        });
         return articleSummaryBo;
     }
 

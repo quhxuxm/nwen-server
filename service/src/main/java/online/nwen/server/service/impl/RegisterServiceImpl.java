@@ -5,7 +5,9 @@ import online.nwen.server.bo.RegisterResponseBo;
 import online.nwen.server.bo.ResponseCode;
 import online.nwen.server.common.ServerConfiguration;
 import online.nwen.server.dao.api.IUserDao;
+import online.nwen.server.domain.Label;
 import online.nwen.server.domain.User;
+import online.nwen.server.service.api.ILabelService;
 import online.nwen.server.service.api.IRegisterService;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,12 @@ import java.util.Date;
 class RegisterServiceImpl implements IRegisterService {
     private ServerConfiguration serverConfiguration;
     private IUserDao userDao;
+    private ILabelService labelService;
 
-    RegisterServiceImpl(ServerConfiguration serverConfiguration, IUserDao userDao) {
+    RegisterServiceImpl(ServerConfiguration serverConfiguration, IUserDao userDao, ILabelService labelService) {
         this.serverConfiguration = serverConfiguration;
         this.userDao = userDao;
+        this.labelService = labelService;
     }
 
     @Override
@@ -49,12 +53,18 @@ class RegisterServiceImpl implements IRegisterService {
         if (this.userDao.getByNickname(registerRequestBo.getNickname()) != null) {
             throw new ServiceException(ResponseCode.REGISTER_NICKNAME_EXIST);
         }
-        User user = new User();
+        final User user = new User();
         user.setUsername(registerRequestBo.getUsername());
         user.setPassword(registerRequestBo.getPassword());
         user.setNickname(registerRequestBo.getNickname());
         user.setRegisteredTime(new Date());
-        user = this.userDao.save(user);
+        registerRequestBo.getLabels().forEach(text -> {
+            Label label = this.labelService.getAndCreateIfAbsent(text);
+            if (label != null) {
+                user.getLabels().add(label);
+            }
+        });
+        this.userDao.save(user);
         RegisterResponseBo result = new RegisterResponseBo();
         result.setId(user.getId());
         return result;

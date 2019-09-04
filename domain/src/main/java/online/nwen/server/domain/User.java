@@ -2,6 +2,8 @@ package online.nwen.server.domain;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tbnwen_user")
@@ -27,6 +29,17 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_anthology_id", referencedColumnName = "anthology_id")
     private Anthology defaultAnthology;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "tbnwen_user_label", joinColumns = {
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    }, inverseJoinColumns = {
+            @JoinColumn(name = "label_id", referencedColumnName = "label_id")
+    })
+    private Set<Label> labels;
+
+    public User() {
+        this.labels = new HashSet<>();
+    }
 
     public Long getId() {
         return id;
@@ -90,5 +103,13 @@ public class User {
 
     public void setDefaultAnthology(Anthology defaultAnthology) {
         this.defaultAnthology = defaultAnthology;
+    }
+
+    public Set<Label> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<Label> labels) {
+        this.labels = labels;
     }
 }

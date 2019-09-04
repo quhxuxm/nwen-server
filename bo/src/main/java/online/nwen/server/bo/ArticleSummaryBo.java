@@ -1,6 +1,8 @@
 package online.nwen.server.bo;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ArticleSummaryBo {
     private Long articleId;
@@ -9,6 +11,19 @@ public class ArticleSummaryBo {
     private Date createTime;
     private Date updateTime;
     private AnthologySummaryBo anthologySummary;
+    private Set<LabelBo> labels;
+
+    public ArticleSummaryBo() {
+        this.labels = new HashSet<>();
+    }
+
+    public Set<LabelBo> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Set<LabelBo> labels) {
+        this.labels = labels;
+    }
 
     public Long getArticleId() {
         return articleId;

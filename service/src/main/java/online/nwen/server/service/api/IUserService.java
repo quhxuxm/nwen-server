@@ -5,4 +5,6 @@ import online.nwen.server.domain.User;
 
 public interface IUserService {
     UserSummaryBo convertToSummary(User user);
+
+    UserSummaryBo getUserSummary(Long userId);
 }
