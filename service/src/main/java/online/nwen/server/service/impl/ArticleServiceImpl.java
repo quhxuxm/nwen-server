@@ -102,6 +102,8 @@ class ArticleServiceImpl implements IArticleService {
             }
         });
         this.articleDao.save(article);
+        anthology.setUpdateTime(new Date());
+        this.anthologyDao.save(anthology);
         CreateArticleResponseBo result = new CreateArticleResponseBo();
         result.setArticleId(article.getId());
         return result;
