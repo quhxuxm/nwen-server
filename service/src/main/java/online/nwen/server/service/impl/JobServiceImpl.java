@@ -56,9 +56,24 @@ class JobServiceImpl implements IJobService {
                 securityJobTrigger);
     }
 
+    private void saveAdjustLabelPopularFactorJob() throws ServiceException {
+        JobDetail adjustLabelPopularFactorJob = JobBuilder.newJob().ofType(AutoSecurityJob.class)
+                .withIdentity(IJobConstant.Job.ADJUST_LABEL_POPULAR_FACTOR.generateJobId(null)).storeDurably().build();
+        SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule().withIntervalInMilliseconds(
+                this.serverConfiguration.getTimerIntervalForSecurityJob()).repeatForever();
+        Trigger adjustLabelPopularFactorJobTrigger =
+                TriggerBuilder.newTrigger().withIdentity(IJobConstant.Job.ADJUST_LABEL_POPULAR_FACTOR.generateTriggerId(null))
+                        .forJob(adjustLabelPopularFactorJob).startNow()
+                        .withSchedule(simpleScheduleBuilder)
+                        .build();
+        doScheduleJob(adjustLabelPopularFactorJob,
+                adjustLabelPopularFactorJobTrigger);
+    }
+
     @PostConstruct
     @Override
     public void initializeJobs() {
         this.saveSecurityJob();
+        this.saveAdjustLabelPopularFactorJob();
     }
 }

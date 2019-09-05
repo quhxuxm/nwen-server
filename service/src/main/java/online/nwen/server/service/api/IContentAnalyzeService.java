@@ -1,5 +1,7 @@
 package online.nwen.server.service.api;
 
+import online.nwen.server.bo.ContentAnalyzeResultBo;
+
 public interface IContentAnalyzeService {
-    String analyze(String content);
+    ContentAnalyzeResultBo analyze(String content);
 }

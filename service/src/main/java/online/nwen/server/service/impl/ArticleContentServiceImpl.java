@@ -1,6 +1,7 @@
 package online.nwen.server.service.impl;
 
 import online.nwen.server.bo.ArticleContentBo;
+import online.nwen.server.bo.ContentAnalyzeResultBo;
 import online.nwen.server.bo.ResponseCode;
 import online.nwen.server.bo.SecurityContextBo;
 import online.nwen.server.common.ServerConfiguration;
@@ -51,8 +52,8 @@ class ArticleContentServiceImpl implements IArticleContentService {
         }
         articleContentId.setVersion(version);
         articleContent.setId(articleContentId);
-        String analyzedContent = this.contentAnalyzeService.analyze(content);
-        articleContent.setContent(analyzedContent);
+        ContentAnalyzeResultBo analyzedContentResult = this.contentAnalyzeService.analyze(content);
+        articleContent.setContent(analyzedContentResult.getContent());
         articleContent.setVersionTime(new Date());
         return this.articleContentDao.save(articleContent);
     }

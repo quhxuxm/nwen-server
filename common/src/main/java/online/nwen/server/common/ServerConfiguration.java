@@ -19,6 +19,7 @@ public class ServerConfiguration {
     private Integer articleDescriptionMaxLength;
     private Integer articleContentSaveInterval;
     private Long timerIntervalForSecurityJob;
+    private Long timerIntervalForAdjustLabelPopularFactorJob;
 
     public String getJwtSecret() {
         return jwtSecret;
@@ -122,5 +123,13 @@ public class ServerConfiguration {
 
     public Long getTimerIntervalForSecurityJob() {
         return timerIntervalForSecurityJob;
+    }
+
+    public void setTimerIntervalForAdjustLabelPopularFactorJob(Long timerIntervalForAdjustLabelPopularFactorJob) {
+        this.timerIntervalForAdjustLabelPopularFactorJob = timerIntervalForAdjustLabelPopularFactorJob;
+    }
+
+    public Long getTimerIntervalForAdjustLabelPopularFactorJob() {
+        return timerIntervalForAdjustLabelPopularFactorJob;
     }
 }
