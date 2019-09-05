@@ -101,6 +101,9 @@ class AnthologyServiceImpl implements IAnthologyService {
             throw new ServiceException(ResponseCode.USER_NOT_EXIST);
         }
         final Anthology anthology = this.anthologyDao.getById(updateAnthologyRequestBo.getAnthologyId());
+        if (anthology == null) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_EXIST);
+        }
         if (!anthology.getAuthor().getId().equals(currentUser.getId())) {
             throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_BELONG_TO_AUTHOR);
         }
