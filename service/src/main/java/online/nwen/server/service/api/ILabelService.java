@@ -14,4 +14,6 @@ public interface ILabelService {
     Set<Label> getWithTexts(Set<String> labelTexts);
 
     List<LabelBo> getTopNLabels(Integer number);
+
+    List<LabelBo> getByTextLikeOrderByPopularFactor(String text);
 }

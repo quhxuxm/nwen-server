@@ -48,4 +48,9 @@ class LabelDaoImpl implements ILabelDao {
         Pageable pageable = PageRequest.of(0, n, Sort.by(Sort.Direction.DESC, "popularFactor"));
         return this.labelRepository.findLabels(pageable);
     }
+
+    @Override
+    public List<Label> getByTextLikeOrderByPopularFactor(String text) {
+        return this.labelRepository.findByTextLikeOrderByPopularFactor(text);
+    }
 }

@@ -60,4 +60,15 @@ class LabelServiceImpl implements ILabelService {
     public List<LabelBo> getTopNLabels(Integer number) {
         return this.labelDao.getTopNLabels(number).stream().map(this::convert).collect(Collectors.toList());
     }
+
+    @Override
+    public List<LabelBo> getByTextLikeOrderByPopularFactor(String text) {
+        return this.labelDao.getByTextLikeOrderByPopularFactor(text).stream().map(label -> {
+            LabelBo result = new LabelBo();
+            result.setPopularFactor(label.getPopularFactor());
+            result.setText(label.getText());
+            result.setId(label.getId());
+            return result;
+        }).collect(Collectors.toList());
+    }
 }

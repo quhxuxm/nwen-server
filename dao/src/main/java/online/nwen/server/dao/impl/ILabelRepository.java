@@ -14,4 +14,6 @@ interface ILabelRepository extends JpaRepository<Label, Long> {
 
     @Query("select l from Label l")
     List<Label> findLabels(Pageable pageable);
+
+    List<Label> findByTextLikeOrderByPopularFactor(String text);
 }

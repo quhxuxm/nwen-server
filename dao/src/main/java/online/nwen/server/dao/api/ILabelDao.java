@@ -12,4 +12,6 @@ public interface ILabelDao {
     Label getByText(String text);
 
     List<Label> getTopNLabels(int n);
+
+    List<Label> getByTextLikeOrderByPopularFactor(String text);
 }
