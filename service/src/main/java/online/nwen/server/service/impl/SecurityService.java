@@ -164,13 +164,7 @@ class SecurityService implements ISecurityService {
     public SecurityToken markSecurityTokenDisabled(String securityToken) {
         SecurityToken securityTokenObj = this.securityTokenDao.getByToken(securityToken);
         if (securityTokenObj == null) {
-            securityTokenObj = new SecurityToken();
-            securityTokenObj.setToken(securityToken);
-            securityTokenObj.setExpireAt(new Date());
-            securityTokenObj.setRefreshableTill(new Date());
-            securityTokenObj.setCreateTime(new Date());
-            securityTokenObj.setDisabled(true);
-            return this.securityTokenDao.save(securityTokenObj);
+            return null;
         }
         securityTokenObj.setDisabled(true);
         return this.securityTokenDao.save(securityTokenObj);

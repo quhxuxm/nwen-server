@@ -12,7 +12,6 @@
         <module>entry</module>
         <module>common</module>
         <module>bo</module>
-        <module>job</module>
     </modules>
     <packaging>pom</packaging>
     <properties>

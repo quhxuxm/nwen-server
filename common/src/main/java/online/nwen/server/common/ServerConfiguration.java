@@ -18,6 +18,7 @@ public class ServerConfiguration {
     private Integer articleTitleMaxLength;
     private Integer articleDescriptionMaxLength;
     private Integer articleContentSaveInterval;
+    private Long timerIntervalForSecurityJob;
 
     public String getJwtSecret() {
         return jwtSecret;
@@ -113,5 +114,13 @@ public class ServerConfiguration {
 
     public Integer getArticleContentSaveInterval() {
         return articleContentSaveInterval;
+    }
+
+    public void setTimerIntervalForSecurityJob(Long timerIntervalForSecurityJob) {
+        this.timerIntervalForSecurityJob = timerIntervalForSecurityJob;
+    }
+
+    public Long getTimerIntervalForSecurityJob() {
+        return timerIntervalForSecurityJob;
     }
 }
