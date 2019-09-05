@@ -30,7 +30,7 @@ class ArticleContentDaoImpl implements IArticleContentDao {
         return this.articleContentRepository.save(content);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Cacheable(cacheNames = "article-content-by-article_id-and-version", key = "#p0.article.id+'-'+#p0.version", unless = "#result == null",
             condition = "#p0 != null && #p0.article !=null")
     @Override

@@ -6,24 +6,14 @@ import javax.persistence.*;
 @Table(name = "tbnwen_media_resource")
 public class MediaResource {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "media_resource_id")
-    private Long id;
-    @Column(name = "md5", unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "md5", unique = true, length = 64)
     private String md5;
     @Column(name = "content_type")
     private String contentType;
     @Column(name = "content")
     @Lob
     private byte[] content;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getMd5() {
         return md5;

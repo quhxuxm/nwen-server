@@ -21,6 +21,7 @@ class EntryConfigure implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new SecurityCheckInterceptor(this.securityService)).order(99).addPathPatterns("/mediaResource/security/**");
         registry.addInterceptor(new SecurityCheckInterceptor(this.securityService)).order(100).addPathPatterns("/api/security/**");
         registry.addInterceptor(new PrepareLocaleInterceptor(this.localeService)).order(101).addPathPatterns("/api/**");
         registry.addInterceptor(new LoadSecurityContextInterceptor(this.securityService)).order(102).addPathPatterns("/api/**");

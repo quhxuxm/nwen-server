@@ -1,6 +1,9 @@
 package online.nwen.server.service.impl;
 
 import online.nwen.server.bo.ContentAnalyzeResultBo;
+import online.nwen.server.bo.MediaResourceBo;
+import online.nwen.server.dao.api.IMediaResourceDao;
+import online.nwen.server.domain.MediaResource;
 import online.nwen.server.service.api.IContentAnalyzeService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,35 +19,54 @@ import java.util.Base64;
 @Service
 class ContentAnalyzeServiceImpl implements IContentAnalyzeService {
     private static final Logger logger = LoggerFactory.getLogger(ContentAnalyzeServiceImpl.class);
-    private static final String IMG_TAG = "img";
-    private static final String VIDEO_TAG = "video";
-    private static final String AUDIO_TAG = "audio";
+    private IMediaResourceDao mediaResourceDao;
+
+    ContentAnalyzeServiceImpl(IMediaResourceDao mediaResourceDao) {
+        this.mediaResourceDao = mediaResourceDao;
+    }
 
     @Override
     public ContentAnalyzeResultBo analyze(String content) {
         ContentAnalyzeResultBo result = new ContentAnalyzeResultBo();
         Document cleanDocument = Jsoup.parse(Jsoup.clean(content, this.createWhiteList()));
-        this.parseMediaContent(cleanDocument, IMG_TAG, result);
-        this.parseMediaContent(cleanDocument, VIDEO_TAG, result);
-        this.parseMediaContent(cleanDocument, AUDIO_TAG, result);
+        this.parseMediaContent(cleanDocument, "img", result);
+        this.parseMediaContent(cleanDocument, "video", result);
+        this.parseMediaContent(cleanDocument, "audio", result);
+        result.getMediaContents().forEach((md5, mediaContent) -> {
+            MediaResource existingMediaResource = mediaResourceDao.getByMd5(md5);
+            if (existingMediaResource != null) {
+                return;
+            }
+            MediaResource mediaResource = new MediaResource();
+            mediaResource.setContent(mediaContent.getContent());
+            mediaResource.setContentType(mediaContent.getContentType());
+            mediaResource.setMd5(md5);
+            this.mediaResourceDao.save(mediaResource);
+        });
         String contentHtml = cleanDocument.body().html();
         result.setContent(contentHtml);
         return result;
     }
 
     private Whitelist createWhiteList() {
-        return Whitelist.none()
-                .addTags("audio", "video", "img", "div", "p", "h1", "h2", "h3", "h4", "b", "i", "blockquote", "br")
+        return Whitelist.none().addTags(
+                "audio", "video", "img", "div", "p", "h1",
+                "h2", "h3", "h4", "h5", "h6", "h7",
+                "b", "i", "ul", "ol", "li", "blockquote",
+                "br", "strike", "a")
+                .addAttributes("a", "href", "target")
                 .addAttributes("img", "src")
                 .addAttributes("video", "src")
                 .addAttributes("audio", "src")
-                .addProtocols("img", "src", "data")
-                .addProtocols("audio", "src", "data")
-                .addProtocols("video", "src", "data");
+                .addProtocols("img", "src", "http", "https", "data")
+                .addProtocols("audio", "src", "http", "https", "data")
+                .addProtocols("video", "src", "http", "https", "data")
+                .addProtocols("a", "href", "http", "https")
+                .addProtocols("a", "target", "_blank");
     }
 
     private void parseMediaContent(Document document, String tagName,
-                                   ContentAnalyzeResultBo articleContentAnalyzeResponse) {
+                                   ContentAnalyzeResultBo contentAnalyzeResult) {
         Elements imgElements = document.getElementsByTag(tagName);
         imgElements.forEach(element -> {
             String src = element.attr("src");
@@ -78,12 +100,12 @@ class ContentAnalyzeServiceImpl implements IContentAnalyzeService {
             byte[] mediaByteContent = Base64.getDecoder()
                     .decode(base64Content);
             String mediaMd5 = DigestUtils.md5DigestAsHex(mediaByteContent);
-            ContentAnalyzeResultBo.MediaContent mediaContent = new ContentAnalyzeResultBo.MediaContent();
+            MediaResourceBo mediaContent = new MediaResourceBo();
             mediaContent.setMd5(mediaMd5);
             mediaContent.setContentType(mediaType);
             mediaContent.setContent(mediaByteContent);
-            articleContentAnalyzeResponse.getMediaContents().put(mediaMd5, mediaContent);
-            element.attr("src", "/api/resource/" + mediaMd5);
+            contentAnalyzeResult.getMediaContents().put(mediaMd5, mediaContent);
+            element.attr("src", "/mediaResource/" + mediaMd5);
         });
     }
 }

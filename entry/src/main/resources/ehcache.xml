@@ -57,4 +57,8 @@
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>
+    <cache alias="mediaresource-by-md5"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
 </config>
