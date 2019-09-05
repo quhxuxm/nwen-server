@@ -4,7 +4,6 @@ import online.nwen.server.bo.*;
 import online.nwen.server.common.ServerConfiguration;
 import online.nwen.server.common.constant.IConstant;
 import online.nwen.server.dao.api.IAnthologyDao;
-import online.nwen.server.dao.api.IArticleContentDao;
 import online.nwen.server.dao.api.IArticleDao;
 import online.nwen.server.dao.api.IUserDao;
 import online.nwen.server.domain.*;
@@ -30,13 +29,13 @@ class ArticleServiceImpl implements IArticleService {
     private MessageSource messageSource;
     private ILocaleService localeService;
     private ISecurityService securityService;
-    private IArticleContentDao articleContentDao;
     private ILabelService labelService;
+    private IArticleContentService articleContentService;
 
     ArticleServiceImpl(IArticleDao articleDao, IAnthologyDao anthologyDao, IUserDao userDao,
                        ServerConfiguration serverConfiguration, IAnthologyService anthologyService, MessageSource messageSource,
-                       ILocaleService localeService, ISecurityService securityService, IArticleContentDao articleContentDao,
-                       ILabelService labelService) {
+                       ILocaleService localeService, ISecurityService securityService,
+                       ILabelService labelService, IArticleContentService articleContentService) {
         this.articleDao = articleDao;
         this.anthologyDao = anthologyDao;
         this.userDao = userDao;
@@ -45,8 +44,8 @@ class ArticleServiceImpl implements IArticleService {
         this.messageSource = messageSource;
         this.localeService = localeService;
         this.securityService = securityService;
-        this.articleContentDao = articleContentDao;
         this.labelService = labelService;
+        this.articleContentService = articleContentService;
     }
 
     @Override
@@ -99,15 +98,7 @@ class ArticleServiceImpl implements IArticleService {
             }
         });
         this.articleDao.save(article);
-        ArticleContent articleContent = new ArticleContent();
-        ArticleContentId articleContentId = new ArticleContentId();
-        articleContentId.setArticle(article);
-        long version = System.currentTimeMillis() / this.serverConfiguration.getArticleContentSaveInterval();
-        articleContentId.setVersion(version);
-        articleContent.setId(articleContentId);
-        articleContent.setContent(createArticleRequestBo.getContent());
-        articleContent.setVersionTime(new Date());
-        this.articleContentDao.save(articleContent);
+        this.articleContentService.save(article, null, createArticleRequestBo.getContent());
         anthology = this.anthologyDao.getById(anthology.getId());
         anthology.setUpdateTime(new Date());
         this.anthologyDao.save(anthology);
@@ -186,19 +177,7 @@ class ArticleServiceImpl implements IArticleService {
         ArticleSummaryBo articleSummaryBo = this.convertToSummary(article);
         ArticleDetailBo articleDetailBo = new ArticleDetailBo();
         articleDetailBo.setSummary(articleSummaryBo);
-        ArticleContentId articleContentId = new ArticleContentId();
-        articleContentId.setArticle(article);
-        Long articleLastVersion = this.articleContentDao.getArticleContentLastVersion(article);
-        articleContentId.setVersion(articleLastVersion);
-        ArticleContent articleContent = this.articleContentDao.getById(articleContentId);
-        if (articleContent == null) {
-            return articleDetailBo;
-        }
-        ArticleContentBo articleContentBo = new ArticleContentBo();
-        articleContentBo.setContent(articleContent.getContent());
-        articleContentBo.setContentVersion(articleContent.getId().getVersion());
-        articleContentBo.setVersionTime(articleContent.getVersionTime());
-        articleDetailBo.setContent(articleContentBo);
+        articleDetailBo.setContent(this.articleContentService.getLastVersion(article));
         return articleDetailBo;
     }
 
@@ -246,51 +225,12 @@ class ArticleServiceImpl implements IArticleService {
             article.setLabels(updateLabels);
         }
         this.articleDao.save(article);
-        Long version = updateArticleRequestBo.getVersion();
-        if (version == null) {
-            version = System.currentTimeMillis() / this.serverConfiguration.getArticleContentSaveInterval();
-        }
-        ArticleContentId articleContentId = new ArticleContentId();
-        articleContentId.setArticle(article);
-        articleContentId.setVersion(version);
-        ArticleContent articleContent = new ArticleContent();
-        articleContent.setId(articleContentId);
-        articleContent.setContent(updateArticleRequestBo.getContent());
-        articleContent.setVersionTime(new Date());
-        this.articleContentDao.save(articleContent);
+        ArticleContent articleContent = this.articleContentService.save(article, updateArticleRequestBo.getVersion(), updateArticleRequestBo.getContent());
         anthology.setUpdateTime(new Date());
         this.anthologyDao.save(anthology);
         UpdateArticleResponseBo result = new UpdateArticleResponseBo();
         result.setArticleId(article.getId());
-        result.setVersion(version);
+        result.setVersion(articleContent.getId().getVersion());
         return result;
-    }
-
-    @Override
-    public Page<ArticleContentBo> getArticleContentHistories(Long articleId, Pageable pageable) {
-        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
-        User author = this.userDao.getByUsername(securityContextBo.getUsername());
-        if (author == null) {
-            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
-        }
-        Article article = this.articleDao.getById(articleId);
-        if (article == null) {
-            throw new ServiceException(ResponseCode.ARTICLE_NOT_EXIST);
-        }
-        Anthology anthology = this.anthologyDao.getById(article.getAnthology().getId());
-        if (anthology == null) {
-            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_EXIST);
-        }
-        if (!anthology.getAuthor().getId().equals(author.getId())) {
-            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_BELONG_TO_AUTHOR);
-        }
-        Page<ArticleContent> histories = this.articleContentDao.getByArticle(article, pageable);
-        return histories.map(articleContent -> {
-            ArticleContentBo result = new ArticleContentBo();
-            result.setVersionTime(articleContent.getVersionTime());
-            result.setContentVersion(articleContent.getId().getVersion());
-            result.setContent(articleContent.getContent());
-            return result;
-        });
     }
 }

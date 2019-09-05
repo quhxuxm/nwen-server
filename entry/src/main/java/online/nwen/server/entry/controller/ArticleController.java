@@ -1,6 +1,7 @@
 package online.nwen.server.entry.controller;
 
 import online.nwen.server.bo.*;
+import online.nwen.server.service.api.IArticleContentService;
 import online.nwen.server.service.api.IArticleService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class ArticleController {
     private IArticleService articleService;
+    private IArticleContentService articleContentService;
 
-    public ArticleController(IArticleService articleService) {
+    public ArticleController(IArticleService articleService, IArticleContentService articleContentService) {
         this.articleService = articleService;
+        this.articleContentService = articleContentService;
     }
 
     @PostMapping("/security/article/create")
@@ -30,7 +33,7 @@ public class ArticleController {
 
     @GetMapping(value = {"/security/article/{articleId}/content/histories" })
     Page<ArticleContentBo> getArticleContentHistories(@PathVariable("articleId") Long articleId, Pageable pageable) {
-        return this.articleService.getArticleContentHistories(articleId, pageable);
+        return this.articleContentService.getArticleContentHistories(articleId, pageable);
     }
 
     @DeleteMapping("/security/article/deleteAll")

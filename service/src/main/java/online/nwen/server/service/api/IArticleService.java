@@ -23,5 +23,4 @@ public interface IArticleService {
 
     UpdateArticleResponseBo update(UpdateArticleRequestBo updateArticleRequestBo);
 
-    Page<ArticleContentBo> getArticleContentHistories(Long articleId, Pageable pageable);
 }
