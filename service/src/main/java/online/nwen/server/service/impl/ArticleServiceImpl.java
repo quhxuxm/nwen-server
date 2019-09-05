@@ -106,7 +106,9 @@ class ArticleServiceImpl implements IArticleService {
         articleContentId.setVersion(version);
         articleContent.setId(articleContentId);
         articleContent.setContent(createArticleRequestBo.getContent());
+        articleContent.setVersionTime(new Date());
         this.articleContentDao.save(articleContent);
+        anthology = this.anthologyDao.getById(anthology.getId());
         anthology.setUpdateTime(new Date());
         this.anthologyDao.save(anthology);
         CreateArticleResponseBo result = new CreateArticleResponseBo();
@@ -192,8 +194,11 @@ class ArticleServiceImpl implements IArticleService {
         if (articleContent == null) {
             return articleDetailBo;
         }
-        articleDetailBo.setContent(articleContent.getContent());
-        articleDetailBo.setContentVersion(articleLastVersion);
+        ArticleContentBo articleContentBo = new ArticleContentBo();
+        articleContentBo.setContent(articleContent.getContent());
+        articleContentBo.setContentVersion(articleContent.getId().getVersion());
+        articleContentBo.setVersionTime(articleContent.getVersionTime());
+        articleDetailBo.setContent(articleContentBo);
         return articleDetailBo;
     }
 
@@ -251,6 +256,7 @@ class ArticleServiceImpl implements IArticleService {
         ArticleContent articleContent = new ArticleContent();
         articleContent.setId(articleContentId);
         articleContent.setContent(updateArticleRequestBo.getContent());
+        articleContent.setVersionTime(new Date());
         this.articleContentDao.save(articleContent);
         anthology.setUpdateTime(new Date());
         this.anthologyDao.save(anthology);
