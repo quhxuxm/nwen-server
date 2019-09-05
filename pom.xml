@@ -12,6 +12,7 @@
         <module>entry</module>
         <module>common</module>
         <module>bo</module>
+        <module>job</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
@@ -42,6 +43,11 @@
             <dependency>
                 <groupId>online.nwen.server</groupId>
                 <artifactId>bo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>online.nwen.server</groupId>
+                <artifactId>job</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
