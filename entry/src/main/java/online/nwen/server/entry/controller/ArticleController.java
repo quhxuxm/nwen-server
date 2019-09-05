@@ -20,11 +20,17 @@ public class ArticleController {
         return this.articleService.create(createArticleRequestBo);
     }
 
-    @PostMapping(value = {"/security/article/update/{articleId}/{version}", "/security/article/update/{articleId}"})
-    UpdateArticleResponseBo update(@PathVariable("articleId") Long articleId, @PathVariable(value = "version", required = false) Long version, @RequestBody UpdateArticleRequestBo updateArticleRequestBo) {
+    @PostMapping(value = {"/security/article/update/{articleId}/{version}", "/security/article/update/{articleId}" })
+    UpdateArticleResponseBo update(@PathVariable("articleId") Long articleId, @PathVariable(value = "version", required = false) Long version,
+                                   @RequestBody UpdateArticleRequestBo updateArticleRequestBo) {
         updateArticleRequestBo.setArticleId(articleId);
         updateArticleRequestBo.setVersion(version);
         return this.articleService.update(updateArticleRequestBo);
+    }
+
+    @GetMapping(value = {"/security/article/{articleId}/content/histories" })
+    Page<ArticleContentBo> getArticleContentHistories(@PathVariable("articleId") Long articleId, Pageable pageable) {
+        return this.articleService.getArticleContentHistories(articleId, pageable);
     }
 
     @DeleteMapping("/security/article/deleteAll")

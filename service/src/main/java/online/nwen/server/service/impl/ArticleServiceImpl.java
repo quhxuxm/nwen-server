@@ -265,4 +265,32 @@ class ArticleServiceImpl implements IArticleService {
         result.setVersion(version);
         return result;
     }
+
+    @Override
+    public Page<ArticleContentBo> getArticleContentHistories(Long articleId, Pageable pageable) {
+        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
+        User author = this.userDao.getByUsername(securityContextBo.getUsername());
+        if (author == null) {
+            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
+        }
+        Article article = this.articleDao.getById(articleId);
+        if (article == null) {
+            throw new ServiceException(ResponseCode.ARTICLE_NOT_EXIST);
+        }
+        Anthology anthology = this.anthologyDao.getById(article.getAnthology().getId());
+        if (anthology == null) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_EXIST);
+        }
+        if (!anthology.getAuthor().getId().equals(author.getId())) {
+            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_BELONG_TO_AUTHOR);
+        }
+        Page<ArticleContent> histories = this.articleContentDao.getByArticle(article, pageable);
+        return histories.map(articleContent -> {
+            ArticleContentBo result = new ArticleContentBo();
+            result.setVersionTime(articleContent.getVersionTime());
+            result.setContentVersion(articleContent.getId().getVersion());
+            result.setContent(articleContent.getContent());
+            return result;
+        });
+    }
 }

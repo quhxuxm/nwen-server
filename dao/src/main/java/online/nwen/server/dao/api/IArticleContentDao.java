@@ -3,8 +3,8 @@ package online.nwen.server.dao.api;
 import online.nwen.server.domain.Article;
 import online.nwen.server.domain.ArticleContent;
 import online.nwen.server.domain.ArticleContentId;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IArticleContentDao {
     ArticleContent save(ArticleContent content);
@@ -13,5 +13,5 @@ public interface IArticleContentDao {
 
     Long getArticleContentLastVersion(Article article);
 
-    List<ArticleContent> getByArticleOrderByVersionDesc(Article article);
+    Page<ArticleContent> getByArticle(Article article, Pageable pageable);
 }

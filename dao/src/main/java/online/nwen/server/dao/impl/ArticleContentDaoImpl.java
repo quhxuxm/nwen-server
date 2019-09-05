@@ -7,10 +7,10 @@ import online.nwen.server.domain.ArticleContentId;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 class ArticleContentDaoImpl implements IArticleContentDao {
@@ -30,6 +30,7 @@ class ArticleContentDaoImpl implements IArticleContentDao {
         return this.articleContentRepository.save(content);
     }
 
+    @Transactional
     @Cacheable(cacheNames = "article-content-by-article_id-and-version", key = "#p0.article.id+'-'+#p0.version", unless = "#result == null",
             condition = "#p0 != null && #p0.article !=null")
     @Override
@@ -42,8 +43,9 @@ class ArticleContentDaoImpl implements IArticleContentDao {
         return this.articleContentRepository.findArticleContentLastVersion(article);
     }
 
+    @Transactional
     @Override
-    public List<ArticleContent> getByArticleOrderByVersionDesc(Article article) {
-        return this.articleContentRepository.findByArticleOrderByVersionDesc(article);
+    public Page<ArticleContent> getByArticle(Article article, Pageable pageable) {
+        return this.articleContentRepository.findByArticle(article, pageable);
     }
 }
