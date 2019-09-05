@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api")
 public class ArticleController {
@@ -44,6 +46,11 @@ public class ArticleController {
     @GetMapping("/article/summaries/anthology/{anthologyId}")
     Page<ArticleSummaryBo> getArticleSummariesOfAnthology(@PathVariable("anthologyId") Long anthologyId, Pageable pageable) {
         return this.articleService.getArticleSummariesOfAnthology(anthologyId, pageable);
+    }
+
+    @GetMapping("/article/summaries/labels/{labels}")
+    Page<ArticleSummaryBo> getArticleSummariesWithLabels(@PathVariable("labels") Set<String> labels, Pageable pageable) {
+        return this.articleService.getArticleSummariesWithLabels(labels, pageable);
     }
 
     @GetMapping("/article/detail/{articleId}")

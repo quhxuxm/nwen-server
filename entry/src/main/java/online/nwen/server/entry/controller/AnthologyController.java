@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api")
 class AnthologyController {
@@ -29,5 +31,10 @@ class AnthologyController {
     @GetMapping("/anthology/summaries/author/{authorId}")
     Page<AnthologySummaryBo> getAnthologySummariesOfAuthor(@PathVariable("authorId") Long authorId, Pageable pageable) {
         return this.anthologyService.getAnthologySummariesOfAuthor(authorId, pageable);
+    }
+
+    @GetMapping("/anthology/summaries/labels/{labels}")
+    Page<AnthologySummaryBo> getAnthologySummariesWithLabels(@PathVariable("labels") Set<String> labels, Pageable pageable) {
+        return this.anthologyService.getAnthologySummariesWithLabels(labels, pageable);
     }
 }

@@ -10,6 +10,7 @@ import online.nwen.server.dao.api.IArticleDao;
 import online.nwen.server.dao.api.IUserDao;
 import online.nwen.server.domain.*;
 import online.nwen.server.service.api.IArticleContentService;
+import online.nwen.server.service.api.IContentAnalyzeService;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.data.domain.Page;
@@ -26,15 +27,18 @@ class ArticleContentServiceImpl implements IArticleContentService {
     private IAnthologyDao anthologyDao;
     private IUserDao userDao;
     private ISecurityService securityService;
+    private IContentAnalyzeService contentAnalyzeService;
 
     ArticleContentServiceImpl(IArticleContentDao articleContentDao, ServerConfiguration serverConfiguration, IArticleDao articleDao,
-                              IAnthologyDao anthologyDao, IUserDao userDao, ISecurityService securityService) {
+                              IAnthologyDao anthologyDao, IUserDao userDao, ISecurityService securityService,
+                              IContentAnalyzeService contentAnalyzeService) {
         this.articleContentDao = articleContentDao;
         this.serverConfiguration = serverConfiguration;
         this.articleDao = articleDao;
         this.anthologyDao = anthologyDao;
         this.userDao = userDao;
         this.securityService = securityService;
+        this.contentAnalyzeService = contentAnalyzeService;
     }
 
     @Override
@@ -47,7 +51,8 @@ class ArticleContentServiceImpl implements IArticleContentService {
         }
         articleContentId.setVersion(version);
         articleContent.setId(articleContentId);
-        articleContent.setContent(content);
+        String analyzedContent = this.contentAnalyzeService.analyze(content);
+        articleContent.setContent(analyzedContent);
         articleContent.setVersionTime(new Date());
         return this.articleContentDao.save(articleContent);
     }

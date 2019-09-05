@@ -177,4 +177,11 @@ class AnthologyServiceImpl implements IAnthologyService {
         Page<Anthology> anthologies = this.anthologyDao.getByAuthor(author, pageable);
         return anthologies.map(this::convertToSummary);
     }
+
+    @Override
+    public Page<AnthologySummaryBo> getAnthologySummariesWithLabels(Set<String> labels, Pageable pageable) {
+        Set<Label> labelEntities = this.labelService.getWithTexts(labels);
+        Page<Anthology> anthologies = this.anthologyDao.getByLabels(labelEntities, pageable);
+        return anthologies.map(this::convertToSummary);
+    }
 }

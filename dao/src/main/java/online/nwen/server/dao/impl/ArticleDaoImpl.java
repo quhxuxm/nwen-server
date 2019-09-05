@@ -63,6 +63,6 @@ class ArticleDaoImpl implements IArticleDao {
 
     @Override
     public Page<Article> getByLabels(Set<Label> labels, Pageable pageable) {
-        return this.articleRepository.findByLabelsContaining(labels, pageable);
+        return this.articleRepository.findByLabels(labels, pageable);
     }
 }

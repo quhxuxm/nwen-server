@@ -21,5 +21,6 @@ interface IArticleRepository extends JpaRepository<Article, Long> {
 
     int countByAnthology(Anthology anthology);
 
-    Page<Article> findByLabelsContaining(Set<Label> labels, Pageable pageable);
+    @Query("select a from Article a , in(a.labels) l where l in :labels")
+    Page<Article> findByLabels(@Param("labels") Set<Label> labels, Pageable pageable);
 }
