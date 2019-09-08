@@ -24,6 +24,12 @@ public class AnthologyBookmark {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_read_article_id", referencedColumnName = "article_id")
     private Article lastReadArticle;
+    @Version
+    @Column(name = "version")
+    private Long version;
+    @Column(name = "update_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -63,5 +69,21 @@ public class AnthologyBookmark {
 
     public void setLastReadArticle(Article lastReadArticle) {
         this.lastReadArticle = lastReadArticle;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }
