@@ -23,6 +23,4 @@ public interface IAnthologyService {
     AnthologyBookmarkBo bookmarkAnthology(Long anthologyId, Long lastReadArticleId);
 
     Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAuthor(Long userId, Pageable pageable);
-
-    Page<AnthologyBookmarkBo> getAnthologyBookmarksOfCurrentUser(Pageable pageable);
 }

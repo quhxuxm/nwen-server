@@ -37,4 +37,14 @@ class AnthologyController {
     Page<AnthologySummaryBo> getAnthologySummariesWithLabels(@PathVariable("labels") Set<String> labels, Pageable pageable) {
         return this.anthologyService.getAnthologySummariesWithLabels(labels, pageable);
     }
+
+    @PatchMapping("/security/anthology/bookmark/{anthologyId}")
+    AnthologyBookmarkBo bookmark(@PathVariable("anthologyId") Long anthologyId, @RequestParam(value = "articleId", required = false) Long articleId) {
+        return this.anthologyService.bookmarkAnthology(anthologyId, articleId);
+    }
+
+    @GetMapping("/anthology/bookmark/{anthologyId}")
+    Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAuthor(@RequestParam(value = "userId", required = false) Long userId, Pageable pageable) {
+        return this.anthologyService.getAnthologyBookmarksOfAuthor(userId, pageable);
+    }
 }

@@ -231,21 +231,17 @@ class AnthologyServiceImpl implements IAnthologyService {
 
     @Override
     public Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAuthor(Long userId, Pageable pageable) {
-        User targetUser = this.userDao.getById(userId);
+        User targetUser = null;
+        if (userId == null) {
+            SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
+            targetUser = this.userDao.getByUsername(securityContextBo.getUsername());
+        } else {
+            targetUser = this.userDao.getById(userId);
+        }
         if (targetUser == null) {
             throw new ServiceException(ResponseCode.USER_NOT_EXIST);
         }
         Page<AnthologyBookmark> anthologyBookmarks = this.anthologyBookmarkDao.getByUser(targetUser, pageable);
         return anthologyBookmarks.map(this::convertAnthologyBookmark);
-    }
-
-    @Override
-    public Page<AnthologyBookmarkBo> getAnthologyBookmarksOfCurrentUser(Pageable pageable) {
-        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
-        User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());
-        if (currentUser == null) {
-            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
-        }
-        return this.getAnthologyBookmarksOfAuthor(currentUser.getId(), pageable);
     }
 }
