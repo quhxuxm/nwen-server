@@ -1,6 +1,7 @@
 package online.nwen.server.entry.controller;
 
-import online.nwen.server.bo.AnthologyBookmarkBo;
+import online.nwen.server.bo.AnthologyBookmarkByAnthologyBo;
+import online.nwen.server.bo.AnthologyBookmarkByUserBo;
 import online.nwen.server.bo.CreateOrUpdateAnthologyBookmarkResponseBo;
 import online.nwen.server.service.api.IAnthologyBookmarkService;
 import org.springframework.data.domain.Page;
@@ -22,12 +23,12 @@ class AnthologyBookmarkController {
     }
 
     @GetMapping("/bookmark/user/{userId}")
-    Page<AnthologyBookmarkBo> getAnthologyBookmarksOfUser(@PathVariable(value = "userId") Long userId, Pageable pageable) {
+    Page<AnthologyBookmarkByUserBo> getAnthologyBookmarksOfUser(@PathVariable(value = "userId") Long userId, Pageable pageable) {
         return this.anthologyBookmarkService.getAnthologyBookmarksOfUser(userId, pageable);
     }
 
     @GetMapping("/bookmark/anthology/{anthologyId}")
-    Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAnthology(@PathVariable(value = "anthologyId") Long anthologyId, Pageable pageable) {
+    Page<AnthologyBookmarkByAnthologyBo> getAnthologyBookmarksOfAnthology(@PathVariable(value = "anthologyId") Long anthologyId, Pageable pageable) {
         return this.anthologyBookmarkService.getAnthologyBookmarksOfAnthology(anthologyId, pageable);
     }
 }

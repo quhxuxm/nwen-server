@@ -79,7 +79,7 @@ class AnthologyBookmarkServiceImpl implements IAnthologyBookmarkService {
     }
 
     @Override
-    public Page<AnthologyBookmarkBo> getAnthologyBookmarksOfUser(Long userId, Pageable pageable) {
+    public Page<AnthologyBookmarkByUserBo> getAnthologyBookmarksOfUser(Long userId, Pageable pageable) {
         User targetUser = null;
         if (userId == null) {
             SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
@@ -91,24 +91,45 @@ class AnthologyBookmarkServiceImpl implements IAnthologyBookmarkService {
             throw new ServiceException(ResponseCode.USER_NOT_EXIST);
         }
         Page<AnthologyBookmark> anthologyBookmarks = this.anthologyBookmarkDao.getByUser(targetUser, pageable);
-        return anthologyBookmarks.map(this::convertAnthologyBookmark);
+        return anthologyBookmarks.map(this::convertAnthologyBookmarkByUser);
     }
 
     @Override
-    public Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAnthology(Long anthologyId, Pageable pageable) {
+    public Page<AnthologyBookmarkByAnthologyBo> getAnthologyBookmarksOfAnthology(Long anthologyId, Pageable pageable) {
         Anthology anthology = this.anthologyDao.getById(anthologyId);
         if (anthology == null) {
             throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_EXIST);
         }
         Page<AnthologyBookmark> anthologyBookmarks = this.anthologyBookmarkDao.getByAnthology(anthology, pageable);
-        return anthologyBookmarks.map(this::convertAnthologyBookmark);
+        return anthologyBookmarks.map(this::convertAnthologyBookmarkByAnthology);
     }
 
-    private AnthologyBookmarkBo convertAnthologyBookmark(AnthologyBookmark anthologyBookmark) {
-        AnthologyBookmarkBo result = new AnthologyBookmarkBo();
+    private AnthologyBookmarkByUserBo convertAnthologyBookmarkByUser(AnthologyBookmark anthologyBookmark) {
+        AnthologyBookmarkByUserBo result = new AnthologyBookmarkByUserBo();
         result.setAnthologyBookmarkId(anthologyBookmark.getId());
         Anthology anthology = this.anthologyDao.getById(anthologyBookmark.getAnthology().getId());
         result.setAnthologySummary(this.anthologyService.convertToSummary(anthology));
+        result.setCreateTime(anthologyBookmark.getCreateTime());
+        Article lastReadArticle = null;
+        if (anthologyBookmark.getLastReadArticle() != null) {
+            lastReadArticle = this.articleDao.getById(anthologyBookmark.getLastReadArticle().getId());
+            if (lastReadArticle != null) {
+                LastReadArticleInBookmarkBo lastReadArticleInBookmarkBo = new LastReadArticleInBookmarkBo();
+                lastReadArticleInBookmarkBo.setArticleId(lastReadArticle.getId());
+                lastReadArticleInBookmarkBo.setArticleDescription(lastReadArticle.getDescription());
+                lastReadArticleInBookmarkBo.setArticleTitle(lastReadArticle.getTitle());
+                lastReadArticle.getLabels().forEach(label -> {
+                    lastReadArticleInBookmarkBo.getLabels().add(this.labelService.convert(label));
+                });
+                result.setLastReadArticle(lastReadArticleInBookmarkBo);
+            }
+        }
+        return result;
+    }
+
+    private AnthologyBookmarkByAnthologyBo convertAnthologyBookmarkByAnthology(AnthologyBookmark anthologyBookmark) {
+        AnthologyBookmarkByAnthologyBo result = new AnthologyBookmarkByAnthologyBo();
+        result.setAnthologyBookmarkId(anthologyBookmark.getId());
         User author = this.userDao.getById(anthologyBookmark.getUser().getId());
         result.setAuthorSummary(this.userService.convertToSummary(author));
         result.setCreateTime(anthologyBookmark.getCreateTime());

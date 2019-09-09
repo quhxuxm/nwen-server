@@ -2,10 +2,9 @@ package online.nwen.server.bo;
 
 import java.util.Date;
 
-public class AnthologyBookmarkBo {
+public class AnthologyBookmarkByAnthologyBo {
     private Long anthologyBookmarkId;
     private UserSummaryBo authorSummary;
-    private AnthologySummaryBo anthologySummary;
     private Date createTime;
     private LastReadArticleInBookmarkBo lastReadArticleId;
 
@@ -15,14 +14,6 @@ public class AnthologyBookmarkBo {
 
     public void setAuthorSummary(UserSummaryBo authorSummary) {
         this.authorSummary = authorSummary;
-    }
-
-    public AnthologySummaryBo getAnthologySummary() {
-        return anthologySummary;
-    }
-
-    public void setAnthologySummary(AnthologySummaryBo anthologySummary) {
-        this.anthologySummary = anthologySummary;
     }
 
     public Date getCreateTime() {
