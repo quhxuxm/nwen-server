@@ -2,12 +2,16 @@ package online.nwen.server.service.impl;
 
 import online.nwen.server.bo.*;
 import online.nwen.server.common.ServerConfiguration;
-import online.nwen.server.dao.api.IAnthologyBookmarkDao;
 import online.nwen.server.dao.api.IAnthologyDao;
 import online.nwen.server.dao.api.IArticleDao;
 import online.nwen.server.dao.api.IUserDao;
-import online.nwen.server.domain.*;
-import online.nwen.server.service.api.*;
+import online.nwen.server.domain.Anthology;
+import online.nwen.server.domain.Label;
+import online.nwen.server.domain.User;
+import online.nwen.server.service.api.IAnthologyService;
+import online.nwen.server.service.api.ILabelService;
+import online.nwen.server.service.api.ISecurityService;
+import online.nwen.server.service.api.IUserService;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,11 +31,9 @@ class AnthologyServiceImpl implements IAnthologyService {
     private IUserService userService;
     private ISecurityService securityService;
     private ILabelService labelService;
-    private IAnthologyBookmarkDao anthologyBookmarkDao;
-    private IArticleService articleService;
 
     AnthologyServiceImpl(IAnthologyDao anthologyDao, IArticleDao articleDao, IUserDao userDao, ServerConfiguration serverConfiguration, IUserService userService,
-                         ISecurityService securityService, ILabelService labelService, IAnthologyBookmarkDao anthologyBookmarkDao, IArticleService articleService) {
+                         ISecurityService securityService, ILabelService labelService) {
         this.anthologyDao = anthologyDao;
         this.articleDao = articleDao;
         this.userDao = userDao;
@@ -39,8 +41,6 @@ class AnthologyServiceImpl implements IAnthologyService {
         this.userService = userService;
         this.securityService = securityService;
         this.labelService = labelService;
-        this.anthologyBookmarkDao = anthologyBookmarkDao;
-        this.articleService = articleService;
     }
 
     @Override
@@ -183,65 +183,5 @@ class AnthologyServiceImpl implements IAnthologyService {
         Set<Label> labelEntities = this.labelService.getWithTexts(labels);
         Page<Anthology> anthologies = this.anthologyDao.getByLabels(labelEntities, pageable);
         return anthologies.map(this::convertToSummary);
-    }
-
-    private AnthologyBookmarkBo convertAnthologyBookmark(AnthologyBookmark anthologyBookmark) {
-        AnthologyBookmarkBo result = new AnthologyBookmarkBo();
-        Anthology anthology = this.anthologyDao.getById(anthologyBookmark.getAnthology().getId());
-        result.setAnthologySummary(this.convertToSummary(anthology));
-        User author = this.userDao.getById(anthologyBookmark.getUser().getId());
-        result.setAuthorSummary(this.userService.convertToSummary(author));
-        result.setCreateTime(anthologyBookmark.getCreateTime());
-        Article lastReadArticle = this.articleDao.getById(anthologyBookmark.getLastReadArticle().getId());
-        if (lastReadArticle != null) {
-            result.setLastReadArticle(this.articleService.convertToSummary(lastReadArticle));
-        }
-        return result;
-    }
-
-    @Override
-    public AnthologyBookmarkBo bookmarkAnthology(Long anthologyId, Long lastReadArticleId) {
-        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
-        User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());
-        if (currentUser == null) {
-            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
-        }
-        Anthology anthology = this.anthologyDao.getById(anthologyId);
-        if (anthology == null) {
-            throw new ServiceException(ResponseCode.ANTHOLOGY_NOT_EXIST);
-        }
-        AnthologyBookmark existingBookmark = this.anthologyBookmarkDao.getByUserAndAnthology(currentUser, anthology);
-        if (existingBookmark == null) {
-            existingBookmark = new AnthologyBookmark();
-            existingBookmark.setCreateTime(new Date());
-            existingBookmark.setAnthology(anthology);
-            existingBookmark.setUser(currentUser);
-        } else {
-            existingBookmark.setUpdateTime(new Date());
-        }
-        if (lastReadArticleId != null) {
-            Article article = this.articleDao.getById(lastReadArticleId);
-            if (article != null) {
-                existingBookmark.setLastReadArticle(article);
-            }
-        }
-        this.anthologyBookmarkDao.save(existingBookmark);
-        return this.convertAnthologyBookmark(existingBookmark);
-    }
-
-    @Override
-    public Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAuthor(Long userId, Pageable pageable) {
-        User targetUser = null;
-        if (userId == null) {
-            SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
-            targetUser = this.userDao.getByUsername(securityContextBo.getUsername());
-        } else {
-            targetUser = this.userDao.getById(userId);
-        }
-        if (targetUser == null) {
-            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
-        }
-        Page<AnthologyBookmark> anthologyBookmarks = this.anthologyBookmarkDao.getByUser(targetUser, pageable);
-        return anthologyBookmarks.map(this::convertAnthologyBookmark);
     }
 }

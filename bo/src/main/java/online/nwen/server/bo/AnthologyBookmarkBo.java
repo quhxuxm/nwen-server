@@ -3,10 +3,11 @@ package online.nwen.server.bo;
 import java.util.Date;
 
 public class AnthologyBookmarkBo {
+    private Long anthologyBookmarkId;
     private UserSummaryBo authorSummary;
     private AnthologySummaryBo anthologySummary;
     private Date createTime;
-    private ArticleSummaryBo lastReadArticle;
+    private Long lastReadArticleId;
 
     public UserSummaryBo getAuthorSummary() {
         return authorSummary;
@@ -32,11 +33,19 @@ public class AnthologyBookmarkBo {
         this.createTime = createTime;
     }
 
-    public ArticleSummaryBo getLastReadArticle() {
-        return lastReadArticle;
+    public Long getLastReadArticleId() {
+        return lastReadArticleId;
     }
 
-    public void setLastReadArticle(ArticleSummaryBo lastReadArticle) {
-        this.lastReadArticle = lastReadArticle;
+    public void setLastReadArticleId(Long lastReadArticleId) {
+        this.lastReadArticleId = lastReadArticleId;
+    }
+
+    public void setAnthologyBookmarkId(Long anthologyBookmarkId) {
+        this.anthologyBookmarkId = anthologyBookmarkId;
+    }
+
+    public Long getAnthologyBookmarkId() {
+        return anthologyBookmarkId;
     }
 }

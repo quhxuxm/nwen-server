@@ -13,4 +13,6 @@ interface IAnthologyBookmarkRepository extends JpaRepository<AnthologyBookmark, 
     Page<AnthologyBookmark> findByUser(User user, Pageable pageable);
 
     AnthologyBookmark findByUserAndAnthology(User user, Anthology anthology);
+
+    Page<AnthologyBookmark> findByAnthology(Anthology anthology, Pageable pageable);
 }

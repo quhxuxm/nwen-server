@@ -12,4 +12,6 @@ public interface IAnthologyBookmarkDao {
     Page<AnthologyBookmark> getByUser(User user, Pageable pageable);
 
     AnthologyBookmark getByUserAndAnthology(User user, Anthology anthology);
+
+    Page<AnthologyBookmark> getByAnthology(Anthology anthology, Pageable pageable);
 }

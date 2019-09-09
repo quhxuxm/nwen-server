@@ -1,6 +1,7 @@
 package online.nwen.server.entry.controller;
 
 import online.nwen.server.bo.*;
+import online.nwen.server.service.api.IAnthologyBookmarkService;
 import online.nwen.server.service.api.IAnthologyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,9 +13,11 @@ import java.util.Set;
 @RequestMapping("/api")
 class AnthologyController {
     private IAnthologyService anthologyService;
+    private IAnthologyBookmarkService anthologyBookmarkService;
 
-    AnthologyController(IAnthologyService anthologyService) {
+    AnthologyController(IAnthologyService anthologyService, IAnthologyBookmarkService anthologyBookmarkService) {
         this.anthologyService = anthologyService;
+        this.anthologyBookmarkService = anthologyBookmarkService;
     }
 
     @PostMapping("/security/anthology/create")
@@ -39,12 +42,17 @@ class AnthologyController {
     }
 
     @PatchMapping("/security/anthology/bookmark/{anthologyId}")
-    AnthologyBookmarkBo bookmark(@PathVariable("anthologyId") Long anthologyId, @RequestParam(value = "articleId", required = false) Long articleId) {
-        return this.anthologyService.bookmarkAnthology(anthologyId, articleId);
+    CreateOrUpdateAnthologyBookmarkResponseBo bookmark(@PathVariable("anthologyId") Long anthologyId, @RequestParam(value = "articleId", required = false) Long articleId) {
+        return this.anthologyBookmarkService.bookmarkAnthology(anthologyId, articleId);
     }
 
-    @GetMapping("/anthology/bookmark/{anthologyId}")
-    Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAuthor(@RequestParam(value = "userId", required = false) Long userId, Pageable pageable) {
-        return this.anthologyService.getAnthologyBookmarksOfAuthor(userId, pageable);
+    @GetMapping("/anthology/bookmark/byUser/{userId}")
+    Page<AnthologyBookmarkBo> getAnthologyBookmarksOfUser(@PathVariable(value = "userId") Long userId, Pageable pageable) {
+        return this.anthologyBookmarkService.getAnthologyBookmarksOfUser(userId, pageable);
+    }
+
+    @GetMapping("/anthology/bookmark/byAnthology/{anthologyId}")
+    Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAnthology(@PathVariable(value = "anthologyId") Long anthologyId, Pageable pageable) {
+        return this.anthologyBookmarkService.getAnthologyBookmarksOfAnthology(anthologyId, pageable);
     }
 }

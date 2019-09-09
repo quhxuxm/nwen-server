@@ -19,8 +19,4 @@ public interface IAnthologyService {
     AnthologySummaryBo convertToSummary(Anthology anthology);
 
     Page<AnthologySummaryBo> getAnthologySummariesWithLabels(Set<String> labels, Pageable pageable);
-
-    AnthologyBookmarkBo bookmarkAnthology(Long anthologyId, Long lastReadArticleId);
-
-    Page<AnthologyBookmarkBo> getAnthologyBookmarksOfAuthor(Long userId, Pageable pageable);
 }

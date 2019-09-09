@@ -30,4 +30,9 @@ class AnthologyBookmarkDaoImpl implements IAnthologyBookmarkDao {
     public AnthologyBookmark getByUserAndAnthology(User user, Anthology anthology) {
         return this.anthologyBookmarkRepository.findByUserAndAnthology(user, anthology);
     }
+
+    @Override
+    public Page<AnthologyBookmark> getByAnthology(Anthology anthology, Pageable pageable) {
+        return this.anthologyBookmarkRepository.findByAnthology(anthology, pageable);
+    }
 }
