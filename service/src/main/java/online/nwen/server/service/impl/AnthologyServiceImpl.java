@@ -8,10 +8,7 @@ import online.nwen.server.dao.api.IUserDao;
 import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.Label;
 import online.nwen.server.domain.User;
-import online.nwen.server.service.api.IAnthologyService;
-import online.nwen.server.service.api.ILabelService;
-import online.nwen.server.service.api.ISecurityService;
-import online.nwen.server.service.api.IUserService;
+import online.nwen.server.service.api.*;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,9 +28,10 @@ class AnthologyServiceImpl implements IAnthologyService {
     private IUserService userService;
     private ISecurityService securityService;
     private ILabelService labelService;
+    private IArticlePraiseService articlePraiseService;
 
     AnthologyServiceImpl(IAnthologyDao anthologyDao, IArticleDao articleDao, IUserDao userDao, ServerConfiguration serverConfiguration, IUserService userService,
-                         ISecurityService securityService, ILabelService labelService) {
+                         ISecurityService securityService, ILabelService labelService, IArticlePraiseService articlePraiseService) {
         this.anthologyDao = anthologyDao;
         this.articleDao = articleDao;
         this.userDao = userDao;
@@ -41,6 +39,7 @@ class AnthologyServiceImpl implements IAnthologyService {
         this.userService = userService;
         this.securityService = securityService;
         this.labelService = labelService;
+        this.articlePraiseService = articlePraiseService;
     }
 
     @Override
@@ -165,6 +164,7 @@ class AnthologyServiceImpl implements IAnthologyService {
         anthology.getLabels().forEach(label -> {
             anthologySummaryBo.getLabels().add(this.labelService.convert(label));
         });
+        anthologySummaryBo.setTotalPraiseNumber(this.articlePraiseService.countTotalPraiseOfAnthology(anthology.getId()));
         return anthologySummaryBo;
     }
 

@@ -31,11 +31,12 @@ class ArticleServiceImpl implements IArticleService {
     private ISecurityService securityService;
     private ILabelService labelService;
     private IArticleContentService articleContentService;
+    private IArticlePraiseService articlePraiseService;
 
     ArticleServiceImpl(IArticleDao articleDao, IAnthologyDao anthologyDao, IUserDao userDao,
                        ServerConfiguration serverConfiguration, IAnthologyService anthologyService, MessageSource messageSource,
                        ILocaleService localeService, ISecurityService securityService,
-                       ILabelService labelService, IArticleContentService articleContentService) {
+                       ILabelService labelService, IArticleContentService articleContentService, IArticlePraiseService articlePraiseService) {
         this.articleDao = articleDao;
         this.anthologyDao = anthologyDao;
         this.userDao = userDao;
@@ -46,6 +47,7 @@ class ArticleServiceImpl implements IArticleService {
         this.securityService = securityService;
         this.labelService = labelService;
         this.articleContentService = articleContentService;
+        this.articlePraiseService = articlePraiseService;
     }
 
     @Override
@@ -165,6 +167,7 @@ class ArticleServiceImpl implements IArticleService {
         article.getLabels().forEach(label -> {
             articleSummaryBo.getLabels().add(this.labelService.convert(label));
         });
+        articleSummaryBo.setTotalPraiseNumber(this.articlePraiseService.countTotalPraiseOfArticle(article.getId()));
         return articleSummaryBo;
     }
 

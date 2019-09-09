@@ -12,6 +12,7 @@ public class ArticleSummaryBo {
     private Date updateTime;
     private AnthologySummaryBo anthologySummary;
     private Set<LabelBo> labels;
+    private Long totalPraiseNumber;
 
     public ArticleSummaryBo() {
         this.labels = new HashSet<>();
@@ -71,5 +72,13 @@ public class ArticleSummaryBo {
 
     public void setAnthologySummary(AnthologySummaryBo anthologySummary) {
         this.anthologySummary = anthologySummary;
+    }
+
+    public void setTotalPraiseNumber(Long totalPraiseNumber) {
+        this.totalPraiseNumber = totalPraiseNumber;
+    }
+
+    public Long getTotalPraiseNumber() {
+        return totalPraiseNumber;
     }
 }

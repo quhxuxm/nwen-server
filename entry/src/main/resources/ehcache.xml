@@ -61,4 +61,12 @@
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>
+    <cache alias="article-praise-by-article-and-user"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
+    <cache alias="anthology-bookmark-by-user-and-anthology"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
 </config>
