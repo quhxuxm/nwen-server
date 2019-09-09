@@ -7,7 +7,7 @@ public class AnthologyBookmarkBo {
     private UserSummaryBo authorSummary;
     private AnthologySummaryBo anthologySummary;
     private Date createTime;
-    private Long lastReadArticleId;
+    private LastReadArticleInBookmarkBo lastReadArticleId;
 
     public UserSummaryBo getAuthorSummary() {
         return authorSummary;
@@ -33,11 +33,11 @@ public class AnthologyBookmarkBo {
         this.createTime = createTime;
     }
 
-    public Long getLastReadArticleId() {
+    public LastReadArticleInBookmarkBo getLastReadArticleId() {
         return lastReadArticleId;
     }
 
-    public void setLastReadArticleId(Long lastReadArticleId) {
+    public void setLastReadArticle(LastReadArticleInBookmarkBo lastReadArticleId) {
         this.lastReadArticleId = lastReadArticleId;
     }
 

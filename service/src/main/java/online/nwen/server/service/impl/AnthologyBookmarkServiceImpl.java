@@ -1,9 +1,6 @@
 package online.nwen.server.service.impl;
 
-import online.nwen.server.bo.AnthologyBookmarkBo;
-import online.nwen.server.bo.CreateOrUpdateAnthologyBookmarkResponseBo;
-import online.nwen.server.bo.ResponseCode;
-import online.nwen.server.bo.SecurityContextBo;
+import online.nwen.server.bo.*;
 import online.nwen.server.dao.api.IAnthologyBookmarkDao;
 import online.nwen.server.dao.api.IAnthologyDao;
 import online.nwen.server.dao.api.IArticleDao;
@@ -12,10 +9,7 @@ import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.AnthologyBookmark;
 import online.nwen.server.domain.Article;
 import online.nwen.server.domain.User;
-import online.nwen.server.service.api.IAnthologyBookmarkService;
-import online.nwen.server.service.api.IAnthologyService;
-import online.nwen.server.service.api.ISecurityService;
-import online.nwen.server.service.api.IUserService;
+import online.nwen.server.service.api.*;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,10 +26,11 @@ class AnthologyBookmarkServiceImpl implements IAnthologyBookmarkService {
     private IUserDao userDao;
     private IAnthologyService anthologyService;
     private IUserService userService;
+    private ILabelService labelService;
 
     AnthologyBookmarkServiceImpl(IAnthologyBookmarkDao anthologyBookmarkDao, ISecurityService securityService,
                                  IAnthologyDao anthologyDao, IArticleDao articleDao, IUserDao userDao, IAnthologyService anthologyService,
-                                 IUserService userService) {
+                                 IUserService userService, ILabelService labelService) {
         this.anthologyBookmarkDao = anthologyBookmarkDao;
         this.securityService = securityService;
         this.anthologyDao = anthologyDao;
@@ -43,6 +38,7 @@ class AnthologyBookmarkServiceImpl implements IAnthologyBookmarkService {
         this.userDao = userDao;
         this.anthologyService = anthologyService;
         this.userService = userService;
+        this.labelService = labelService;
     }
 
     @Override
@@ -120,7 +116,14 @@ class AnthologyBookmarkServiceImpl implements IAnthologyBookmarkService {
         if (anthologyBookmark.getLastReadArticle() != null) {
             lastReadArticle = this.articleDao.getById(anthologyBookmark.getLastReadArticle().getId());
             if (lastReadArticle != null) {
-                result.setLastReadArticleId(lastReadArticle.getId());
+                LastReadArticleInBookmarkBo lastReadArticleInBookmarkBo = new LastReadArticleInBookmarkBo();
+                lastReadArticleInBookmarkBo.setArticleId(lastReadArticle.getId());
+                lastReadArticleInBookmarkBo.setArticleDescription(lastReadArticle.getDescription());
+                lastReadArticleInBookmarkBo.setArticleTitle(lastReadArticle.getTitle());
+                lastReadArticle.getLabels().forEach(label -> {
+                    lastReadArticleInBookmarkBo.getLabels().add(this.labelService.convert(label));
+                });
+                result.setLastReadArticle(lastReadArticleInBookmarkBo);
             }
         }
         return result;
