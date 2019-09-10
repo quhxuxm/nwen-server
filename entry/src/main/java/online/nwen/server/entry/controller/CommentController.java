@@ -19,7 +19,7 @@ class CommentController {
         return this.articleCommentService.create(createArticleCommentRequestBo);
     }
 
-    @PatchMapping(path = "/security/comment/{commentId)")
+    @PatchMapping(path = "/security/comment/{commentId}")
     UpdateArticleCommentResponseBo update(@PathVariable(name = "commentId") Long commentId, @RequestBody UpdateArticleCommentRequestBo updateArticleCommentRequestBo) {
         return this.articleCommentService.update(commentId, updateArticleCommentRequestBo);
     }
