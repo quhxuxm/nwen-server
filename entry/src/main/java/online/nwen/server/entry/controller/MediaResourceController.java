@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Resource
+@MediaResource
 class MediaResourceController {
     private static final Logger logger = LoggerFactory.getLogger(MediaResourceController.class);
     private IMediaResourceService mediaResourceService;
