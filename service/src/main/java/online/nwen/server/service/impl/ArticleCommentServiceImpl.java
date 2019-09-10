@@ -9,6 +9,7 @@ import online.nwen.server.domain.ArticleComment;
 import online.nwen.server.domain.User;
 import online.nwen.server.service.api.IArticleCommentService;
 import online.nwen.server.service.api.ISecurityService;
+import online.nwen.server.service.api.IUserService;
 import online.nwen.server.service.exception.ServiceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +23,15 @@ class ArticleCommentServiceImpl implements IArticleCommentService {
     private IArticleDao articleDao;
     private ISecurityService securityService;
     private IUserDao userDao;
+    private IUserService userService;
 
-    ArticleCommentServiceImpl(IArticleCommentDao articleCommentDao, IArticleDao articleDao, ISecurityService securityService, IUserDao userDao) {
+    ArticleCommentServiceImpl(IArticleCommentDao articleCommentDao, IArticleDao articleDao, ISecurityService securityService, IUserDao userDao,
+                              IUserService userService) {
         this.articleCommentDao = articleCommentDao;
         this.articleDao = articleDao;
         this.securityService = securityService;
         this.userDao = userDao;
+        this.userService = userService;
     }
 
     @Override
@@ -118,6 +122,8 @@ class ArticleCommentServiceImpl implements IArticleCommentService {
         }
         Page<ArticleComment> replyComments = this.articleCommentDao.getByReplyTo(articleComment, Pageable.unpaged());
         result.setReplyComments(replyComments.map(this::convert).getContent());
+        UserSummaryBo commenter = this.userService.getUserSummary(articleComment.getCommenter().getId());
+        result.setCommenter(commenter);
         return result;
     }
 }

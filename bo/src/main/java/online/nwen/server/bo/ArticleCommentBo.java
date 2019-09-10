@@ -11,6 +11,7 @@ public class ArticleCommentBo {
     private String content;
     private Date createTime;
     private List<ArticleCommentBo> replyComments;
+    private UserSummaryBo commenter;
 
     public ArticleCommentBo() {
         this.replyComments = new ArrayList<>();
@@ -62,5 +63,13 @@ public class ArticleCommentBo {
 
     public void setReplyComments(List<ArticleCommentBo> replyComments) {
         this.replyComments = replyComments;
+    }
+
+    public void setCommenter(UserSummaryBo commenter) {
+        this.commenter = commenter;
+    }
+
+    public UserSummaryBo getCommenter() {
+        return commenter;
     }
 }
