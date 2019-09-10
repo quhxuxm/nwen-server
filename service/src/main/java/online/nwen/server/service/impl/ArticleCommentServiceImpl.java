@@ -92,26 +92,26 @@ class ArticleCommentServiceImpl implements IArticleCommentService {
     }
 
     @Override
-    public Page<ArticleCommentBo> getComments(Long articleId, Pageable pageable) {
+    public Page<ArticleCommentBo> getComments(Long articleId, boolean loadReply, Pageable pageable) {
         Article article = this.articleDao.getById(articleId);
         if (article == null) {
             throw new ServiceException(ResponseCode.ARTICLE_NOT_EXIST);
         }
         Page<ArticleComment> articleComments = this.articleCommentDao.getByArticle(article, pageable);
-        return articleComments.map(this::convert);
+        return articleComments.map(articleComment -> this.convert(articleComment, loadReply));
     }
 
     @Override
-    public Page<ArticleCommentBo> getReplyToComments(Long commentId, Pageable pageable) {
+    public Page<ArticleCommentBo> getReplyToComments(Long commentId, boolean loadReply, Pageable pageable) {
         ArticleComment replyToArticleComment = this.articleCommentDao.getById(commentId);
         if (replyToArticleComment == null) {
             throw new ServiceException(ResponseCode.COMMENT_NOT_EXIST);
         }
         Page<ArticleComment> articleComments = this.articleCommentDao.getByReplyTo(replyToArticleComment, pageable);
-        return articleComments.map(this::convert);
+        return articleComments.map(articleComment -> this.convert(articleComment, loadReply));
     }
 
-    private ArticleCommentBo convert(ArticleComment articleComment) {
+    private ArticleCommentBo convert(ArticleComment articleComment, boolean loadReply) {
         ArticleCommentBo result = new ArticleCommentBo();
         result.setArticleId(articleComment.getArticle().getId());
         result.setCommentId(articleComment.getId());
@@ -120,8 +120,11 @@ class ArticleCommentServiceImpl implements IArticleCommentService {
         if (articleComment.getReplyTo() != null) {
             result.setReplyToCommentId(articleComment.getReplyTo().getId());
         }
-        Page<ArticleComment> replyComments = this.articleCommentDao.getByReplyTo(articleComment, Pageable.unpaged());
-        result.setReplyComments(replyComments.map(this::convert).getContent());
+        if (loadReply) {
+            Page<ArticleComment> replyComments = this.articleCommentDao.getByReplyTo(articleComment, Pageable.unpaged());
+            result.setReplyComments(replyComments.map(ac -> this.convert(ac, loadReply)).getContent());
+        }
+        result.setReplyCommentsNumber(this.articleCommentDao.countByReplyTo(articleComment));
         UserSummaryBo commenter = this.userService.getUserSummary(articleComment.getCommenter().getId());
         result.setCommenter(commenter);
         return result;

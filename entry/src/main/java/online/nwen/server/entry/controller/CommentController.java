@@ -25,12 +25,14 @@ class CommentController {
     }
 
     @GetMapping(path = "/comment/article/{articleId}")
-    Page<ArticleCommentBo> getCommentsOfArticle(@PathVariable("articleId") Long articleId, Pageable pageable) {
-        return this.articleCommentService.getComments(articleId, pageable);
+    Page<ArticleCommentBo> getCommentsOfArticle(@PathVariable("articleId") Long articleId, @RequestParam(value = "loadReply", required = false) boolean loadReply,
+                                                Pageable pageable) {
+        return this.articleCommentService.getComments(articleId, loadReply, pageable);
     }
 
     @GetMapping(path = "/comment/replyTo/{commentId}")
-    Page<ArticleCommentBo> getCommentsOfReplyTo(@PathVariable("commentId") Long commentId, Pageable pageable) {
-        return this.articleCommentService.getReplyToComments(commentId, pageable);
+    Page<ArticleCommentBo> getCommentsOfReplyTo(@PathVariable("commentId") Long commentId, @RequestParam(value = "loadReply", required = false) boolean loadReply,
+                                                Pageable pageable) {
+        return this.articleCommentService.getReplyToComments(commentId, loadReply, pageable);
     }
 }

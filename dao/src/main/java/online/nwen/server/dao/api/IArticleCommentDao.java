@@ -17,4 +17,6 @@ public interface IArticleCommentDao {
     Page<Long> getIdsByReplyTo(ArticleComment replyTo, Pageable pageable);
 
     Page<Long> getIdsByArticle(Article article, Pageable pageable);
+
+    Integer countByReplyTo(ArticleComment replyTo);
 }

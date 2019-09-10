@@ -9,7 +9,7 @@ public interface IArticleCommentService {
 
     UpdateArticleCommentResponseBo update(Long commentId, UpdateArticleCommentRequestBo updateArticleCommentRequestBo);
 
-    Page<ArticleCommentBo> getComments(Long articleId, Pageable pageable);
+    Page<ArticleCommentBo> getComments(Long articleId, boolean loadReply, Pageable pageable);
 
-    Page<ArticleCommentBo> getReplyToComments(Long commentId, Pageable pageable);
+    Page<ArticleCommentBo> getReplyToComments(Long commentId, boolean loadReply, Pageable pageable);
 }

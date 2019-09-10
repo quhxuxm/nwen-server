@@ -56,4 +56,9 @@ class ArticleCommentDaoImpl implements IArticleCommentDao {
     public Page<Long> getIdsByArticle(Article article, Pageable pageable) {
         return this.articleCommentRepository.findIdsByArticleAndReplyToIsNullOrderByCreateTime(article, pageable);
     }
+
+    @Override
+    public Integer countByReplyTo(ArticleComment replyTo) {
+        return this.articleCommentRepository.countByReplyTo(replyTo);
+    }
 }

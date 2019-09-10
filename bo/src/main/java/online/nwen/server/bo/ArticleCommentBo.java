@@ -10,6 +10,7 @@ public class ArticleCommentBo {
     private Long replyToCommentId;
     private String content;
     private Date createTime;
+    private Integer replyCommentsNumber;
     private List<ArticleCommentBo> replyComments;
     private UserSummaryBo commenter;
 
@@ -71,5 +72,13 @@ public class ArticleCommentBo {
 
     public UserSummaryBo getCommenter() {
         return commenter;
+    }
+
+    public void setReplyCommentsNumber(Integer replyCommentsNumber) {
+        this.replyCommentsNumber = replyCommentsNumber;
+    }
+
+    public Integer getReplyCommentsNumber() {
+        return replyCommentsNumber;
     }
 }

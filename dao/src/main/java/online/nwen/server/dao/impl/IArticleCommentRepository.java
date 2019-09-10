@@ -20,4 +20,6 @@ interface IArticleCommentRepository extends JpaRepository<ArticleComment, Long> 
 
     @Query("select ac.id from ArticleComment  ac where ac.replyTo is null and ac.article=:article")
     Page<Long> findIdsByArticleAndReplyToIsNullOrderByCreateTime(@Param("article") Article article, Pageable pageable);
+
+    Integer countByReplyTo(ArticleComment replyTo);
 }
