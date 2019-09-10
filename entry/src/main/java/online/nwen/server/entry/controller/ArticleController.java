@@ -19,12 +19,12 @@ class ArticleController {
         this.articleContentService = articleContentService;
     }
 
-    @PostMapping(path = "/security/article/create")
+    @PostMapping(path = "/security/article")
     CreateArticleResponseBo create(@RequestBody CreateArticleRequestBo createArticleRequestBo) {
         return this.articleService.create(createArticleRequestBo);
     }
 
-    @PatchMapping(path = {"/security/article/update/{articleId}/{version}", "/security/article/update/{articleId}"})
+    @PatchMapping(path = {"/security/article/{articleId}/{version}", "/security/article/{articleId}"})
     UpdateArticleResponseBo update(@PathVariable("articleId") Long articleId, @PathVariable(value = "version", required = false) Long version,
                                    @RequestBody UpdateArticleRequestBo updateArticleRequestBo) {
         updateArticleRequestBo.setArticleId(articleId);

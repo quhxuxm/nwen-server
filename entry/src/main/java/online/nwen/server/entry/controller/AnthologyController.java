@@ -21,7 +21,7 @@ class AnthologyController {
         return this.anthologyService.create(createAnthologyRequestBo);
     }
 
-    @PatchMapping(path = "/security/anthology/update/{anthologyId}")
+    @PatchMapping(path = "/security/anthology/{anthologyId}")
     UpdateAnthologyResponseBo update(@PathVariable("anthologyId") Long anthologyId, @RequestBody UpdateAnthologyRequestBo updateAnthologyRequestBo) {
         updateAnthologyRequestBo.setAnthologyId(anthologyId);
         return this.anthologyService.update(updateAnthologyRequestBo);
