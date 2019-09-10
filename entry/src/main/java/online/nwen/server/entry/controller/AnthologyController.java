@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-@RestController
-@RequestMapping("/api")
+@Api
 class AnthologyController {
     private IAnthologyService anthologyService;
 
@@ -22,18 +21,18 @@ class AnthologyController {
         return this.anthologyService.create(createAnthologyRequestBo);
     }
 
-    @PostMapping("/security/anthology/update/{anthologyId}")
+    @PatchMapping(path = "/security/anthology/update/{anthologyId}")
     UpdateAnthologyResponseBo update(@PathVariable("anthologyId") Long anthologyId, @RequestBody UpdateAnthologyRequestBo updateAnthologyRequestBo) {
         updateAnthologyRequestBo.setAnthologyId(anthologyId);
         return this.anthologyService.update(updateAnthologyRequestBo);
     }
 
-    @GetMapping("/anthology/summaries/author/{authorId}")
+    @GetMapping(path = "/anthology/summaries/author/{authorId}")
     Page<AnthologySummaryBo> getAnthologySummariesOfAuthor(@PathVariable("authorId") Long authorId, Pageable pageable) {
         return this.anthologyService.getAnthologySummariesOfAuthor(authorId, pageable);
     }
 
-    @GetMapping("/anthology/summaries/labels/{labels}")
+    @GetMapping(path = "/anthology/summaries/labels/{labels}")
     Page<AnthologySummaryBo> getAnthologySummariesWithLabels(@PathVariable("labels") Set<String> labels, Pageable pageable) {
         return this.anthologyService.getAnthologySummariesWithLabels(labels, pageable);
     }

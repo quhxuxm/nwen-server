@@ -31,19 +31,41 @@ class ArticleCommentServiceImpl implements IArticleCommentService {
     }
 
     @Override
-    public CreateArticleCommentResponseBo create(Long articleId, CreateArticleCommentRequestBo createArticleCommentRequestBo) {
+    public UpdateArticleCommentResponseBo update(Long commentId, UpdateArticleCommentRequestBo updateArticleCommentRequestBo) {
         SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
         User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());
         if (currentUser == null) {
             throw new ServiceException(ResponseCode.USER_NOT_EXIST);
         }
-        if (articleId == null) {
+        if (commentId == null) {
+            throw new ServiceException(ResponseCode.INPUT_ERROR);
+        }
+        ArticleComment articleComment = this.articleCommentDao.getById(commentId);
+        if (articleComment == null) {
+            throw new ServiceException(ResponseCode.COMMENT_NOT_EXIST);
+        }
+        articleComment.setContent(updateArticleCommentRequestBo.getContent());
+        articleComment.setUpdateTime(new Date());
+        this.articleCommentDao.save(articleComment);
+        UpdateArticleCommentResponseBo result = new UpdateArticleCommentResponseBo();
+        result.setCommentId(articleComment.getId());
+        return result;
+    }
+
+    @Override
+    public CreateArticleCommentResponseBo create(CreateArticleCommentRequestBo createArticleCommentRequestBo) {
+        SecurityContextBo securityContextBo = this.securityService.checkAndGetSecurityContextFromCurrentThread();
+        User currentUser = this.userDao.getByUsername(securityContextBo.getUsername());
+        if (currentUser == null) {
+            throw new ServiceException(ResponseCode.USER_NOT_EXIST);
+        }
+        if (createArticleCommentRequestBo.getArticleId() == null) {
             throw new ServiceException(ResponseCode.INPUT_ERROR);
         }
         if (createArticleCommentRequestBo.getContent() == null) {
             throw new ServiceException(ResponseCode.INPUT_ERROR);
         }
-        Article article = this.articleDao.getById(articleId);
+        Article article = this.articleDao.getById(createArticleCommentRequestBo.getArticleId());
         if (article == null) {
             throw new ServiceException(ResponseCode.ARTICLE_NOT_EXIST);
         }
@@ -91,7 +113,9 @@ class ArticleCommentServiceImpl implements IArticleCommentService {
         result.setCommentId(articleComment.getId());
         result.setContent(articleComment.getContent());
         result.setCreateTime(articleComment.getCreateTime());
-        result.setReplyToCommentId(articleComment.getReplyTo().getId());
+        if (articleComment.getReplyTo() != null) {
+            result.setReplyToCommentId(articleComment.getReplyTo().getId());
+        }
         Page<ArticleComment> replyComments = this.articleCommentDao.getByReplyTo(articleComment, Pageable.unpaged());
         result.setReplyComments(replyComments.map(this::convert).getContent());
         return result;

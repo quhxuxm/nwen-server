@@ -2,12 +2,13 @@ package online.nwen.server.entry.controller;
 
 import online.nwen.server.bo.LabelBo;
 import online.nwen.server.service.api.ILabelService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
+@Api
 public class LabelController {
     private ILabelService labelService;
 
@@ -15,12 +16,12 @@ public class LabelController {
         this.labelService = labelService;
     }
 
-    @GetMapping("/label/top/{number}")
+    @GetMapping(path = "/label/top/{number}")
     List<LabelBo> getTopNLabels(@PathVariable(name = "number") Integer number) {
         return this.labelService.getTopNLabels(number);
     }
 
-    @GetMapping("/label/like")
+    @GetMapping(path = "/label/like")
     List<LabelBo> getByTextLikeOrderByPopularFactor(@RequestParam(name = "text") String text) {
         return this.labelService.getByTextLikeOrderByPopularFactor(text);
     }

@@ -1,13 +1,13 @@
 package online.nwen.server.service.api;
 
-import online.nwen.server.bo.ArticleCommentBo;
-import online.nwen.server.bo.CreateArticleCommentRequestBo;
-import online.nwen.server.bo.CreateArticleCommentResponseBo;
+import online.nwen.server.bo.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IArticleCommentService {
-    CreateArticleCommentResponseBo create(Long articleId, CreateArticleCommentRequestBo createArticleCommentRequestBo);
+    CreateArticleCommentResponseBo create(CreateArticleCommentRequestBo createArticleCommentRequestBo);
+
+    UpdateArticleCommentResponseBo update(Long commentId, UpdateArticleCommentRequestBo updateArticleCommentRequestBo);
 
     Page<ArticleCommentBo> getComments(Long articleId, Pageable pageable);
 

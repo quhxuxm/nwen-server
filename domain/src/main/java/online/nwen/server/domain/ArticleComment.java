@@ -17,6 +17,9 @@ public class ArticleComment {
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
+    @Column(name = "update_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTime;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commenter_id", referencedColumnName = "user_id", nullable = false)
     private User commenter;
@@ -84,5 +87,13 @@ public class ArticleComment {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

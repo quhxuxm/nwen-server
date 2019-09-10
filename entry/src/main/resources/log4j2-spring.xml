@@ -24,24 +24,24 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="error"
+        <Root level="debug"
               additivity="true">
-            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="NwenLogFileAppender"/>
         </Root>
         <Logger name="org.hibernate.SQL"
-                level="error"
+                level="debug"
                 additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="NwenLogFileAppender"/>
         </Logger>
         <Logger name="org.hibernate.type"
-                level="error"
+                level="debug"
                 additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="NwenLogFileAppender"/>
         </Logger>
-        <Logger name="online.nwen.server"
-                level="error"
+        <Logger name="online.nwen"
+                level="debug"
                 additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="NwenLogFileAppender"/>
         </Logger>
     </Loggers>
 </Configuration>

@@ -11,13 +11,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 interface IArticleCommentRepository extends JpaRepository<ArticleComment, Long> {
-    Page<ArticleComment> findByArticleAndReplyToIsNull(Article article, Pageable pageable);
+    Page<ArticleComment> findByArticleAndReplyToIsNullOrderByCreateTime(Article article, Pageable pageable);
 
-    Page<ArticleComment> findByReplyTo(ArticleComment replyTo, Pageable pageable);
+    Page<ArticleComment> findByReplyToOrderByCreateTime(ArticleComment replyTo, Pageable pageable);
 
     @Query("select ac.id from ArticleComment  ac where ac.replyTo=:replyTo")
-    Page<Long> findIdsByReplyTo(@Param("replyTo") ArticleComment replyTo, Pageable pageable);
+    Page<Long> findIdsByReplyToOrderByCreateTime(@Param("replyTo") ArticleComment replyTo, Pageable pageable);
 
     @Query("select ac.id from ArticleComment  ac where ac.replyTo is null and ac.article=:article")
-    Page<Long> findIdsByArticleAndReplyToIsNull(@Param("article") Article article, Pageable pageable);
+    Page<Long> findIdsByArticleAndReplyToIsNullOrderByCreateTime(@Param("article") Article article, Pageable pageable);
 }

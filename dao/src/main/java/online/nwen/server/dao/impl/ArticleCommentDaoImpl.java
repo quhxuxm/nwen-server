@@ -28,29 +28,32 @@ class ArticleCommentDaoImpl implements IArticleCommentDao {
         return this.articleCommentRepository.save(articleComment);
     }
 
+    @Transactional
     @Cacheable(cacheNames = "article-comment-by-id", key = "#p0", unless = "#result == null", condition = "#p0 != null")
     @Override
     public ArticleComment getById(Long id) {
         return this.articleCommentRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     @Override
     public Page<ArticleComment> getByReplyTo(ArticleComment replyTo, Pageable pageable) {
-        return this.articleCommentRepository.findByReplyTo(replyTo, pageable);
+        return this.articleCommentRepository.findByReplyToOrderByCreateTime(replyTo, pageable);
     }
 
+    @Transactional
     @Override
     public Page<ArticleComment> getByArticle(Article article, Pageable pageable) {
-        return this.articleCommentRepository.findByArticleAndReplyToIsNull(article, pageable);
+        return this.articleCommentRepository.findByArticleAndReplyToIsNullOrderByCreateTime(article, pageable);
     }
 
     @Override
     public Page<Long> getIdsByReplyTo(ArticleComment replyTo, Pageable pageable) {
-        return this.articleCommentRepository.findIdsByReplyTo(replyTo, pageable);
+        return this.articleCommentRepository.findIdsByReplyToOrderByCreateTime(replyTo, pageable);
     }
 
     @Override
     public Page<Long> getIdsByArticle(Article article, Pageable pageable) {
-        return this.articleCommentRepository.findIdsByArticleAndReplyToIsNull(article, pageable);
+        return this.articleCommentRepository.findIdsByArticleAndReplyToIsNullOrderByCreateTime(article, pageable);
     }
 }

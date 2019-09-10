@@ -4,11 +4,8 @@ import online.nwen.server.bo.UserSummaryBo;
 import online.nwen.server.service.api.IUserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api")
+@Api
 public class UserController {
     private IUserService userService;
 
@@ -16,7 +13,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user/summary/{userId}")
+    @GetMapping(path = "/user/summary/{userId}")
     UserSummaryBo getUserSummary(@PathVariable("userId") Long userId) {
         return this.userService.getUserSummary(userId);
     }

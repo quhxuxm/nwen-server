@@ -5,11 +5,8 @@ import online.nwen.server.bo.RegisterResponseBo;
 import online.nwen.server.service.api.IRegisterService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api")
+@Api
 class RegisterController {
     private IRegisterService registerService;
 
@@ -17,7 +14,7 @@ class RegisterController {
         this.registerService = registerService;
     }
 
-    @PostMapping("/register")
+    @PostMapping(path = "/register")
     RegisterResponseBo register(@RequestBody RegisterRequestBo registerRequestBo) {
         return this.registerService.register(registerRequestBo);
     }

@@ -5,6 +5,8 @@ import online.nwen.server.bo.SecurityContextBo;
 import online.nwen.server.common.constant.IConstant;
 import online.nwen.server.service.api.ISecurityService;
 import online.nwen.server.service.exception.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 public class SecurityCheckInterceptor implements HandlerInterceptor {
+    private static final Logger logger = LoggerFactory.getLogger(SecurityCheckInterceptor.class);
     private ISecurityService securityService;
 
     public SecurityCheckInterceptor(ISecurityService securityService) {
@@ -37,11 +40,13 @@ public class SecurityCheckInterceptor implements HandlerInterceptor {
             if (System.currentTimeMillis() > securityTokenRefreshTill.getTime()) {
                 this.securityService.markSecurityTokenDisabled(securityToken);
                 this.securityService.clearSecurityContextFromCurrentThread();
-                throw new ServiceException(ResponseCode.SECURITY_TOKEN_EXPIRED);
+                logger.error("Security token expired because of security token exceed refresh till time, security token = {}", securityToken);
+                throw new ServiceException(e, ResponseCode.SECURITY_TOKEN_EXPIRED);
             }
             if (this.securityService.isSecurityTokenDisabled(securityToken)) {
                 this.securityService.clearSecurityContextFromCurrentThread();
-                throw new ServiceException(ResponseCode.SECURITY_TOKEN_EXPIRED);
+                logger.error("Security token expired because of security token disabled, security token = {}", securityToken);
+                throw new ServiceException(e, ResponseCode.SECURITY_TOKEN_EXPIRED);
             }
             this.securityService.markSecurityTokenDisabled(securityToken);
             String refreshSecurityToken = this.securityService.refreshJwtToken(securityContextBo);
@@ -49,10 +54,8 @@ public class SecurityCheckInterceptor implements HandlerInterceptor {
             request.setAttribute(IConstant.RequestAttrName.REFRESHED_SECURITY_TOKEN, refreshSecurityToken);
         } catch (Exception e) {
             this.securityService.clearSecurityContextFromCurrentThread();
-            throw new ServiceException(ResponseCode.SYSTEM_ERROR);
+            throw new ServiceException(e, ResponseCode.SYSTEM_ERROR);
         }
         return true;
     }
-
-
 }
