@@ -81,4 +81,12 @@
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>
+    <cache alias="security-token-by-token"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
+    <cache alias="security-token-by-id"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
 </config>
