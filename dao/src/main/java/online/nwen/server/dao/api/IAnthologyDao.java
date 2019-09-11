@@ -1,6 +1,7 @@
 package online.nwen.server.dao.api;
 
 import online.nwen.server.domain.Anthology;
+import online.nwen.server.domain.Category;
 import online.nwen.server.domain.Label;
 import online.nwen.server.domain.User;
 import org.springframework.data.domain.Page;
@@ -20,4 +21,6 @@ public interface IAnthologyDao {
     void delete(Anthology anthology);
 
     Page<Anthology> getByLabels(Set<Label> labels, Pageable pageable);
+
+    Page<Anthology> getByCategory(Category category, Pageable pageable);
 }

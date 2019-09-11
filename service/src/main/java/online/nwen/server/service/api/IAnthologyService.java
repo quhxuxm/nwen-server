@@ -19,4 +19,6 @@ public interface IAnthologyService {
     AnthologySummaryBo convertToSummary(Anthology anthology);
 
     Page<AnthologySummaryBo> getAnthologySummariesWithLabels(Set<String> labels, Pageable pageable);
+
+    Page<AnthologySummaryBo> getAnthologySummariesWithCategory(Long categoryId, Pageable pageable);
 }

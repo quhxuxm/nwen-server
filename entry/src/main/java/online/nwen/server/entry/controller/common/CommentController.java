@@ -1,27 +1,20 @@
-package online.nwen.server.entry.controller;
+package online.nwen.server.entry.controller.common;
 
-import online.nwen.server.bo.*;
+import online.nwen.server.bo.ArticleCommentBo;
+import online.nwen.server.entry.controller.CommonApi;
 import online.nwen.server.service.api.IArticleCommentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@Api
+@CommonApi
 class CommentController {
     private IArticleCommentService articleCommentService;
 
     CommentController(IArticleCommentService articleCommentService) {
         this.articleCommentService = articleCommentService;
-    }
-
-    @PostMapping(path = "/security/comment")
-    CreateArticleCommentResponseBo create(@RequestBody CreateArticleCommentRequestBo createArticleCommentRequestBo) {
-        return this.articleCommentService.create(createArticleCommentRequestBo);
-    }
-
-    @PatchMapping(path = "/security/comment/{commentId}")
-    UpdateArticleCommentResponseBo update(@PathVariable(name = "commentId") Long commentId, @RequestBody UpdateArticleCommentRequestBo updateArticleCommentRequestBo) {
-        return this.articleCommentService.update(commentId, updateArticleCommentRequestBo);
     }
 
     @GetMapping(path = "/comment/article/{articleId}")

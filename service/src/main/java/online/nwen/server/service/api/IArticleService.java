@@ -5,7 +5,6 @@ import online.nwen.server.domain.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Set;
 
 public interface IArticleService {
@@ -23,4 +22,5 @@ public interface IArticleService {
 
     UpdateArticleResponseBo update(UpdateArticleRequestBo updateArticleRequestBo);
 
+    Page<ArticleSummaryBo> getArticleSummariesWithCategory(Long categoryId, Pageable pageable);
 }

@@ -1,6 +1,7 @@
-package online.nwen.server.entry.controller;
+package online.nwen.server.entry.controller.common;
 
 import online.nwen.server.bo.LabelBo;
+import online.nwen.server.entry.controller.CommonApi;
 import online.nwen.server.service.api.ILabelService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Api
+@CommonApi
 public class LabelController {
     private ILabelService labelService;
 

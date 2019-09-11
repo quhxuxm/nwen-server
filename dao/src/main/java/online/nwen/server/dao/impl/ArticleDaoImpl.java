@@ -3,6 +3,7 @@ package online.nwen.server.dao.impl;
 import online.nwen.server.dao.api.IArticleDao;
 import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.Article;
+import online.nwen.server.domain.Category;
 import online.nwen.server.domain.Label;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -64,5 +65,10 @@ class ArticleDaoImpl implements IArticleDao {
     @Override
     public Page<Article> getByLabels(Set<Label> labels, Pageable pageable) {
         return this.articleRepository.findByLabels(labels, pageable);
+    }
+
+    @Override
+    public Page<Article> getByCategory(Category category, Pageable pageable) {
+        return this.articleRepository.findByCategory(category, pageable);
     }
 }

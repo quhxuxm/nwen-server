@@ -1,5 +1,6 @@
 package online.nwen.server.entry;
 
+import online.nwen.server.common.constant.IConstant;
 import online.nwen.server.entry.interceptor.LoadSecurityContextInterceptor;
 import online.nwen.server.entry.interceptor.PrepareLocaleInterceptor;
 import online.nwen.server.entry.interceptor.SecurityCheckInterceptor;
@@ -21,9 +22,11 @@ class EntryConfigure implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new SecurityCheckInterceptor(this.securityService)).order(99).addPathPatterns("/mediaResource/security/**");
-        registry.addInterceptor(new SecurityCheckInterceptor(this.securityService)).order(100).addPathPatterns("/api/security/**");
-        registry.addInterceptor(new PrepareLocaleInterceptor(this.localeService)).order(101).addPathPatterns("/api/**");
-        registry.addInterceptor(new LoadSecurityContextInterceptor(this.securityService)).order(102).addPathPatterns("/api/**");
+        registry.addInterceptor(new SecurityCheckInterceptor(this.securityService)).order(100).addPathPatterns(IConstant.RequestPath.SECURITY_PATH_PREFIX + "/**");
+        registry.addInterceptor(new PrepareLocaleInterceptor(this.localeService)).order(101).addPathPatterns(IConstant.RequestPath.COMMON_API + "/**");
+        registry.addInterceptor(new PrepareLocaleInterceptor(this.localeService)).order(102).addPathPatterns(IConstant.RequestPath.SECURITY_API + "/**");
+        registry.addInterceptor(new LoadSecurityContextInterceptor(this.securityService)).order(103).addPathPatterns(IConstant.RequestPath.COMMON_API + "/**");
+        registry.addInterceptor(new LoadSecurityContextInterceptor(this.securityService)).order(104).addPathPatterns(IConstant.RequestPath.SECURITY_API + "/**");
+        registry.addInterceptor(new LoadSecurityContextInterceptor(this.securityService)).order(105).addPathPatterns(IConstant.RequestPath.SECURITY_MEDIA_RESOURCE + "/**");
     }
 }

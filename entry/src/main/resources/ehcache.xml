@@ -69,4 +69,16 @@
            uses-template="general-cache">
         <heap>2048000</heap>
     </cache>
+    <cache alias="category-by-id"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
+    <cache alias="category-by-name"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
+    <cache alias="category-all"
+           uses-template="general-cache">
+        <heap>2048000</heap>
+    </cache>
 </config>

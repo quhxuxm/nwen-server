@@ -5,6 +5,7 @@ import online.nwen.server.common.ServerConfiguration;
 import online.nwen.server.common.constant.IConstant;
 import online.nwen.server.dao.api.IAnthologyDao;
 import online.nwen.server.dao.api.IArticleDao;
+import online.nwen.server.dao.api.ICategoryDao;
 import online.nwen.server.dao.api.IUserDao;
 import online.nwen.server.domain.*;
 import online.nwen.server.service.api.*;
@@ -32,11 +33,14 @@ class ArticleServiceImpl implements IArticleService {
     private ILabelService labelService;
     private IArticleContentService articleContentService;
     private IArticlePraiseService articlePraiseService;
+    private ICategoryDao categoryDao;
+    private ICategoryService categoryService;
 
     ArticleServiceImpl(IArticleDao articleDao, IAnthologyDao anthologyDao, IUserDao userDao,
                        ServerConfiguration serverConfiguration, IAnthologyService anthologyService, MessageSource messageSource,
                        ILocaleService localeService, ISecurityService securityService,
-                       ILabelService labelService, IArticleContentService articleContentService, IArticlePraiseService articlePraiseService) {
+                       ILabelService labelService, IArticleContentService articleContentService, IArticlePraiseService articlePraiseService,
+                       ICategoryDao categoryDao, ICategoryService categoryService) {
         this.articleDao = articleDao;
         this.anthologyDao = anthologyDao;
         this.userDao = userDao;
@@ -48,6 +52,8 @@ class ArticleServiceImpl implements IArticleService {
         this.labelService = labelService;
         this.articleContentService = articleContentService;
         this.articlePraiseService = articlePraiseService;
+        this.categoryDao = categoryDao;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -168,6 +174,11 @@ class ArticleServiceImpl implements IArticleService {
             articleSummaryBo.getLabels().add(this.labelService.convert(label));
         });
         articleSummaryBo.setTotalPraiseNumber(this.articlePraiseService.countTotalPraiseOfArticle(article.getId()));
+        if (article.getCategory() != null) {
+            Category category = this.categoryDao.getById(anthology.getCategory().getId());
+            CategoryBo categoryBo = this.categoryService.convert(category);
+            articleSummaryBo.setCategory(categoryBo);
+        }
         return articleSummaryBo;
     }
 
@@ -235,5 +246,14 @@ class ArticleServiceImpl implements IArticleService {
         result.setArticleId(article.getId());
         result.setVersion(articleContent.getId().getVersion());
         return result;
+    }
+
+    @Override
+    public Page<ArticleSummaryBo> getArticleSummariesWithCategory(Long categoryId, Pageable pageable) {
+        Category category = this.categoryDao.getById(categoryId);
+        if (category == null) {
+            throw new ServiceException(ResponseCode.CATEGORY_NOT_EXIST);
+        }
+        return this.articleDao.getByCategory(category, pageable).map(this::convertToSummary);
     }
 }

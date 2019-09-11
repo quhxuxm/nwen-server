@@ -1,12 +1,13 @@
-package online.nwen.server.entry.controller;
+package online.nwen.server.entry.controller.common;
 
 import online.nwen.server.bo.RegisterRequestBo;
 import online.nwen.server.bo.RegisterResponseBo;
+import online.nwen.server.entry.controller.CommonApi;
 import online.nwen.server.service.api.IRegisterService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@Api
+@CommonApi
 class RegisterController {
     private IRegisterService registerService;
 

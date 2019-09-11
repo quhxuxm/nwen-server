@@ -4,8 +4,10 @@ import online.nwen.server.bo.*;
 import online.nwen.server.common.ServerConfiguration;
 import online.nwen.server.dao.api.IAnthologyDao;
 import online.nwen.server.dao.api.IArticleDao;
+import online.nwen.server.dao.api.ICategoryDao;
 import online.nwen.server.dao.api.IUserDao;
 import online.nwen.server.domain.Anthology;
+import online.nwen.server.domain.Category;
 import online.nwen.server.domain.Label;
 import online.nwen.server.domain.User;
 import online.nwen.server.service.api.*;
@@ -29,9 +31,12 @@ class AnthologyServiceImpl implements IAnthologyService {
     private ISecurityService securityService;
     private ILabelService labelService;
     private IArticlePraiseService articlePraiseService;
+    private ICategoryDao categoryDao;
+    private ICategoryService categoryService;
 
     AnthologyServiceImpl(IAnthologyDao anthologyDao, IArticleDao articleDao, IUserDao userDao, ServerConfiguration serverConfiguration, IUserService userService,
-                         ISecurityService securityService, ILabelService labelService, IArticlePraiseService articlePraiseService) {
+                         ISecurityService securityService, ILabelService labelService, IArticlePraiseService articlePraiseService,
+                         ICategoryDao categoryDao, ICategoryService categoryService) {
         this.anthologyDao = anthologyDao;
         this.articleDao = articleDao;
         this.userDao = userDao;
@@ -40,6 +45,8 @@ class AnthologyServiceImpl implements IAnthologyService {
         this.securityService = securityService;
         this.labelService = labelService;
         this.articlePraiseService = articlePraiseService;
+        this.categoryDao = categoryDao;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -165,6 +172,11 @@ class AnthologyServiceImpl implements IAnthologyService {
             anthologySummaryBo.getLabels().add(this.labelService.convert(label));
         });
         anthologySummaryBo.setTotalPraiseNumber(this.articlePraiseService.countTotalPraiseOfAnthology(anthology.getId()));
+        if (anthology.getCategory() != null) {
+            Category category = this.categoryDao.getById(anthology.getCategory().getId());
+            CategoryBo categoryBo = this.categoryService.convert(category);
+            anthologySummaryBo.setCategory(categoryBo);
+        }
         return anthologySummaryBo;
     }
 
@@ -183,5 +195,14 @@ class AnthologyServiceImpl implements IAnthologyService {
         Set<Label> labelEntities = this.labelService.getWithTexts(labels);
         Page<Anthology> anthologies = this.anthologyDao.getByLabels(labelEntities, pageable);
         return anthologies.map(this::convertToSummary);
+    }
+
+    @Override
+    public Page<AnthologySummaryBo> getAnthologySummariesWithCategory(Long categoryId, Pageable pageable) {
+        Category category = this.categoryDao.getById(categoryId);
+        if (category == null) {
+            throw new ServiceException(ResponseCode.CATEGORY_NOT_EXIST);
+        }
+        return this.anthologyDao.getByCategory(category, pageable).map(this::convertToSummary);
     }
 }

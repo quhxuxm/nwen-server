@@ -1,6 +1,7 @@
 package online.nwen.server.dao.impl;
 
 import online.nwen.server.domain.Anthology;
+import online.nwen.server.domain.Category;
 import online.nwen.server.domain.Label;
 import online.nwen.server.domain.User;
 import org.springframework.data.domain.Page;
@@ -23,4 +24,6 @@ interface IAnthologyRepository extends JpaRepository<Anthology, Long> {
 
     @Query("select a from Anthology a , in(a.labels) l where l in :labels")
     Page<Anthology> findByLabels(@Param("labels") Set<Label> labels, Pageable pageable);
+
+    Page<Anthology> findByCategory(Category category, Pageable pageable);
 }

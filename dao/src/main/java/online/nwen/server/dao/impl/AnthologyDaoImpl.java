@@ -2,6 +2,7 @@ package online.nwen.server.dao.impl;
 
 import online.nwen.server.dao.api.IAnthologyDao;
 import online.nwen.server.domain.Anthology;
+import online.nwen.server.domain.Category;
 import online.nwen.server.domain.Label;
 import online.nwen.server.domain.User;
 import org.springframework.cache.annotation.CacheEvict;
@@ -59,5 +60,10 @@ class AnthologyDaoImpl implements IAnthologyDao {
     @Override
     public Page<Anthology> getByLabels(Set<Label> labels, Pageable pageable) {
         return this.anthologyRepository.findByLabels(labels, pageable);
+    }
+
+    @Override
+    public Page<Anthology> getByCategory(Category category, Pageable pageable) {
+        return this.anthologyRepository.findByCategory(category, pageable);
     }
 }

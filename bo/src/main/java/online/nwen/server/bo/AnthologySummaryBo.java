@@ -13,6 +13,7 @@ public class AnthologySummaryBo {
     private UserSummaryBo author;
     private Set<LabelBo> labels;
     private Long totalPraiseNumber;
+    private CategoryBo category;
 
     public AnthologySummaryBo() {
         this.labels = new HashSet<>();
@@ -80,5 +81,13 @@ public class AnthologySummaryBo {
 
     public void setTotalPraiseNumber(Long totalPraiseNumber) {
         this.totalPraiseNumber = totalPraiseNumber;
+    }
+
+    public CategoryBo getCategory() {
+        return category;
+    }
+
+    public void setCategory(CategoryBo category) {
+        this.category = category;
     }
 }

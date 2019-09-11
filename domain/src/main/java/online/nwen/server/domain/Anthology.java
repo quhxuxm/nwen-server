@@ -35,6 +35,9 @@ public class Anthology {
             @JoinColumn(name = "label_id", referencedColumnName = "label_id")
     })
     private Set<Label> labels;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    private Category category;
 
     public Anthology() {
         this.labels = new HashSet<>();
@@ -102,5 +105,13 @@ public class Anthology {
 
     public void setLabels(Set<Label> labels) {
         this.labels = labels;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

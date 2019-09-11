@@ -2,6 +2,7 @@ package online.nwen.server.dao.impl;
 
 import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.Article;
+import online.nwen.server.domain.Category;
 import online.nwen.server.domain.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,6 @@ interface IArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("select a from Article a , in(a.labels) l where l in :labels")
     Page<Article> findByLabels(@Param("labels") Set<Label> labels, Pageable pageable);
+
+    Page<Article> findByCategory(Category category, Pageable pageable);
 }

@@ -2,6 +2,7 @@ package online.nwen.server.dao.api;
 
 import online.nwen.server.domain.Anthology;
 import online.nwen.server.domain.Article;
+import online.nwen.server.domain.Category;
 import online.nwen.server.domain.Label;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +23,6 @@ public interface IArticleDao {
     void delete(Article article);
 
     Page<Article> getByLabels(Set<Label> labels, Pageable pageable);
+
+    Page<Article> getByCategory(Category category, Pageable pageable);
 }
