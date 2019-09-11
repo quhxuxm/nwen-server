@@ -86,6 +86,7 @@ class ArticleServiceImpl implements IArticleService {
             if (anthology == null) {
                 CreateAnthologyRequestBo createAnthologyRequestBo = new CreateAnthologyRequestBo();
                 createAnthologyRequestBo.setAsDefault(true);
+                createAnthologyRequestBo.setCategoryId(createArticleRequestBo.getCategoryId());
                 createAnthologyRequestBo
                         .setTitle(this.messageSource.getMessage(IConstant.MessageKey.ANTHOLOGY_DEFAULT_TITLE_MESSAGE_KEY, null, this.localeService.getLocaleFromCurrentThread()));
                 createAnthologyRequestBo.setDescription(
@@ -105,6 +106,13 @@ class ArticleServiceImpl implements IArticleService {
                 article.getLabels().add(label);
             }
         });
+        if (createArticleRequestBo.getCategoryId() != null) {
+            Category category = this.categoryDao.getById(createArticleRequestBo.getCategoryId());
+            if (category == null) {
+                throw new ServiceException(ResponseCode.CATEGORY_NOT_EXIST);
+            }
+            article.setCategory(category);
+        }
         this.articleDao.save(article);
         this.articleContentService.save(article, null, createArticleRequestBo.getContent());
         anthology = this.anthologyDao.getById(anthology.getId());
@@ -237,6 +245,13 @@ class ArticleServiceImpl implements IArticleService {
                 }
             });
             article.setLabels(updateLabels);
+        }
+        if (updateArticleRequestBo.getCategoryId() != null) {
+            Category category = this.categoryDao.getById(updateArticleRequestBo.getCategoryId());
+            if (category == null) {
+                throw new ServiceException(ResponseCode.CATEGORY_NOT_EXIST);
+            }
+            article.setCategory(category);
         }
         this.articleDao.save(article);
         ArticleContent articleContent = this.articleContentService.save(article, updateArticleRequestBo.getVersion(), updateArticleRequestBo.getContent());

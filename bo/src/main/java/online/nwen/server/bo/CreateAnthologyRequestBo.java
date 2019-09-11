@@ -8,6 +8,7 @@ public class CreateAnthologyRequestBo {
     private String description;
     private boolean asDefault;
     private Set<String> labels;
+    private Long categoryId;
 
     public CreateAnthologyRequestBo() {
         this.labels = new HashSet<>();
@@ -43,5 +44,13 @@ public class CreateAnthologyRequestBo {
 
     public void setLabels(Set<String> labels) {
         this.labels = labels;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

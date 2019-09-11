@@ -77,6 +77,13 @@ class AnthologyServiceImpl implements IAnthologyService {
                 anthology.getLabels().add(label);
             }
         });
+        if (createAnthologyRequestBo.getCategoryId() != null) {
+            Category category = this.categoryDao.getById(createAnthologyRequestBo.getCategoryId());
+            if (category == null) {
+                throw new ServiceException(ResponseCode.CATEGORY_NOT_EXIST);
+            }
+            anthology.setCategory(category);
+        }
         this.anthologyDao.save(anthology);
         if (createAnthologyRequestBo.isAsDefault()) {
             author.setDefaultAnthology(anthology);
@@ -125,6 +132,13 @@ class AnthologyServiceImpl implements IAnthologyService {
                 }
             });
             anthology.setLabels(updateLabels);
+        }
+        if (updateAnthologyRequestBo.getCategoryId() != null) {
+            Category category = this.categoryDao.getById(updateAnthologyRequestBo.getCategoryId());
+            if (category == null) {
+                throw new ServiceException(ResponseCode.CATEGORY_NOT_EXIST);
+            }
+            anthology.setCategory(category);
         }
         this.anthologyDao.save(anthology);
         if (updateAnthologyRequestBo.isAsDefault()) {

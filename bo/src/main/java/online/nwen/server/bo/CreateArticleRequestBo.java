@@ -9,6 +9,7 @@ public class CreateArticleRequestBo {
     private String description;
     private Long anthologyId;
     private Set<String> labels;
+    private Long categoryId;
 
     public CreateArticleRequestBo() {
         this.labels = new HashSet<>();
@@ -52,5 +53,13 @@ public class CreateArticleRequestBo {
 
     public void setLabels(Set<String> labels) {
         this.labels = labels;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }
