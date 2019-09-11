@@ -1,13 +1,13 @@
 package online.nwen.server.entry.controller.security;
 
 import online.nwen.server.bo.CreateOrUpdateAnthologyBookmarkResponseBo;
-import online.nwen.server.entry.controller.SecurityApi;
+import online.nwen.server.entry.controller.SecurityApiController;
 import online.nwen.server.service.api.IAnthologyBookmarkService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@SecurityApi
+@SecurityApiController
 class SecurityAnthologyBookmarkController {
     private IAnthologyBookmarkService anthologyBookmarkService;
 

@@ -1,14 +1,14 @@
 package online.nwen.server.entry.controller.common;
 
 import online.nwen.server.bo.CategoryBo;
-import online.nwen.server.entry.controller.CommonApi;
+import online.nwen.server.entry.controller.CommonApiController;
 import online.nwen.server.service.api.ICategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@CommonApi
+@CommonApiController
 class CategoryController {
     private ICategoryService categoryService;
 

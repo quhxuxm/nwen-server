@@ -1,7 +1,6 @@
 package online.nwen.server.entry.controller.security;
 
 import online.nwen.server.bo.ResponseCode;
-import online.nwen.server.entry.controller.SecurityMediaResource;
 import online.nwen.server.service.api.IMediaResourceService;
 import online.nwen.server.service.exception.ServiceException;
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@SecurityMediaResource
+@online.nwen.server.entry.controller.SecurityMediaResourceController
 class SecurityMediaResourceController {
     private static final Logger logger = LoggerFactory.getLogger(SecurityMediaResourceController.class);
     private IMediaResourceService mediaResourceService;

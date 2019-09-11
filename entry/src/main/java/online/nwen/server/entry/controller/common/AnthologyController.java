@@ -1,7 +1,7 @@
 package online.nwen.server.entry.controller.common;
 
 import online.nwen.server.bo.AnthologySummaryBo;
-import online.nwen.server.entry.controller.CommonApi;
+import online.nwen.server.entry.controller.CommonApiController;
 import online.nwen.server.service.api.IAnthologyService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Set;
 
-@CommonApi
+@CommonApiController
 class AnthologyController {
     private IAnthologyService anthologyService;
 

@@ -1,12 +1,12 @@
 package online.nwen.server.entry.controller.common;
 
 import online.nwen.server.bo.UserSummaryBo;
-import online.nwen.server.entry.controller.CommonApi;
+import online.nwen.server.entry.controller.CommonApiController;
 import online.nwen.server.service.api.IUserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@CommonApi
+@CommonApiController
 public class UserController {
     private IUserService userService;
 

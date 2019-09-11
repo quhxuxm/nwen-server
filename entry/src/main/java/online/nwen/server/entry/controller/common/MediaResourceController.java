@@ -2,7 +2,7 @@ package online.nwen.server.entry.controller.common;
 
 import online.nwen.server.bo.MediaResourceBo;
 import online.nwen.server.bo.ResponseCode;
-import online.nwen.server.entry.controller.CommonMediaResource;
+import online.nwen.server.entry.controller.CommonMediaResourceController;
 import online.nwen.server.service.api.IMediaResourceService;
 import online.nwen.server.service.exception.ServiceException;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@CommonMediaResource
+@CommonMediaResourceController
 class MediaResourceController {
     private static final Logger logger = LoggerFactory.getLogger(MediaResourceController.class);
     private IMediaResourceService mediaResourceService;

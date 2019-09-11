@@ -1,14 +1,14 @@
 package online.nwen.server.entry.controller.security;
 
 import online.nwen.server.bo.*;
-import online.nwen.server.entry.controller.SecurityApi;
+import online.nwen.server.entry.controller.SecurityApiController;
 import online.nwen.server.service.api.IArticleContentService;
 import online.nwen.server.service.api.IArticleService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-@SecurityApi
+@SecurityApiController
 class SecurityArticleController {
     private IArticleService articleService;
     private IArticleContentService articleContentService;

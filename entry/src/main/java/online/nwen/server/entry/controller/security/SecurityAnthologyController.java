@@ -4,14 +4,14 @@ import online.nwen.server.bo.CreateAnthologyRequestBo;
 import online.nwen.server.bo.CreateAnthologyResponseBo;
 import online.nwen.server.bo.UpdateAnthologyRequestBo;
 import online.nwen.server.bo.UpdateAnthologyResponseBo;
-import online.nwen.server.entry.controller.SecurityApi;
+import online.nwen.server.entry.controller.SecurityApiController;
 import online.nwen.server.service.api.IAnthologyService;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@SecurityApi
+@SecurityApiController
 class SecurityAnthologyController {
     private IAnthologyService anthologyService;
 
@@ -19,7 +19,7 @@ class SecurityAnthologyController {
         this.anthologyService = anthologyService;
     }
 
-    @PostMapping("/anthology/create")
+    @PostMapping("/anthology")
     CreateAnthologyResponseBo create(@RequestBody CreateAnthologyRequestBo createAnthologyRequestBo) {
         return this.anthologyService.create(createAnthologyRequestBo);
     }

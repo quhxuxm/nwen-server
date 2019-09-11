@@ -2,12 +2,12 @@ package online.nwen.server.entry.controller.common;
 
 import online.nwen.server.bo.AuthenticationRequestBo;
 import online.nwen.server.bo.AuthenticationResponseBo;
-import online.nwen.server.entry.controller.CommonApi;
+import online.nwen.server.entry.controller.CommonApiController;
 import online.nwen.server.service.api.ISecurityService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@CommonApi
+@CommonApiController
 class AuthenticateController {
     private ISecurityService securityService;
 

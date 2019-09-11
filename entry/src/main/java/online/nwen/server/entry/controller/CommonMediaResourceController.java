@@ -1,15 +1,15 @@
 package online.nwen.server.entry.controller;
 
 import online.nwen.server.common.constant.IConstant;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.annotation.*;
 
-@RestController
-@RequestMapping(path = IConstant.RequestPath.COMMON_API)
+@Controller
+@RequestMapping(IConstant.RequestPath.COMMON_MEDIA_RESOURCE)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface CommonApi {
+public @interface CommonMediaResourceController {
 }

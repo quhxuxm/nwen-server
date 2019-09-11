@@ -4,14 +4,14 @@ import online.nwen.server.bo.CreateArticleCommentRequestBo;
 import online.nwen.server.bo.CreateArticleCommentResponseBo;
 import online.nwen.server.bo.UpdateArticleCommentRequestBo;
 import online.nwen.server.bo.UpdateArticleCommentResponseBo;
-import online.nwen.server.entry.controller.SecurityApi;
+import online.nwen.server.entry.controller.SecurityApiController;
 import online.nwen.server.service.api.IArticleCommentService;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@SecurityApi
+@SecurityApiController
 class SecurityCommentController {
     private IArticleCommentService articleCommentService;
 

@@ -10,11 +10,11 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "category_id")
     private Long id;
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
-    @Column(name = "description")
+    @Column(name = "description", length = 2000)
     private String description;
-    @Column(name = "create_time")
+    @Column(name = "create_time", nullable = false)
     private Date createTime;
 
     public Long getId() {

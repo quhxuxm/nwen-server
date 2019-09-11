@@ -24,17 +24,17 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="debug"
+        <Root level="error"
               additivity="true">
             <AppenderRef ref="NwenLogFileAppender"/>
         </Root>
         <Logger name="org.hibernate.SQL"
-                level="debug"
+                level="error"
                 additivity="false">
             <AppenderRef ref="NwenLogFileAppender"/>
         </Logger>
         <Logger name="org.hibernate.type"
-                level="debug"
+                level="error"
                 additivity="false">
             <AppenderRef ref="NwenLogFileAppender"/>
         </Logger>
