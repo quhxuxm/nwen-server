@@ -10,19 +10,31 @@ import online.nwen.server.domain.User;
 import online.nwen.server.service.api.ILabelService;
 import online.nwen.server.service.api.IRegisterService;
 import online.nwen.server.service.exception.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 class RegisterServiceImpl implements IRegisterService {
+    private static final Logger logger = LoggerFactory.getLogger(RegisterServiceImpl.class);
     private ServerConfiguration serverConfiguration;
     private IUserDao userDao;
     private ILabelService labelService;
-    private Pattern usernamePattern;
+    private List<Pattern> usernamePatterns;
+    private List<Pattern> nicknamePatterns;
+    private List<Pattern> passwordPatterns;
     private Pattern nicknamePattern;
     private Pattern passwordPattern;
 
@@ -30,9 +42,31 @@ class RegisterServiceImpl implements IRegisterService {
         this.serverConfiguration = serverConfiguration;
         this.userDao = userDao;
         this.labelService = labelService;
-        this.usernamePattern = Pattern.compile(this.serverConfiguration.getUsernameFormat());
-        this.nicknamePattern = Pattern.compile(this.serverConfiguration.getNicknameFormat());
-        this.passwordPattern = Pattern.compile(this.serverConfiguration.getPasswordFormat());
+        this.usernamePatterns = new ArrayList<>();
+        this.nicknamePatterns = new ArrayList<>();
+        this.passwordPatterns = new ArrayList<>();
+        this.initializePatterns(this.serverConfiguration.getUsernamePatterns(), this.usernamePatterns);
+        this.initializePatterns(this.serverConfiguration.getNicknamePatterns(), this.nicknamePatterns);
+        this.initializePatterns(this.serverConfiguration.getPasswordPatterns(), this.passwordPatterns);
+    }
+
+    private void initializePatterns(Resource patternsResource, List<Pattern> patterns) {
+        this.usernamePatterns = new ArrayList<>();
+        BufferedReader patternsReader = null;
+        try {
+            patternsReader = new BufferedReader(new InputStreamReader(patternsResource.getInputStream()));
+            patterns.addAll(patternsReader.lines().map(Pattern::compile).collect(Collectors.toList()));
+        } catch (IOException e) {
+            logger.error("Fail to read username patterns resource because of exception.", e);
+        } finally {
+            if (patternsReader != null) {
+                try {
+                    patternsReader.close();
+                } catch (IOException e) {
+                    logger.error("Fail to close username patterns resource because of exception.", e);
+                }
+            }
+        }
     }
 
     @Override
@@ -40,6 +74,12 @@ class RegisterServiceImpl implements IRegisterService {
         if (StringUtils.isEmpty(registerRequestBo.getUsername())) {
             throw new ServiceException(ResponseCode.REGISTER_USERNAME_EMPTY);
         }
+        this.usernamePatterns.forEach(pattern -> {
+          Matcher currentMatcher=  pattern.matcher(registerRequestBo.getUsername());
+          if(currentMatcher.matches()){
+              return;
+          }
+        });
         Matcher usernamePatternMatcher = this.usernamePattern.matcher(registerRequestBo.getUsername());
         if (!usernamePatternMatcher.matches()) {
             throw new ServiceException(ResponseCode.REGISTER_USERNAME_FORMAT_ERROR);

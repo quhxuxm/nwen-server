@@ -1,6 +1,7 @@
 package online.nwen.server.common;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "nwen-server")
@@ -10,9 +11,9 @@ public class ServerConfiguration {
     private String jwtIssuer;
     private Long jwtRefreshableInterval;
     private Long jwtExpireInterval;
-    private String usernameFormat;
-    private String passwordFormat;
-    private String nicknameFormat;
+    private Resource usernamePatterns;
+    private Resource passwordPatterns;
+    private Resource nicknamePatterns;
     private Integer anthologyTitleMaxLength;
     private Integer anthologyDescriptionMaxLength;
     private Integer articleTitleMaxLength;
@@ -53,28 +54,28 @@ public class ServerConfiguration {
         this.jwtExpireInterval = jwtExpireInterval;
     }
 
-    public void setUsernameFormat(String usernameFormat) {
-        this.usernameFormat = usernameFormat;
+    public Resource getUsernamePatterns() {
+        return usernamePatterns;
     }
 
-    public String getUsernameFormat() {
-        return usernameFormat;
+    public void setNicknamePatterns(Resource nicknamePatterns) {
+        this.nicknamePatterns = nicknamePatterns;
     }
 
-    public String getPasswordFormat() {
-        return passwordFormat;
+    public Resource getNicknamePatterns() {
+        return nicknamePatterns;
     }
 
-    public void setPasswordFormat(String passwordFormat) {
-        this.passwordFormat = passwordFormat;
+    public void setPasswordPatterns(Resource passwordPatterns) {
+        this.passwordPatterns = passwordPatterns;
     }
 
-    public String getNicknameFormat() {
-        return nicknameFormat;
+    public Resource getPasswordPatterns() {
+        return passwordPatterns;
     }
 
-    public void setNicknameFormat(String nicknameFormat) {
-        this.nicknameFormat = nicknameFormat;
+    public void setUsernamePatterns(Resource usernamePatterns) {
+        this.usernamePatterns = usernamePatterns;
     }
 
     public Integer getAnthologyTitleMaxLength() {
