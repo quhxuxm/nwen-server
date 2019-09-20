@@ -14,17 +14,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 class RegisterServiceImpl implements IRegisterService {
     private ServerConfiguration serverConfiguration;
     private IUserDao userDao;
     private ILabelService labelService;
+    private Pattern usernamePattern;
+    private Pattern nicknamePattern;
+    private Pattern passwordPattern;
 
     RegisterServiceImpl(ServerConfiguration serverConfiguration, IUserDao userDao, ILabelService labelService) {
         this.serverConfiguration = serverConfiguration;
         this.userDao = userDao;
         this.labelService = labelService;
+        this.usernamePattern = Pattern.compile(this.serverConfiguration.getUsernameFormat());
+        this.nicknamePattern = Pattern.compile(this.serverConfiguration.getNicknameFormat());
+        this.passwordPattern = Pattern.compile(this.serverConfiguration.getPasswordFormat());
     }
 
     @Override
@@ -32,19 +40,22 @@ class RegisterServiceImpl implements IRegisterService {
         if (StringUtils.isEmpty(registerRequestBo.getUsername())) {
             throw new ServiceException(ResponseCode.REGISTER_USERNAME_EMPTY);
         }
-        if (!registerRequestBo.getUsername().matches(this.serverConfiguration.getUsernameFormat())) {
+        Matcher usernamePatternMatcher = this.usernamePattern.matcher(registerRequestBo.getUsername());
+        if (!usernamePatternMatcher.matches()) {
             throw new ServiceException(ResponseCode.REGISTER_USERNAME_FORMAT_ERROR);
         }
         if (StringUtils.isEmpty(registerRequestBo.getPassword())) {
             throw new ServiceException(ResponseCode.REGISTER_PASSWORD_EMPTY);
         }
-        if (!registerRequestBo.getPassword().matches(this.serverConfiguration.getPasswordFormat())) {
+        Matcher passwordPatternMatcher = this.passwordPattern.matcher(registerRequestBo.getPassword());
+        if (!passwordPatternMatcher.matches()) {
             throw new ServiceException(ResponseCode.REGISTER_PASSWORD_FORMAT_ERROR);
         }
         if (StringUtils.isEmpty(registerRequestBo.getNickname())) {
             throw new ServiceException(ResponseCode.REGISTER_NICKNAME_EMPTY);
         }
-        if (!registerRequestBo.getNickname().matches(this.serverConfiguration.getNicknameFormat())) {
+        Matcher nicknamePatternMatcher = this.nicknamePattern.matcher(registerRequestBo.getNickname());
+        if (!nicknamePatternMatcher.matches()) {
             throw new ServiceException(ResponseCode.REGISTER_NICKNAME_FORMAT_ERROR);
         }
         if (this.userDao.getByUsername(registerRequestBo.getUsername()) != null) {
