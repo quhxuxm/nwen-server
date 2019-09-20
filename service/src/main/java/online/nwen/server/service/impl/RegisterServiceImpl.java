@@ -74,14 +74,11 @@ class RegisterServiceImpl implements IRegisterService {
         if (StringUtils.isEmpty(registerRequestBo.getUsername())) {
             throw new ServiceException(ResponseCode.REGISTER_USERNAME_EMPTY);
         }
-        this.usernamePatterns.forEach(pattern -> {
-          Matcher currentMatcher=  pattern.matcher(registerRequestBo.getUsername());
-          if(currentMatcher.matches()){
-              return;
-          }
+        boolean usernameMatchResult = this.usernamePatterns.stream().anyMatch(pattern -> {
+            Matcher currentMatcher = pattern.matcher(registerRequestBo.getUsername());
+            return currentMatcher.matches();
         });
-        Matcher usernamePatternMatcher = this.usernamePattern.matcher(registerRequestBo.getUsername());
-        if (!usernamePatternMatcher.matches()) {
+        if (!usernameMatchResult) {
             throw new ServiceException(ResponseCode.REGISTER_USERNAME_FORMAT_ERROR);
         }
         if (StringUtils.isEmpty(registerRequestBo.getPassword())) {
