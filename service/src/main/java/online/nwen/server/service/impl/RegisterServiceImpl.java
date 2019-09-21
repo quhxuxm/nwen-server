@@ -35,8 +35,6 @@ class RegisterServiceImpl implements IRegisterService {
     private List<Pattern> usernamePatterns;
     private List<Pattern> nicknamePatterns;
     private List<Pattern> passwordPatterns;
-    private Pattern nicknamePattern;
-    private Pattern passwordPattern;
 
     RegisterServiceImpl(ServerConfiguration serverConfiguration, IUserDao userDao, ILabelService labelService) {
         this.serverConfiguration = serverConfiguration;
@@ -51,11 +49,10 @@ class RegisterServiceImpl implements IRegisterService {
     }
 
     private void initializePatterns(Resource patternsResource, List<Pattern> patterns) {
-        this.usernamePatterns = new ArrayList<>();
         BufferedReader patternsReader = null;
         try {
             patternsReader = new BufferedReader(new InputStreamReader(patternsResource.getInputStream()));
-            patterns.addAll(patternsReader.lines().map(Pattern::compile).collect(Collectors.toList()));
+            patterns.addAll(patternsReader.lines().filter(s -> !s.isBlank()).map(Pattern::compile).collect(Collectors.toList()));
         } catch (IOException e) {
             logger.error("Fail to read username patterns resource because of exception.", e);
         } finally {
@@ -74,25 +71,31 @@ class RegisterServiceImpl implements IRegisterService {
         if (StringUtils.isEmpty(registerRequestBo.getUsername())) {
             throw new ServiceException(ResponseCode.REGISTER_USERNAME_EMPTY);
         }
-        boolean usernameMatchResult = this.usernamePatterns.stream().anyMatch(pattern -> {
+        boolean usernamePatternMatchResult = this.usernamePatterns.stream().anyMatch(pattern -> {
             Matcher currentMatcher = pattern.matcher(registerRequestBo.getUsername());
             return currentMatcher.matches();
         });
-        if (!usernameMatchResult) {
+        if (!usernamePatternMatchResult) {
             throw new ServiceException(ResponseCode.REGISTER_USERNAME_FORMAT_ERROR);
         }
         if (StringUtils.isEmpty(registerRequestBo.getPassword())) {
             throw new ServiceException(ResponseCode.REGISTER_PASSWORD_EMPTY);
         }
-        Matcher passwordPatternMatcher = this.passwordPattern.matcher(registerRequestBo.getPassword());
-        if (!passwordPatternMatcher.matches()) {
+        boolean passwordPatternMatchResult = this.passwordPatterns.stream().anyMatch(pattern -> {
+            Matcher currentMatcher = pattern.matcher(registerRequestBo.getPassword());
+            return currentMatcher.matches();
+        });
+        if (!passwordPatternMatchResult) {
             throw new ServiceException(ResponseCode.REGISTER_PASSWORD_FORMAT_ERROR);
         }
         if (StringUtils.isEmpty(registerRequestBo.getNickname())) {
             throw new ServiceException(ResponseCode.REGISTER_NICKNAME_EMPTY);
         }
-        Matcher nicknamePatternMatcher = this.nicknamePattern.matcher(registerRequestBo.getNickname());
-        if (!nicknamePatternMatcher.matches()) {
+        boolean nicknamePatternMatchResult = this.nicknamePatterns.stream().anyMatch(pattern -> {
+            Matcher currentMatcher = pattern.matcher(registerRequestBo.getNickname());
+            return currentMatcher.matches();
+        });
+        if (!nicknamePatternMatchResult) {
             throw new ServiceException(ResponseCode.REGISTER_NICKNAME_FORMAT_ERROR);
         }
         if (this.userDao.getByUsername(registerRequestBo.getUsername()) != null) {
