@@ -10,7 +10,7 @@ public class SecurityToken {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "security_token_id")
     private Long id;
-    @Column(name = "security_token", unique = true, nullable = false)
+    @Column(name = "security_token", unique = true, nullable = false, length = 2048)
     private String token;
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
